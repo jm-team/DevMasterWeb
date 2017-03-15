@@ -1,0 +1,57 @@
+#parse("./inc/head.vm")
+      <div class="modal-content">
+         <div class="modal-body">
+            <form id="form" class="form-horizontal" >
+				<div class="form-group">
+					<span class="col-sm-3 control-label no-padding-right">账号：</span> 
+					<div class="col-sm-9">
+						<input type="text"  name="username" class="col-xs-10 col-sm-5" />
+					</div>
+				</div>
+				<div class="form-group">
+					<span class="col-sm-3 control-label no-padding-right">手机：</span> 
+					<div class="col-sm-9">
+						<input type="text"  name="mobile" class="col-xs-10 col-sm-5" />
+					</div>
+				</div>
+				<div class="form-group">
+					<span class="col-sm-3 control-label no-padding-right">真实姓名：</span> 
+					<div class="col-sm-9">
+						<input type="text"  name="realname" class="col-xs-10 col-sm-5" />
+					</div>
+				</div>
+				<div class="form-group">
+					<span class="col-sm-3 control-label no-padding-right">密码：</span> 
+					<div class="col-sm-9">
+						<input type="password"  name="password" class="col-xs-10 col-sm-5" />
+					</div>
+				</div>
+			</form>
+         </div>
+         <div class="modal-footer">
+            <button type="button" id="item_submit" class="btn btn-primary">
+               	保存
+            </button>
+         </div>
+      </div>
+
+<script type="text/javascript">
+//提交
+$("#item_submit").on("click", function (e) {
+    //check form data
+    var data = $('#form').serialize();
+    $.ajax({
+        type: "POST",
+        url: '${ServiceName}' + "/user/doAddSPUser",
+        data: data,
+        dataType:'json'
+    }).done(function (data) {
+        if (data.code == -1) {
+            layer.msg(data.desc);
+        } else {
+        	layer.msg('保存成功');
+        	closeWindowAndRefreshParent();
+        }
+    });
+});
+</script>

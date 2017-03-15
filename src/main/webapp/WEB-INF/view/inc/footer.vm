@@ -1,0 +1,15 @@
+
+<script src="${ServiceName}/assets/js/bootstrap.min.js"></script>
+<script src="${ServiceName}/assets/js/typeahead-bs2.min.js"></script>
+<script type="text/javascript" src="${ServiceName}/page/js/htmlBuilder.js"></script>
+<!-- page specific plugin scripts -->
+
+<!-- ace scripts -->
+
+<script src="${ServiceName}/assets/js/ace-elements.min.js"></script>
+<script src="${ServiceName}/assets/js/ace.min.js"></script>
+<!-- jquery表单验证 -->
+<script src="${ServiceName}/assets/js/jquery.validate.min.js"></script>
+<script src="${ServiceName}/assets/js/validate/messages_cn.js"></script>
+<!-- 分页 -->
+<script src="${ServiceName}/page/js/jqPaginator.js"></script>

@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<configuration>
+    <contextName>${appName}</contextName>
+    <property scope="context" resource="config/app.properties"/>
+    <contextListener class="com.jumore.dove.common.log.LoggerStartupListener" ></contextListener>
+    <!-- 控制台输出 -->
+    <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+        <Target>System.out</Target>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss}[%t]%-5p %c{36}.%M\(%L\) %m%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- 文件输出 -->
+    <appender name="file" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${user.home}/logs/${appName}-all.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <FileNamePattern>
+                ${user.home}/logs/%d{yyyy-MM,aux}/${appName}-all.%d.%i.gz
+            </FileNamePattern>
+            <timeBasedFileNamingAndTriggeringPolicy
+                    class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>1024MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss}[%t]%-5p %c{36}.%M\(%L\) %m%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- 输出到flume -->
+    <appender name="flume" class="com.jumore.dove.common.log.FlumeAppender">
+        <flumeAgents>
+            ${flumeAgent}
+        </flumeAgents>
+        <flumeProperties>
+            connect-timeout=3000;
+            request-timeout=3000;
+            backoff=true;
+            maxBackoff=60000
+        </flumeProperties>
+        <batchSize>100</batchSize>
+        <reportingWindow>500</reportingWindow>
+        <application>${appName}</application>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss}[%t]%-5p %c{36}.%M\(%L\) %m%n</pattern>
+        </encoder>
+    </appender>
+
+    <!--日志的异步输出配置-->
+    <appender name="ASYNCConsole" class="ch.qos.logback.classic.AsyncAppender">
+        <includeCallerData>true</includeCallerData>
+        <appender-ref ref="console"/>
+    </appender>
+    <appender name="ASYNCFile" class="ch.qos.logback.classic.AsyncAppender">
+        <includeCallerData>true</includeCallerData>
+        <appender-ref ref="file"/>
+    </appender>
+    <appender name="ASYNCFlume" class="ch.qos.logback.classic.AsyncAppender">
+        <includeCallerData>true</includeCallerData>
+        <appender-ref ref="flume"/>
+    </appender>
+
+    <logger name="dao" level="DEBUG" ></logger>
+    <logger name="com.teambytes.logback.flume.EventReporter$ReportingJob" level="INFO" ></logger>
+	
+    <root level="INFO">
+        <appender-ref ref="ASYNCConsole"/>
+        <appender-ref ref="ASYNCFile"/>
+        <appender-ref ref="ASYNCFlume"/>
+    </root>
+	
+</configuration>

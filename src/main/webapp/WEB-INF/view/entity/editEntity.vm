@@ -1,0 +1,46 @@
+#parse("./inc/head.vm")
+      <div class="modal-content">
+         <div class="modal-body">
+            <form id="form" class="form-horizontal" >
+				<input type="hidden" value="${entity.id}" name="id"/>
+				<div class="form-group">
+					<span class="col-sm-3 control-label no-padding-right">表名：</span> 
+					<div class="col-sm-9">
+						<input type="text"  name="name" value="${entity.name}" class="col-xs-10 col-sm-5" />
+					</div>
+				</div>
+				<div class="form-group">
+					<span class="col-sm-3 control-label no-padding-right">描述：</span> 
+					<div class="col-sm-9">
+						<textarea rows="3" cols="" name="remark"  class="col-xs-10 col-sm-5" >${entity.remark}</textarea>
+					</div>
+				</div>
+			</form>
+         </div>
+         <div class="modal-footer">
+            <button type="button" id="item_submit" class="btn btn-primary">
+               	保存
+            </button>
+         </div>
+      </div>
+
+<script type="text/javascript">
+//提交
+$("#item_submit").on("click", function (e) {
+    //check form data
+    var data = $('#form').serialize();
+    $.ajax({
+        type: "POST",
+        url: '${ServiceName}' + "/entity/doUpdateEntity",
+        data: data,
+        dataType:'json'
+    }).done(function (data) {
+        if (data.code == -1) {
+            layer.msg(data.desc);
+        } else {
+        	layer.msg('保存成功');
+        	closeWindowAndRefreshParent();
+        }
+    });
+});
+</script>

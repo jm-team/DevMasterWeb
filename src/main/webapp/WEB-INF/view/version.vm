@@ -1,0 +1,16 @@
+<%@ page contentType="text/html;charset=UTF-8" language="java"%>
+<html>
+<body>
+<div>1.2.2 release notes (2017-01-21 14:00)</div>
+<br/>
+<p>1.增加了用户权限控制，添加应用和修改模板需要登录</p>
+<p>2.登录账号只有管理员可以增加，已经为各个项目经理增加账号</p>
+<p>3.为应用增加了开启和禁用的控制（在应用列表中）</p>
+<p>4.增加模板导入导出功能(在应用列表中)</p>
+<p>5.增加release notes页面</p>
+
+<div>1.2.3 release notes (2017-02-09 14:00)</div>
+<p>1.使用加密发送登录</p>
+<p>2.修改sql注入风险</p>
+</body>
+</html>

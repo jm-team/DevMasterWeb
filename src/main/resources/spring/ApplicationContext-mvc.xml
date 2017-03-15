@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd	
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+		">
+	<!-- 配置文件 -->
+	<bean id="propertyConfigurer" class="com.jumore.dove.config.DoveConfigurer">  
+		<property name="locations">  
+			<list>  
+                 <value>classpath:config/app.properties</value>
+            </list>  
+        </property>  
+	</bean> 	
+	<import resource="classpath*:dove/dove-mvc.xml"/>
+	<!-- 控制器扫描 -->
+	<context:component-scan base-package="com.jumore.devmaster.controller" />
+	
+	<!-- 自定义异常处理 -->
+	<!-- 优先要比DefaultHandlerExceptionResolver高，否则部分异常得不到处理机会 -->
+	<!-- DefaultHandlerExceptionResolver order为2，所以此处order设置value为1 -->
+	<bean class="com.jumore.dove.web.exception.AppHandlerExceptionResolver">
+		<property name="order" value="1" />
+	</bean>
+	
+	<!-- 消息转换配置 -->
+	<mvc:annotation-driven>
+		<mvc:message-converters>
+			<bean class="org.springframework.http.converter.StringHttpMessageConverter">
+				<property name="supportedMediaTypes">
+					<list>
+						<value>text/html;charset=UTF-8</value>
+					</list>
+				</property>
+			</bean>
+			<!--json日期格式化默认设置-->
+			<bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+				<property name="objectMapper">
+					<bean class="com.fasterxml.jackson.databind.ObjectMapper">
+						<property name="dateFormat">
+							<bean class="java.text.SimpleDateFormat">
+								<constructor-arg type="java.lang.String" value="yyyy-MM-dd HH:mm:ss"/>
+							</bean>
+						</property>
+					</bean>
+				</property>
+			</bean>
+		</mvc:message-converters>
+	</mvc:annotation-driven>
+	
+	<bean id="velocityConfig" class="org.springframework.web.servlet.view.velocity.VelocityConfigurer">
+		<property name="resourceLoaderPath" value="/WEB-INF/view/"></property>
+		<property name="velocityProperties">
+	      <props>
+	       <prop key="input.encoding">UTF-8</prop>
+	       <prop key="output.encoding">UTF-8</prop>
+	      </props>
+	    </property>
+		
+	</bean>
+
+	<bean id="viewResolver" class="org.springframework.web.servlet.view.velocity.VelocityViewResolver">
+		<property name="cache" value="false"></property>
+		<property name="prefix" value=""></property>
+		<property name="suffix" value=".vm" />
+		<property name="requestContextAttribute" value="rc"/>
+		<property name="contentType"><value>text/html;charset=UTF-8</value></property>
+	</bean>
+	
+	<mvc:default-servlet-handler/>
+	<mvc:view-controller path="/" view-name="index"/> 
+	<!-- 拦截器配置 -->
+</beans>

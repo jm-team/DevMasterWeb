@@ -1,0 +1,85 @@
+<div class="navbar navbar-default" id="navbar">
+    <div class="navbar-container" id="navbar-container">
+        <div class="navbar-header pull-left">
+            <a href="index.jsp" class="navbar-brand">
+                <small>
+                    <i class="icon-leaf"></i>
+						聚贸开放平台
+                </small>
+            </a><!-- /.brand -->
+        </div>
+        <div class="navbar-header pull-right" role="navigation">
+					<ul class="nav ace-nav">
+
+						<li class="light-blue">
+							<a data-toggle="dropdown" href="#" class="dropdown-toggle">
+								<img class="nav-user-photo" src="${ServiceName}/assets/avatars/user.jpg" alt="Jason's Photo">
+								<span class="user-info">
+									<small>您好：</small>
+									#if($!subject.isAuthenticated())
+										$!session.getAttribute("session_user").getUsername()
+									#end
+									#if(!$!subject.isAuthenticated())
+										匿名用户
+									#end
+								</span>
+
+								<i class="icon-caret-down"></i>
+							</a>
+
+							<ul class="user-menu pull-right dropdown-menu dropdown-yellow dropdown-caret dropdown-close">
+								#if(!$!subject.isAuthenticated())
+								<li>
+									<a href="${ServiceName}/login">
+										<i class="icon-key"></i>
+										登录
+									</a>
+								</li>
+								#end
+								#if($!subject.isAuthenticated())
+									<li>
+									<a href="${ServiceName}/logout">
+										<i class="icon-off"></i>
+										退出
+									</a>
+    								</li>
+    								<li>
+    									<a href="#" onclick="openBindMobile()">
+    										<i class="icon-mobile-phone"></i>
+    										绑定手机
+    									</a>
+    								</li>
+    								<li>
+    									<a href="#" onclick="openResetPwd()">
+    										<i class="icon-user-md"></i>
+    										修改密码
+    									</a>
+    								</li>
+								#end
+								
+							</ul>
+						</li>
+					</ul><!-- /.ace-nav -->
+				</div>
+    </div>
+</div>
+<script type="text/javascript">
+	function openResetPwd(){
+		layer.open({
+			  type: 2,
+			  title: '修改密码',
+			  shade: 0.5,
+			  area: ['450px', '400px'],
+			  content: serviceName + '/user/resetPwd'
+			});
+	}
+	function openBindMobile(){
+		layer.open({
+			  type: 2,
+			  title: '绑定手机',
+			  shade: 0.5,
+			  area: ['450px', '400px'],
+			  content: serviceName + '/user/bindMobile'
+			});
+	}
+</script>

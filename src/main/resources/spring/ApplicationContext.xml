@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop" 
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:task="http://www.springframework.org/schema/task"
+	xmlns:cache="http://www.springframework.org/schema/cache"  
+	xmlns:p="http://www.springframework.org/schema/p" 
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+						http://www.springframework.org/schema/beans/spring-beans.xsd
+						http://www.springframework.org/schema/aop 
+						http://www.springframework.org/schema/aop/spring-aop.xsd
+						http://www.springframework.org/schema/context 
+						http://www.springframework.org/schema/context/spring-context.xsd
+						http://www.springframework.org/schema/tx 
+						http://www.springframework.org/schema/tx/spring-tx.xsd
+						http://www.springframework.org/schema/util  
+     					http://www.springframework.org/schema/util/spring-util-3.0.xsd
+     					http://www.springframework.org/schema/task 
+     					http://www.springframework.org/schema/task/spring-task-3.0.xsd
+     					http://www.springframework.org/schema/cache 
+            			http://www.springframework.org/schema/cache/spring-cache.xsd
+	">
+	
+	<!-- 启用注解 -->
+	<context:annotation-config />
+	
+	<aop:aspectj-autoproxy proxy-target-class="true"/>
+
+	<!-- 配置文件 -->
+	<bean id="propertyConfigurer" class="com.jumore.dove.config.DoveConfigurer">  
+		<property name="locations">  
+			<list>  
+                 <value>classpath:config/db.properties</value>
+                 <value>classpath:config/app.properties</value>                              
+            </list>  
+        </property>  
+	</bean> 
+    
+	<!-- 数据访问配置 -->
+    <import resource="classpath*:spring/applicationContext-dbconfig.xml"/>
+    
+    <!-- dove框架配置 -->
+	<import resource="classpath*:dove/dove-dao.xml"/>
+	<import resource="classpath*:dove/dove-service.xml"/>
+	<import resource="classpath*:dove/dove-cache.xml"/>
+  
+	<!-- 组件扫描，排除@Controller组件，该组件由SpringMVC配置文件扫描 -->
+	<context:component-scan base-package="com.jumore.devmaster">
+		<context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+	</context:component-scan>
+	
+	
+	<!-- ================ Shiro start ================ -->
+	<bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
+		<property name="sessionManager" ref="sessionManager" />
+		<property name="realm" ref="devMasterRealm" />
+	</bean>
+	
+    <bean id="memoryCacheManager" class="org.apache.shiro.cache.MemoryConstrainedCacheManager"><!-- 自定义cacheManager -->
+    </bean>
+    
+    <bean id="sessionManager"  class="com.jumore.dove.shiro.session.MyDefaultWebSessionManager">
+<!--         <property name="sessionDAO" ref="redisShiroSessionDAO" /> -->
+<!--        	<property name="cacheManager" ref="redisCacheManager" /> -->
+		<property name="cacheManager" ref="memoryCacheManager" />
+        <property name="globalSessionTimeout" value="${shiro.session.timeout:1800}" />
+        <property name="sessionIdCookieEnabled" value="true" />
+    </bean>
+    
+	<!-- 項目自定义的Realm -->
+	<bean id="devMasterRealm" class="com.jumore.devmaster.service.DevMasterRealm" >
+	</bean>
+	
+	<!-- Shiro Filter -->
+	<bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
+			<property name="securityManager" ref="securityManager" />
+			<property name="loginUrl" value="/login.do" />
+			<property name="unauthorizedUrl" value="/login.do" />
+			<property name="filterChainDefinitions">
+				<value>			
+				 <!-- 静态资源 -->
+	         	 /page/**=anon
+	         	 /assets/**=anon
+	         	 /public/**=anon
+	         	 /** = appAuthc
+			</value>
+			</property>
+			<property name="filters">  
+	            <util:map>  
+	                <entry key="appAuthc" value-ref="appAuthenticationFilter"></entry>
+	            </util:map>  
+	        </property>  
+			
+	</bean>
+		
+	<bean id="appAuthenticationFilter" class="com.jumore.dove.web.filter.AnnotationCheckedFilter" />
+	<!-- ================ Shiro end ================ -->
+</beans>

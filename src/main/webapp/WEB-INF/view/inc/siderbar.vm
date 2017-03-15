@@ -1,0 +1,59 @@
+<script type="text/javascript">
+$(function(){
+	var path = window.location.pathname;
+	var menu = $('.menu[href="'+path+'"]');
+	menu.addClass('active');
+	menu.parents('.level_1').addClass('open');
+	menu.parents('li').addClass('active');
+});
+</script>
+<a class="menu-toggler" id="menu-toggler" href="#"> <span
+	class="menu-text"></span>
+</a>
+<div class="sidebar" id="sidebar">
+	<ul class="nav nav-list">
+			#if($!subject.hasRole("admin"))
+			<li  class="level_1">
+				<a href="#" class="dropdown-toggle"> <i class="icon-user"></i>
+				 	<span class="menu-text"> 用户管理 </span>  <b class="arrow icon-angle-down"></b>
+				</a>
+				<ul class="submenu">
+					<!--<shiro:user> -->
+					<li>
+						<a  class="menu" href="${ServiceName}/user/devList"> <i class="icon-double-angle-right"></i>开发者</a>
+					</li>
+					<li>
+						<a  class="menu" href="${ServiceName}/user/spList"> <i class="icon-double-angle-right"></i>服务商</a>
+					</li>
+				</ul> 
+			</li>
+			
+			<li  class="level_1">
+				<a href="#" class="dropdown-toggle"> <i class="icon-android"></i>
+				 	<span class="menu-text"> 应用管理 </span>  <b class="arrow icon-angle-down"></b>
+				</a>
+				<ul class="submenu">
+					<!--<shiro:user> -->
+					<li>
+						<a  class="menu" href="${ServiceName}/app/appList"> <i class="icon-double-angle-right"></i>应用列表</a>
+					</li>
+					<li>
+						<a  class="menu" href="${ServiceName}/appService/appServiceList"> <i class="icon-double-angle-right"></i>服务关联</a>
+					</li>
+				</ul> 
+			 </li>
+			 #end
+			 <li  class="level_1">
+				<a href="#" class="dropdown-toggle"> <i class="icon-cloud"></i>
+				 	<span class="menu-text">项目管理</span>  <b class="arrow icon-angle-down"></b>
+				</a>
+		        <ul class="submenu">
+					<li>
+						<a  class="menu" href="${ServiceName}/project/projectList"> <i class="icon-double-angle-right"></i>项目列表</a>
+					</li>
+				</ul> 
+			</li>
+	</ul>
+	<!-- /.nav-list -->
+</div>
+

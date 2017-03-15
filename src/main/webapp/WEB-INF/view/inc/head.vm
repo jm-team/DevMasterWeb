@@ -1,0 +1,32 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>聚贸开放平台</title>
+    <link href="${ServiceName}/page/img/logo.jpg" rel="icon" type="image/x-icon" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- basic styles -->
+    <link href="${ServiceName}/assets/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="${ServiceName}/assets/css/font-awesome.min.css" />
+    
+    <!-- ace styles -->
+
+    <link rel="stylesheet" href="${ServiceName}/assets/css/ace.min.css" />
+    <link rel="stylesheet" href="${ServiceName}/assets/css/ace-rtl.min.css" />
+    <link rel="stylesheet" href="${ServiceName}/assets/css/ace-skins.min.css" />
+
+    <!-- inline styles related to this page -->
+	<link rel="stylesheet" href="${ServiceName}/assets/css/console.css" />
+	<link rel="stylesheet" href="${ServiceName}/page/css/console.css" />
+	
+    <!-- ace settings handler -->
+    <script src='${ServiceName}/assets/js/jquery-2.0.3.min.js' ></script>
+    <script src="${ServiceName}/assets/js/ace-extra.min.js"></script>
+    
+    <script src="${ServiceName}/page/js/common.js"></script>
+    <script src='${ServiceName}/assets/js/layer/layer.js' ></script>
+</head>
+<script type="text/javascript">
+	//设置js中的serviceName变量
+	serviceName='${ServiceName}';
+</script>
