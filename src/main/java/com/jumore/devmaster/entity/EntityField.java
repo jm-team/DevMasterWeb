@@ -1,33 +1,43 @@
 package com.jumore.devmaster.entity;
 
-import com.jumore.dove.aop.AutoIncrease;
-import com.jumore.dove.aop.Entity;
-import com.jumore.dove.aop.Id;
-import com.jumore.dove.aop.Table;
+import com.jumore.dove.aop.*;
 
 @Entity
 @Table(name="dm_entity_field")
 public class EntityField {
-
+    /***/
+    @Column(name="id")
     @Id
     @AutoIncrease
     private Long id;
-    
+
+    /***/
+    @Column(name="name")
     private String name;
-    
+
+    /***/
+    @Column(name="type")
     private String type;
-    
+
+    /***/
+    @Column(name="length")
     private Integer length;
-    
-    private String remark;
 
-    public String getRemark() {
-        return remark;
-    }
+    /***/
+    @Column(name="defaultValue")
+    private String defaultvalue;
 
-    public void setRemark(String remark) {
-        this.remark = remark;
-    }
+    /***/
+    @Column(name="docs")
+    private String docs;
+
+    /**dm_dbentity.id*/
+    @Column(name="dbentity_id")
+    private Long dbentityId;
+
+    /**dm_project.id*/
+    @Column(name="project_id")
+    private Long projectId;
 
     public Long getId() {
         return id;
@@ -42,7 +52,7 @@ public class EntityField {
     }
 
     public void setName(String name) {
-        this.name = name;
+        this.name = name == null ? null : name.trim();
     }
 
     public String getType() {
@@ -50,7 +60,7 @@ public class EntityField {
     }
 
     public void setType(String type) {
-        this.type = type;
+        this.type = type == null ? null : type.trim();
     }
 
     public Integer getLength() {
@@ -60,5 +70,36 @@ public class EntityField {
     public void setLength(Integer length) {
         this.length = length;
     }
-    
+
+    public String getDefaultvalue() {
+        return defaultvalue;
+    }
+
+    public void setDefaultvalue(String defaultvalue) {
+        this.defaultvalue = defaultvalue == null ? null : defaultvalue.trim();
+    }
+
+    public String getDocs() {
+        return docs;
+    }
+
+    public void setDocs(String docs) {
+        this.docs = docs == null ? null : docs.trim();
+    }
+
+    public Long getDbentityId() {
+        return dbentityId;
+    }
+
+    public void setDbentityId(Long dbentityId) {
+        this.dbentityId = dbentityId;
+    }
+
+    public Long getProjectId() {
+        return projectId;
+    }
+
+    public void setProjectId(Long projectId) {
+        this.projectId = projectId;
+    }
 }

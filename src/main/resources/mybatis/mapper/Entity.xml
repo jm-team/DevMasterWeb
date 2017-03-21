@@ -10,4 +10,13 @@
 			</if>
 		</where>
 	</select>
+
+
+	<delete id="delEntity">
+		DELETE FROM dm_dbentity where project_id =#{projectId}
+	</delete>
+
+	<delete id="delField">
+		DELETE FROM dm_entity_field WHERE project_id =#{projectId}
+	</delete>
 </mapper>
