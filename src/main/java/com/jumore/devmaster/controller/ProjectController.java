@@ -110,7 +110,7 @@ public class ProjectController {
         Project po = baseService.get(Project.class, project.getId());
         po.setName(project.getName());
         po.setRemark(project.getRemark());
-        po.setDbUserName(project.getDbUrl());
+        po.setDbUserName(project.getDbUserName());
         po.setDbUrl(project.getDbUrl());
         po.setDbPassword(project.getDbPassword());
         baseService.update(po);
