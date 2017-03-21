@@ -28,20 +28,6 @@ $(function(){
 				</ul> 
 			</li>
 			
-			<li  class="level_1">
-				<a href="#" class="dropdown-toggle"> <i class="icon-android"></i>
-				 	<span class="menu-text"> 应用管理 </span>  <b class="arrow icon-angle-down"></b>
-				</a>
-				<ul class="submenu">
-					<!--<shiro:user> -->
-					<li>
-						<a  class="menu" href="${ServiceName}/app/appList"> <i class="icon-double-angle-right"></i>应用列表</a>
-					</li>
-					<li>
-						<a  class="menu" href="${ServiceName}/appService/appServiceList"> <i class="icon-double-angle-right"></i>服务关联</a>
-					</li>
-				</ul> 
-			 </li>
 			 #end
 			 <li  class="level_1">
 				<a href="#" class="dropdown-toggle"> <i class="icon-cloud"></i>
@@ -50,6 +36,17 @@ $(function(){
 		        <ul class="submenu">
 					<li>
 						<a  class="menu" href="${ServiceName}/project/projectList"> <i class="icon-double-angle-right"></i>项目列表</a>
+					</li>
+				</ul> 
+			</li>
+			<li  class="level_1">
+				<a href="#" class="dropdown-toggle"> <i class="icon-cloud"></i>
+				 	<span class="menu-text">模板管理</span>  <b class="arrow icon-angle-down"></b>
+				</a>
+		        <ul class="submenu">
+					<li>
+						<a  class="menu" href="${ServiceName}/template/templateList?scope=private"> <i class="icon-double-angle-right"></i>我的模板</a>
+						<a  class="menu" href="${ServiceName}/template/templateList?scope=public"> <i class="icon-double-angle-right"></i>共享模板</a>
 					</li>
 				</ul> 
 			</li>
