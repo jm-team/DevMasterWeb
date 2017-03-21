@@ -231,4 +231,9 @@ public class ProjectController {
 
         return lst;
     }
+    
+    @RequestMapping("/index")
+    public ModelAndView index(){
+        return new ModelAndView();
+    }
 }

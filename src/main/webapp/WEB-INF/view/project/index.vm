@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>index</title>
+<link rel="stylesheet" type="text/css" href="${ServiceName}/assets/easyui/themes/metro/easyui.css">
+<link rel="stylesheet" type="text/css" href="${ServiceName}/assets/easyui/themes/icon.css">
+<script type="text/javascript" src="${ServiceName}/assets/easyui/jquery.min.js"></script>
+<script type="text/javascript" src="${ServiceName}/assets/easyui/jquery.easyui.min.js"></script>
+</head>
+<body class="easyui-layout">
+	<!-- header start -->
+	<div data-options="region:'north',border:true" style="height:40px;background: #f1f1f1;">
+		<a href="javascript:void(0)" id="header-button-cloud9" class="easyui-menubutton" 
+			data-options="menu:'#header-button-cloud9-menu'" style="height:40px;">
+			Cloud9
+		</a>
+		<a href="javascript:void(0)" id="header-button-file" class="easyui-menubutton" 
+			data-options="menu:'#header-button-file-menu'" style="height:40px;">
+			File
+		</a>
+		<a href="javascript:void(0)" id="header-button-edit" class="easyui-menubutton" 
+			data-options="menu:'#header-button-edit-menu'" style="height:40px;">
+			Edit
+		</a>
+		<a href="javascript:void(0)" id="header-button-find" class="easyui-menubutton" 
+			data-options="menu:'#header-button-find-menu'" style="height:40px;">
+			Find
+		</a>
+		<a href="javascript:void(0)" id="header-button-view" class="easyui-menubutton" 
+			data-options="menu:'#header-button-view-menu'" style="height:40px;">
+			View
+		</a>
+		<a href="javascript:void(0)" id="header-button-goto" class="easyui-menubutton" 
+			data-options="menu:'#header-button-goto-menu'" style="height:40px;">
+			Goto
+		</a>
+		<a href="javascript:void(0)" id="header-button-run" class="easyui-menubutton" 
+			data-options="menu:'#header-button-run-menu'" style="height:40px;">
+			Run
+		</a>
+		<a href="javascript:void(0)" id="header-button-tools" class="easyui-menubutton" 
+			data-options="menu:'#header-button-tools-menu'" style="height:40px;">
+			Tools
+		</a>
+		<a href="javascript:void(0)" id="header-button-window" class="easyui-menubutton" 
+			data-options="menu:'#header-button-window-menu'" style="height:40px;">
+			Window
+		</a>
+		<div id="header-button-cloud9-menu" style="width:150px;">
+		    <div data-options="iconCls:'icon-undo'">Undo</div>
+		    <div data-options="iconCls:'icon-redo'">Redo</div>
+		    <div class="menu-sep"></div>
+		    <div>Cut</div>
+		    <div>Copy</div>
+		    <div>Paste</div>
+		    <div class="menu-sep"></div>
+		    <div data-options="iconCls:'icon-remove'">Delete</div>
+		    <div>Select All</div>
+		</div>
+		
+		<div id="header-button-file-menu" style="width:150px;">
+		    <div>Cut</div>
+		</div>
+		
+		<div id="header-button-edit-menu" style="width:150px;">
+		    <div>Cut</div>
+		</div>
+		
+		<div id="header-button-find-menu" style="width:150px;">
+		    <div>Cut</div>
+		</div>
+		
+		<div id="header-button-view-menu" style="width:150px;">
+		    <div>Cut</div>
+		</div>
+		
+		<div id="header-button-goto-menu" style="width:150px;">
+		    <div>Cut</div>
+		</div>
+		
+		<div id="header-button-run-menu" style="width:150px;">
+		    <div>Cut</div>
+		</div>
+		
+		<div id="header-button-tools-menu" style="width:150px;">
+		    <div>Cut</div>
+		</div>
+		
+		<div id="header-button-window-menu" style="width:150px;">
+		    <div>Cut</div>
+		</div>
+	</div>
+	<!-- header end -->
+	
+	<!-- left start -->
+	<div data-options="region:'west',split:true,title:''" style="width:15%;padding:10px;background: transparent;">
+		<ul id="tree" class="easyui-tree">
+		    <li>
+		        <span>c9sdk</span>
+		        <ul>
+		            <li>
+		                <span>bin</span>
+		                <ul>
+		                    <li><span>c9</span></li>
+		                    <li><span>launch.bat</span></li>
+		                </ul>
+		            </li>
+		        </ul>
+		        <ul>
+		            <li>
+		                <span>build</span>
+		                <ul>
+		                    <li><span>c9</span></li>
+		                    <li><span>launch.bat</span></li>
+		                </ul>
+		            </li>
+		        </ul>
+		        <ul>
+		            <li>
+		                <span>configs</span>
+		                <ul>
+		                    <li><span>c9</span></li>
+		                    <li><span>launch.bat</span></li>
+		                </ul>
+		            </li>
+		        </ul>
+		        <ul>
+		            <li>
+		                <span>docs</span>
+		                <ul>
+		                    <li><span>c9</span></li>
+		                    <li><span>launch.bat</span></li>
+		                </ul>
+		            </li>
+		        </ul>
+		        <ul>
+		            <li>
+		                <span>integratuons</span>
+		                <ul>
+		                    <li><span>c9</span></li>
+		                    <li><span>launch.bat</span></li>
+		                </ul>
+		            </li>
+		        </ul>
+		        <ul>
+		            <li>
+		                <span>local</span>
+		                <ul>
+		                    <li><span>c9</span></li>
+		                    <li><span>launch.bat</span></li>
+		                </ul>
+		            </li>
+		        </ul>
+		        <ul>
+		            <li>
+		                <span>node_modules</span>
+		                <ul>
+		                    <li><span>c9</span></li>
+		                    <li><span>launch.bat</span></li>
+		                </ul>
+		            </li>
+		        </ul>
+		        <ul>
+		            <li>
+		                <span>plugins</span>
+		                <ul>
+		                    <li><span>c9</span></li>
+		                    <li><span>launch.bat</span></li>
+		                </ul>
+		            </li>
+		        </ul>
+		        <ul>
+		            <li>
+		                <span>scripts</span>
+		                <ul>
+		                    <li><span>c9</span></li>
+		                    <li><span>launch.bat</span></li>
+		                </ul>
+		            </li>
+		        </ul>
+		        <ul>
+		            <li>
+		                <span>settings</span>
+		                <ul>
+		                    <li><span>c9</span></li>
+		                    <li><span>launch.bat</span></li>
+		                </ul>
+		            </li>
+		        </ul>
+		        <ul>
+		            <li>
+		                <span>test</span>
+		                <ul>
+		                    <li><span>c9</span></li>
+		                    <li><span>launch.bat</span></li>
+		                </ul>
+		            </li>
+		        </ul>
+		    </li>
+		</ul>
+	</div>
+	<!-- left end -->
+	
+	<!-- right start -->
+	<div data-options="region:'east',split:true,title:''" style="width:15%;padding:10px;background: transparent;">
+	</div>
+	<!-- right end -->
+	
+	<!-- center start -->
+	<div data-options="region:'center',border:false,title:''">
+		<div class="easyui-layout" data-options="fit:true">
+			<!-- center top start -->
+			<div data-options="region:'center',split:true" style="background:#fbfbfb;">
+				<div id="topTab" class="easyui-tabs" style="width:100%;height:100%;">
+				    <div title="cli.js" style="padding:20px;display:none;">
+				        cli.js
+				    </div>
+				    <div title="server.js" data-options="closable:true" style="overflow:auto;padding:20px;display:none;">
+				        server.js
+				    </div>
+				    <div title="login.js" data-options="closable:true" style="padding:20px;display:none;">
+				        login.js
+				    </div>
+				</div>
+			</div>
+			<!-- center top end -->
+			
+			<!-- center bottom start -->
+			<div data-options="region:'south',split:true" style="height:20%;background:#fbfbfb;">
+				<div id="bottomTab" class="easyui-tabs" style="width:100%;height:100%;">
+				    <div title="root@localhost" style="padding:20px;display:none;">
+				        root@localhost
+				    </div>
+				    <div title="immediate(java)" data-options="closable:true" style="overflow:auto;padding:20px;display:none;">
+				        immediate(java)
+				    </div>
+				</div>
+			</div>
+			<!-- center bottom end -->
+		</div>
+	</div>
+	<!-- center end -->
+</body>
+</html>
