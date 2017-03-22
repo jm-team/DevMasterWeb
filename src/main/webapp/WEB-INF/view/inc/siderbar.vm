@@ -45,8 +45,8 @@ $(function(){
 				</a>
 		        <ul class="submenu">
 					<li>
-						<a  class="menu" href="${ServiceName}/template/templateList?scope=private"> <i class="icon-double-angle-right"></i>我的模板</a>
-						<a  class="menu" href="${ServiceName}/template/templateList?scope=public"> <i class="icon-double-angle-right"></i>共享模板</a>
+						<a  class="menu" href="${ServiceName}/template/templateList?scope=1"> <i class="icon-double-angle-right"></i>我的模板</a>
+						<a  class="menu" href="${ServiceName}/template/templateList?scope=2"> <i class="icon-double-angle-right"></i>共享模板</a>
 					</li>
 				</ul> 
 			</li>

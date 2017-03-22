@@ -6,7 +6,91 @@
 <link rel="stylesheet" type="text/css" href="${ServiceName}/assets/easyui/themes/metro/easyui.css">
 <link rel="stylesheet" type="text/css" href="${ServiceName}/assets/easyui/themes/icon.css">
 <script type="text/javascript" src="${ServiceName}/assets/easyui/jquery.min.js"></script>
+<script src='${ServiceName}/assets/js/layer/layer.js' ></script>
 <script type="text/javascript" src="${ServiceName}/assets/easyui/jquery.easyui.min.js"></script>
+<!--<script type="text/javascript" src="${ServiceName}/page/js/templateManager.js"></script>-->
+<script type="text/javascript">
+function append(){
+    var t = $('#tree');
+    var parent = t.tree('getSelected');
+	layer.prompt({
+        title: '新文件名',
+        formType: 0 //prompt风格，支持0-2
+    }, function(fileName , index){
+		layer.close(index);
+        addNewFile(parent , fileName);
+    });
+		
+	
+}
+function remove(){
+    var node = $('#tree').tree('getSelected');
+    $('#tree').tree('remove', node.target);
+}
+function expand(){
+    var node = $('#tree').tree('getSelected');
+    $('#tree').tree('expand',node.target);
+}
+
+function addNewFile(parent , newFileName){
+	//增加文件
+	$.ajax({
+        type: "POST",
+        url: '${ServiceName}' + "/project/addFile",
+        data: {
+			"tplId" : ${tplId},
+			"parent" : parent.id,
+			"newFileName": newFileName
+        }
+    }).done(function (data) {
+		expand();
+    	if(data.code == 0){
+			$('#tree').tree('append', {
+                parent: (parent.target),
+                data: [{
+					id : parent.id,
+                    text: newFileName
+                }]
+            });
+    	}else{
+    		layer.msg(data.desc);
+    	}
+    });
+}
+
+function onRename(node){
+	//增加文件
+	$.ajax({
+        type: "POST",
+        url: '${ServiceName}' + "/project/rename",
+        data: {
+			"tplId" : ${tplId},
+            "id": node.id,
+			"newFileName": node.text
+        }
+    }).done(function (data) {
+    	if(data.code == 0){
+    	}else{
+    		layer.msg(data.desc);
+    	}
+    });
+}
+
+function onContextMenu(e,node){
+    e.preventDefault();
+	if(node.folder){
+		$('#append').show();
+	}else{
+		$('#append').hide();
+	}
+	
+    $(this).tree('select',node.target);
+    $('#mm').menu('show',{
+        left: e.pageX,
+        top: e.pageY
+    });
+}
+</script>
 </head>
 <body class="easyui-layout">
 	<!-- header start -->
@@ -95,111 +179,21 @@
 	
 	<!-- left start -->
 	<div data-options="region:'west',split:true,title:''" style="width:15%;padding:10px;background: transparent;">
-		<ul id="tree" class="easyui-tree">
-		    <li>
-		        <span>c9sdk</span>
-		        <ul>
-		            <li>
-		                <span>bin</span>
-		                <ul>
-		                    <li><span>c9</span></li>
-		                    <li><span>launch.bat</span></li>
-		                </ul>
-		            </li>
-		        </ul>
-		        <ul>
-		            <li>
-		                <span>build</span>
-		                <ul>
-		                    <li><span>c9</span></li>
-		                    <li><span>launch.bat</span></li>
-		                </ul>
-		            </li>
-		        </ul>
-		        <ul>
-		            <li>
-		                <span>configs</span>
-		                <ul>
-		                    <li><span>c9</span></li>
-		                    <li><span>launch.bat</span></li>
-		                </ul>
-		            </li>
-		        </ul>
-		        <ul>
-		            <li>
-		                <span>docs</span>
-		                <ul>
-		                    <li><span>c9</span></li>
-		                    <li><span>launch.bat</span></li>
-		                </ul>
-		            </li>
-		        </ul>
-		        <ul>
-		            <li>
-		                <span>integratuons</span>
-		                <ul>
-		                    <li><span>c9</span></li>
-		                    <li><span>launch.bat</span></li>
-		                </ul>
-		            </li>
-		        </ul>
-		        <ul>
-		            <li>
-		                <span>local</span>
-		                <ul>
-		                    <li><span>c9</span></li>
-		                    <li><span>launch.bat</span></li>
-		                </ul>
-		            </li>
-		        </ul>
-		        <ul>
-		            <li>
-		                <span>node_modules</span>
-		                <ul>
-		                    <li><span>c9</span></li>
-		                    <li><span>launch.bat</span></li>
-		                </ul>
-		            </li>
-		        </ul>
-		        <ul>
-		            <li>
-		                <span>plugins</span>
-		                <ul>
-		                    <li><span>c9</span></li>
-		                    <li><span>launch.bat</span></li>
-		                </ul>
-		            </li>
-		        </ul>
-		        <ul>
-		            <li>
-		                <span>scripts</span>
-		                <ul>
-		                    <li><span>c9</span></li>
-		                    <li><span>launch.bat</span></li>
-		                </ul>
-		            </li>
-		        </ul>
-		        <ul>
-		            <li>
-		                <span>settings</span>
-		                <ul>
-		                    <li><span>c9</span></li>
-		                    <li><span>launch.bat</span></li>
-		                </ul>
-		            </li>
-		        </ul>
-		        <ul>
-		            <li>
-		                <span>test</span>
-		                <ul>
-		                    <li><span>c9</span></li>
-		                    <li><span>launch.bat</span></li>
-		                </ul>
-		            </li>
-		        </ul>
-		    </li>
+		<ul id="tree" class="easyui-tree" url="${ServiceName}/project/getTemplateFiles?tplId=${tplId}" data-options="
+                method: 'get',
+                animate: true,
+                onContextMenu: onContextMenu,
+				onAfterEdit : onRename
+            ">
+		    
 		</ul>
 	</div>
+	<!-- context menu-->
+	<div id="mm" class="easyui-menu" style="width:120px;">
+        <div id="append" onclick="append()" data-options="iconCls:'icon-add'">添加文件</div>
+        <div id="remove" onclick="remove()" data-options="iconCls:'icon-remove'">删除</div>
+    </div>
+	
 	<!-- left end -->
 	
 	<!-- right start -->

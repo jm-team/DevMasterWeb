@@ -1,17 +1,22 @@
 package com.jumore.devmaster.controller;
 
+import java.io.File;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
 import com.jumore.devmaster.common.util.ConnectionUtil;
+import com.jumore.devmaster.common.util.SessionHelper;
 import com.jumore.devmaster.entity.DBEntity;
 import com.jumore.devmaster.entity.EntityField;
+
+import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,10 +26,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.jumore.devmaster.common.DevMasterConst;
 import com.jumore.devmaster.entity.DevMasterUser;
 import com.jumore.devmaster.entity.Project;
+import com.jumore.devmaster.entity.ProjectTemplate;
 import com.jumore.dove.aop.annotation.PublicMethod;
+import com.jumore.dove.common.BusinessException;
 import com.jumore.dove.plugin.Page;
 import com.jumore.dove.service.BaseService;
 import com.jumore.dove.util.MD5;
@@ -233,8 +242,90 @@ public class ProjectController {
     }
     
     @RequestMapping("/index")
-    public ModelAndView index(){
-        return new ModelAndView();
+    public ModelAndView index(Long tplId){
+        ModelAndView mv = new ModelAndView();
+        ProjectTemplate tplPo = baseService.get(ProjectTemplate.class, tplId);
+        DevMasterUser user = SessionHelper.getUser();
+        if(user.getId() != tplPo.getUid()){
+            mv.addObject("readonly", true);
+        }
+        mv.addObject("tplId", tplId);
+        return mv;
+    }
+    
+    @ResponseBody
+    @RequestMapping(value = "getTemplateFiles")
+    public JSONArray getTemplateFiles(String id , Long tplId) throws Exception {
+        String parent = id;
+        
+        String workDir = SessionHelper.getUserWorkDir();
+        String tplDirStr = workDir + "tpls"+ File.separator;
+        File tplDir = new File(tplDirStr + tplId);
+        if(!tplDir.exists()){
+            FileUtils.forceMkdir(tplDir);
+        }
+        
+        JSONArray arr = new JSONArray();
+        if(parent==null){
+            JSONObject root = new JSONObject();
+            ProjectTemplate tplPo = baseService.get(ProjectTemplate.class, tplId);
+            root.put("text", tplPo.getTitle());
+            root.put("id", File.separator+tplId);
+            root.put("state", "closed");
+            root.put("folder", true);
+            arr.add(root);
+            return arr;
+        }
+        
+        Collection<File> files = FileUtils.listFiles(tplDir, null, false);
+        
+        for(File file : files){
+            JSONObject obj = new JSONObject();
+            obj.put("text", file.getName());
+            obj.put("folder", file.isDirectory());
+            obj.put("id", file.getAbsolutePath().replace(tplDirStr, ""));
+            if(file.isDirectory()){
+                obj.put("state", "closed");
+            }else{
+                obj.put("state", "open");
+            }
+            arr.add(obj);
+        }
+        return arr;
+    }
+    
+    @ResponseBody
+    @RequestMapping(value = "addFile")
+    public ResponseVo<String> addFile(Long tplId,String parent , String newFileName) throws Exception {
+        String workDir = SessionHelper.getUserWorkDir();
+        String tplDirStr = workDir + "tpls"+ File.separator;
+        
+        File newFile = new File(tplDirStr + parent + File.separator + newFileName);
+        if(!newFile.exists()){
+            try{
+                newFile.createNewFile();
+            }catch(Exception ex){
+                return ResponseVo.<String> BUILDER().setDesc(ex.getMessage()).setCode(Const.BUSINESS_CODE.FAILED);
+            }
+        }else{
+            return ResponseVo.<String> BUILDER().setDesc("文件名重复").setCode(Const.BUSINESS_CODE.FAILED); 
+        }
+        return ResponseVo.<String> BUILDER().setCode(Const.BUSINESS_CODE.SUCCESS);
+    }
+    
+    @ResponseBody
+    @RequestMapping(value = "deleteFile")
+    public ResponseVo<String> deleteFile(Long tplId, String parent, String fileName) throws Exception {
+        String workDir = SessionHelper.getUserWorkDir();
+        File newFile = new File(workDir + "tpls"+ File.separator+ tplId+File.separator+fileName);
+        if(!newFile.exists()){
+            try{
+                newFile.createNewFile();
+            }catch(Exception ex){
+                return ResponseVo.<String> BUILDER().setDesc(ex.getMessage()).setCode(Const.BUSINESS_CODE.FAILED);
+            }
+        }
+        return ResponseVo.<String> BUILDER().setCode(Const.BUSINESS_CODE.SUCCESS);
     }
     
     @RequestMapping("/codemirror")

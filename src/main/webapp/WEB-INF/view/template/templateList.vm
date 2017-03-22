@@ -10,7 +10,7 @@
 			</div>
 			<div class="ace-settings-box" id="ace-settings-box">
 				<div>
-					<span><a href="javascript:void(0)" onclick="openAddProject();">添加项目</a></span>
+					<span><a href="javascript:void(0)" onclick="openAddTemplate();">增加模板</a></span>
 				</div>
 			</div>
 		</div>
@@ -18,8 +18,8 @@
 			<div class="search">
     			<div class="form-group">
     				<div class="col-sm-3">
-						<span class="control-label search-label">工程名称：</span>
-    					<input type="text" id="name" placeholder="请输入工程名称" class="col-xs-6 col-sm-6" />
+						<span class="control-label search-label">模板名称：</span>
+    					<input type="text" id="title" placeholder="请输入模板名称" class="col-xs-6 col-sm-6" />
     				</div>
     			</div>
     			<button class="btn btn-xs btn-info" onclick="doSearch()">搜索</button>
@@ -34,18 +34,20 @@
 									<th>说明</th>
 									<th>创建时间</th>
 									<th>创建人</th>
+									<th>状态</th>
 								    <th></th>
 								</tr>
 							</thead>
 
 							<tbody>
 								<tr style="display:none;" class="node_row">
-								    <td ><a href="${ServiceName}/entity/entityList?projectId=$[id]">$[name]</a></td>
+								    <td ><a href="${ServiceName}/project/index?tplId=$[id]">$[title]</a></td>
 								    <td >$[remark]</td>
 									<td >$[createTime]</td>
 									<td >$[createUser]</td>
+                                    <td ><a href="javascript:void(0)" onclick="setScope($[id],$[scope])" script="true">getScopeText($[scope])</a></td>
 								    <td>
-											<a href="javascript:void(0)" onclick="deleteProject($[id])">删除</a>
+											<a href="javascript:void(0)" onclick="deleteTemplate($[id])">删除</a>
 								    </td>
 								</tr>
 							</tbody>
@@ -80,12 +82,12 @@ function doSearch(){
 
 function listData(currentResult){
 	curResult = currentResult;
-	var name = $('#name').val();
+	var title = $('#title').val();
 	var devUsername = $('#devUsername').val();
 	$.ajax({
         type: "POST",
         url: '${ServiceName}/template/listTemplateData',
-        data: {currentResult:currentResult , name:name},
+        data: {currentResult:currentResult , title:title , scope:${scope}},
         dataType:'json'
     }).done(function (result) {
         if(result.code!=0){
@@ -118,8 +120,38 @@ function openAddTemplate(){
 	});
 }
 
+function setScope(id , scope){
+	if(scope==1){
+		scope = 2;
+	}else{
+		scope = 1;
+	}
+	$.ajax({
+        type: "POST",
+        url: '${ServiceName}' + "/template/setScope",
+        data: {
+            "tplId": id,
+			"scope": scope
+        }
+    }).done(function (data) {
+    	if(data.code == 0){
+	    	listData(curResult);
+	    	layer.msg('设置成功');
+    	}else{
+    		layer.msg(data.desc);
+    	}
+    });
+}
 
-
+function getScopeText(scope){
+	if(scope==1){
+		return '私有';
+	}else if(scope==2){
+		return '公开';
+	}else{
+		return '未设定';
+	}
+}
 function deleteTemplate(id){
 	layer.confirm('确定要删除该条数据吗？', {
 		  btn: ['是','否'] //按钮

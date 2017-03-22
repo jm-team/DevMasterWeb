@@ -98,4 +98,6 @@
 		
 	<bean id="appAuthenticationFilter" class="com.jumore.dove.web.filter.AnnotationCheckedFilter" />
 	<!-- ================ Shiro end ================ -->
+	
+	<bean id="devMasterConfiguration" class="com.jumore.devmaster.common.model.Configuration" />
 </beans>
