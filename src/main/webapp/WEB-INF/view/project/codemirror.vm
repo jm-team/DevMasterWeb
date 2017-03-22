@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>index</title>
+<script src="${ServiceName}/assets/js/codemirror-5.24.2/lib/codemirror.js"></script>
+<script src="${ServiceName}/assets/js/codemirror-5.24.2/mode/javascript/javascript.js"></script>
+<link rel="stylesheet" href="${ServiceName}/assets/js/codemirror-5.24.2/lib/codemirror.css">
+<link rel="stylesheet" href="${ServiceName}/assets/js/codemirror-5.24.2/theme/blackboard.css">
+</head>
+<body>
+    <textarea id="editor"></textarea>
+    <script>
+		var editor = document.getElementById('editor');
+		
+		var codeMirror = CodeMirror.fromTextArea(editor,{
+				theme:'blackboard',
+            	lineNumbers: true,
+				lineWrapping:true,
+				styleActiveLine: true,
+				smartIndent:true,
+				indentUnit:4,
+				tabSize:4,
+				scrollbarStyle:'null'
+            });
+		
+		//自动换行
+		//editor.setOption('lineWrapping', true);
+		//自动高度
+		//codeMirror.setSize('auto', 'auto');
+	</script>
+</body>
+</html>
+				

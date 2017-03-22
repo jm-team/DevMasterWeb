@@ -213,8 +213,8 @@
 			<!-- center top start -->
 			<div data-options="region:'center',split:true" style="background:#fbfbfb;">
 				<div id="topTab" class="easyui-tabs" style="width:100%;height:100%;">
-				    <div title="cli.js" style="padding:20px;display:none;">
-				        cli.js
+				    <div title="cli.js" style="display:none;">
+                        <iframe src="${ServiceName}/project/codemirror" width="98%" height="98%"></iframe>
 				    </div>
 				    <div title="server.js" data-options="closable:true" style="overflow:auto;padding:20px;display:none;">
 				        server.js

@@ -236,4 +236,9 @@ public class ProjectController {
     public ModelAndView index(){
         return new ModelAndView();
     }
+    
+    @RequestMapping("/codemirror")
+    public ModelAndView codemirror(){
+        return new ModelAndView();
+    }
 }
