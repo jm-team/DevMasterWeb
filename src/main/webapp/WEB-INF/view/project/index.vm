@@ -9,6 +9,11 @@
 <script src='${ServiceName}/assets/js/layer/layer.js' ></script>
 <script type="text/javascript" src="${ServiceName}/assets/easyui/jquery.easyui.min.js"></script>
 <!--<script type="text/javascript" src="${ServiceName}/page/js/templateManager.js"></script>-->
+<style>
+	#tree a{
+		text-decoration:none;
+    }
+</style>
 <script type="text/javascript">
 function append(){
     var t = $('#tree');
@@ -89,6 +94,66 @@ function onContextMenu(e,node){
         left: e.pageX,
         top: e.pageY
     });
+}
+
+function openCodeFrame(path, name){
+	var ele = $('#contentTabs');
+	var tabs = ele.tabs('getTab', name);
+	
+	if(tabs == null || tabs == undefined || tabs.length == 0){
+		ele.tabs('add', {
+			id : path,
+			title : name,
+			selected : true,
+			closable : true,
+			content : '<iframe src="${ServiceName}/project/codemirror?path='+path+'" width="98%" height="98%"></iframe>'
+		});
+		
+		return;
+	}
+	
+	for(var i = 0; i < tabs.length; i++){
+		if(tabs[i].id == path){
+			var index = ele.tabs('getTabIndex', tabs[i]);
+			ele.tabs('select', index);
+			break;
+		}
+	}
+}
+
+function updateTabTitle(path, fileName, isSave){
+	if(fileName === '' || path === ''){
+		return;
+	}
+	
+	var ele = $('#contentTabs');
+	var tabs = ele.tabs('getTab', fileName);
+	
+	if(tabs == null || tabs == undefined || tabs.length == 0){
+		return;
+	}
+	
+	for(var i = 0; i < tabs.length; i++){
+		if(tabs[i].id == path){
+			var index = ele.tabs('getTabIndex', tabs[i]);
+			
+			if(isSave){
+				$('#contentTabs .tabs-title').eq(index).text(fileName);
+			} else {
+				$('#contentTabs .tabs-title').eq(index).html(fileName + '<span class="changed-title" style="color:red;"> *</span>')
+			}
+			
+			// 万恶的esayui有bug
+			/*ele.tabs('update', {
+    			tab : ele.tabs('select', index),
+    			options : {
+                    title : fileName + ' *'
+    			}
+    		});*/
+			
+			break;
+		}
+	}
 }
 </script>
 </head>
@@ -206,17 +271,7 @@ function onContextMenu(e,node){
 		<div class="easyui-layout" data-options="fit:true">
 			<!-- center top start -->
 			<div data-options="region:'center',split:true" style="background:#fbfbfb;">
-				<div id="topTab" class="easyui-tabs" style="width:100%;height:100%;">
-				    <div title="cli.js" style="display:none;">
-                        <iframe src="${ServiceName}/project/codemirror" width="98%" height="98%"></iframe>
-				    </div>
-				    <div title="server.js" data-options="closable:true" style="overflow:auto;padding:20px;display:none;">
-				        server.js
-				    </div>
-				    <div title="login.js" data-options="closable:true" style="padding:20px;display:none;">
-				        login.js
-				    </div>
-				</div>
+				<div id="contentTabs" class="easyui-tabs" style="width:100%;height:100%;"></div>
 			</div>
 			<!-- center top end -->
 			

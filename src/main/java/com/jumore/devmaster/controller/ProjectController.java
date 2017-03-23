@@ -1,6 +1,7 @@
 package com.jumore.devmaster.controller;
 
 import java.io.File;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
@@ -50,7 +51,7 @@ public class ProjectController {
     private BaseService baseService;
 
     @Autowired
-    //private
+    // private
 
     @RequestMapping(value = "/projectList")
     public ModelAndView projectList() throws Exception {
@@ -63,7 +64,7 @@ public class ProjectController {
     @RequestMapping(value = "listProjectData")
     public ResponseVo<Page<Project>> listProjectData(Page<Project> page) throws Exception {
         ParamMap pm = new ParamMap();
-        page = baseService.findPageByParams(Project.class , page, "Project.listProject", pm);
+        page = baseService.findPageByParams(Project.class, page, "Project.listProject", pm);
         return ResponseVo.<Page<Project>> BUILDER().setData(page).setCode(Const.BUSINESS_CODE.SUCCESS);
     }
 
@@ -79,20 +80,20 @@ public class ProjectController {
         if (StringUtils.isEmpty(project.getName())) {
             throw new RuntimeException("工程名不能为空");
         }
-        if(StringUtils.isEmpty(project.getDbUrl())){
+        if (StringUtils.isEmpty(project.getDbUrl())) {
             throw new RuntimeException("数据库连接不能为空");
         }
-        if(StringUtils.isEmpty(project.getDbUserName())){
+        if (StringUtils.isEmpty(project.getDbUserName())) {
             throw new RuntimeException("数据库账号不能为空");
         }
-        if(StringUtils.isEmpty(project.getDbPassword())){
+        if (StringUtils.isEmpty(project.getDbPassword())) {
             throw new RuntimeException("数据库密码不能为空");
         }
         project.setCreateTime(new Date());
         baseService.save(project);
         return ResponseVo.<String> BUILDER().setData("").setCode(Const.BUSINESS_CODE.SUCCESS);
     }
-    
+
     @RequestMapping(value = "/editProject")
     public ModelAndView editProject(Long id) throws Exception {
         ModelAndView mv = new ModelAndView();
@@ -107,13 +108,13 @@ public class ProjectController {
         if (StringUtils.isEmpty(project.getName())) {
             throw new RuntimeException("工程名不能为空");
         }
-        if(StringUtils.isEmpty(project.getDbUrl())){
+        if (StringUtils.isEmpty(project.getDbUrl())) {
             throw new RuntimeException("数据库连接不能为空");
         }
-        if(StringUtils.isEmpty(project.getDbUserName())){
+        if (StringUtils.isEmpty(project.getDbUserName())) {
             throw new RuntimeException("数据库账号不能为空");
         }
-        if(StringUtils.isEmpty(project.getDbPassword())){
+        if (StringUtils.isEmpty(project.getDbPassword())) {
             throw new RuntimeException("数据库密码不能为空");
         }
         Project po = baseService.get(Project.class, project.getId());
@@ -145,7 +146,7 @@ public class ProjectController {
             throw new RuntimeException("项目不存在或已删除");
         }
 
-        if(addTableAndColumnInfo(po, "com.mysql.jdbc.Driver")){
+        if (addTableAndColumnInfo(po, "com.mysql.jdbc.Driver")) {
             return ResponseVo.<String> BUILDER().setCode(Const.BUSINESS_CODE.SUCCESS);
         }
 
@@ -153,22 +154,24 @@ public class ProjectController {
     }
 
     /**
-     *添加表与列数据
+     * 添加表与列数据
+     * 
      * @param project Project
      * @param driverClass 驱动
      */
     @Transactional
-    private boolean addTableAndColumnInfo(Project project, String driverClass){
+    private boolean addTableAndColumnInfo(Project project, String driverClass) {
         ParamMap pm = new ParamMap();
         pm.put("projectId", project.getId());
-        //保存之前先删除老的数据
+        // 保存之前先删除老的数据
         baseService.execute("Entity.delField", pm);
         baseService.execute("Entity.delEntity", pm);
 
         try {
-            Connection connection = ConnectionUtil.initConnection(driverClass, project.getDbUrl(), project.getDbUserName(), project.getDbPassword());
+            Connection connection = ConnectionUtil.initConnection(driverClass, project.getDbUrl(), project.getDbUserName(),
+                    project.getDbPassword());
             DatabaseMetaData metadata = connection.getMetaData();
-            //获取表信息
+            // 获取表信息
             ResultSet tables = metadata.getTables(null, null, null, null);
 
             List<DBEntity> dbEntityList = new ArrayList<>();
@@ -176,19 +179,19 @@ public class ProjectController {
             while (tables.next()) {
                 dbEntity = new DBEntity();
                 dbEntity.setDatabaseName(tables.getString("TABLE_CAT"));
-                dbEntity.setName(tables.getString("TABLE_NAME"));//表名
-                dbEntity.setRemark(tables.getString("REMARKS"));//表备注
+                dbEntity.setName(tables.getString("TABLE_NAME"));// 表名
+                dbEntity.setRemark(tables.getString("REMARKS"));// 表备注
                 dbEntity.setProjectId(project.getId());
                 dbEntityList.add(dbEntity);
             }
-            if(!CollectionUtils.isEmpty(dbEntityList)){
-                //保存表信息
+            if (!CollectionUtils.isEmpty(dbEntityList)) {
+                // 保存表信息
                 baseService.batchSave(dbEntityList);
 
-                //获取列信息
+                // 获取列信息
                 List<EntityField> entityFieldList = getAllColumnInfoList(dbEntityList, metadata, project.getId());
 
-                //保存列信息
+                // 保存列信息
                 baseService.batchSave(entityFieldList);
             }
             return true;
@@ -200,14 +203,15 @@ public class ProjectController {
 
     /**
      * 获取所有表的列信息
+     * 
      * @param entities
      * @param metadata
      * @param projectId
      * @return
      */
-    private List<EntityField> getAllColumnInfoList(List<DBEntity> entities, DatabaseMetaData metadata,  Long projectId) throws SQLException {
+    private List<EntityField> getAllColumnInfoList(List<DBEntity> entities, DatabaseMetaData metadata, Long projectId) throws SQLException {
         List<EntityField> allList = new ArrayList<>();
-        for(DBEntity entity : entities){
+        for (DBEntity entity : entities) {
             allList.addAll(getColumnInfoList(metadata, entity.getName(), entity.getId(), projectId));
         }
         return allList;
@@ -215,13 +219,15 @@ public class ProjectController {
 
     /**
      * 获取表的列信息
+     * 
      * @param metadata
      * @param tableName
      * @param entityId
      * @param projectId
      * @return
      */
-    private List<EntityField> getColumnInfoList(DatabaseMetaData metadata, String tableName, Long entityId, Long projectId) throws SQLException {
+    private List<EntityField> getColumnInfoList(DatabaseMetaData metadata, String tableName, Long entityId, Long projectId)
+            throws SQLException {
         List<EntityField> lst = new ArrayList<>();
         EntityField field;
         ResultSet columns = null;
@@ -240,96 +246,123 @@ public class ProjectController {
 
         return lst;
     }
-    
+
     @RequestMapping("/index")
-    public ModelAndView index(Long tplId){
+    public ModelAndView index(Long tplId) {
         ModelAndView mv = new ModelAndView();
         ProjectTemplate tplPo = baseService.get(ProjectTemplate.class, tplId);
         DevMasterUser user = SessionHelper.getUser();
-        if(user.getId() != tplPo.getUid()){
+        if (user.getId() != tplPo.getUid()) {
             mv.addObject("readonly", true);
         }
         mv.addObject("tplId", tplId);
         return mv;
     }
-    
+
     @ResponseBody
     @RequestMapping(value = "getTemplateFiles")
-    public JSONArray getTemplateFiles(String id , Long tplId) throws Exception {
+    public JSONArray getTemplateFiles(String id, Long tplId) throws Exception {
         String parent = id;
-        
+
         String workDir = SessionHelper.getUserWorkDir();
-        String tplDirStr = workDir + "tpls"+ File.separator;
+        String tplDirStr = workDir + "tpls" + File.separator;
         File tplDir = new File(tplDirStr + tplId);
-        if(!tplDir.exists()){
+        if (!tplDir.exists()) {
             FileUtils.forceMkdir(tplDir);
         }
-        
+
         JSONArray arr = new JSONArray();
-        if(parent==null){
+        if (parent == null) {
             JSONObject root = new JSONObject();
             ProjectTemplate tplPo = baseService.get(ProjectTemplate.class, tplId);
             root.put("text", tplPo.getTitle());
-            root.put("id", File.separator+tplId);
+            root.put("id", File.separator + tplId);
             root.put("state", "closed");
             root.put("folder", true);
             arr.add(root);
             return arr;
         }
-        
+
         Collection<File> files = FileUtils.listFiles(tplDir, null, false);
-        
-        for(File file : files){
+
+        for (File file : files) {
             JSONObject obj = new JSONObject();
-            obj.put("text", file.getName());
+            // obj.put("text", file.getName());
             obj.put("folder", file.isDirectory());
             obj.put("id", file.getAbsolutePath().replace(tplDirStr, ""));
-            if(file.isDirectory()){
+            if (file.isDirectory()) {
+                obj.put("text", file.getName());
                 obj.put("state", "closed");
-            }else{
+            } else {
+                obj.put("text", "<a href=\"javascript:openCodeFrame('" + file.getAbsolutePath().replace('\\', '/') + "', '" + file.getName()
+                        + "');\">" + file.getName() + "</a>");
                 obj.put("state", "open");
             }
             arr.add(obj);
         }
         return arr;
     }
-    
+
     @ResponseBody
     @RequestMapping(value = "addFile")
-    public ResponseVo<String> addFile(Long tplId,String parent , String newFileName) throws Exception {
+    public ResponseVo<String> addFile(Long tplId, String parent, String newFileName) throws Exception {
         String workDir = SessionHelper.getUserWorkDir();
-        String tplDirStr = workDir + "tpls"+ File.separator;
-        
+        String tplDirStr = workDir + "tpls" + File.separator;
+
         File newFile = new File(tplDirStr + parent + File.separator + newFileName);
-        if(!newFile.exists()){
-            try{
+        if (!newFile.exists()) {
+            try {
                 newFile.createNewFile();
-            }catch(Exception ex){
+            } catch (Exception ex) {
                 return ResponseVo.<String> BUILDER().setDesc(ex.getMessage()).setCode(Const.BUSINESS_CODE.FAILED);
             }
-        }else{
-            return ResponseVo.<String> BUILDER().setDesc("文件名重复").setCode(Const.BUSINESS_CODE.FAILED); 
+        } else {
+            return ResponseVo.<String> BUILDER().setDesc("文件名重复").setCode(Const.BUSINESS_CODE.FAILED);
         }
         return ResponseVo.<String> BUILDER().setCode(Const.BUSINESS_CODE.SUCCESS);
     }
-    
+
     @ResponseBody
     @RequestMapping(value = "deleteFile")
     public ResponseVo<String> deleteFile(Long tplId, String parent, String fileName) throws Exception {
         String workDir = SessionHelper.getUserWorkDir();
-        File newFile = new File(workDir + "tpls"+ File.separator+ tplId+File.separator+fileName);
-        if(!newFile.exists()){
-            try{
+        File newFile = new File(workDir + "tpls" + File.separator + tplId + File.separator + fileName);
+        if (!newFile.exists()) {
+            try {
                 newFile.createNewFile();
-            }catch(Exception ex){
+            } catch (Exception ex) {
                 return ResponseVo.<String> BUILDER().setDesc(ex.getMessage()).setCode(Const.BUSINESS_CODE.FAILED);
             }
         }
         return ResponseVo.<String> BUILDER().setCode(Const.BUSINESS_CODE.SUCCESS);
     }
-    
+
     @RequestMapping("/codemirror")
-    public ModelAndView codemirror(){
-        return new ModelAndView();
+    public ModelAndView codemirror(String path) throws IOException {
+        ModelAndView mv = new ModelAndView();
+
+        if (org.apache.commons.lang.StringUtils.isNotBlank(path)) {
+            File file = new File(path);
+            String content = FileUtils.readFileToString(file);
+            mv.addObject("content", content);
+            mv.addObject("path", path);
+            mv.addObject("fileName", file.getName());
+        }
+
+        return mv;
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "save")
+    public ResponseVo<String> save(String path, String content) {
+        try {
+            File file = new File(path);
+            FileUtils.write(file, content);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return ResponseVo.<String> BUILDER().setCode(Const.BUSINESS_CODE.FAILED);
+        }
+        
+        return ResponseVo.<String> BUILDER().setCode(Const.BUSINESS_CODE.SUCCESS);
     }
 }

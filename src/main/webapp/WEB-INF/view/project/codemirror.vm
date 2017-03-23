@@ -3,15 +3,31 @@
 <head>
 <meta charset="UTF-8">
 <title>index</title>
+
+<script src="${ServiceName}/assets/easyui/jquery.min.js"></script>
+<script src='${ServiceName}/assets/js/layer/layer.js' ></script>
 <script src="${ServiceName}/assets/js/codemirror-5.24.2/lib/codemirror.js"></script>
 <script src="${ServiceName}/assets/js/codemirror-5.24.2/mode/javascript/javascript.js"></script>
+<script src="${ServiceName}/assets/easyui/jquery.easyui.min.js"></script>
 <link rel="stylesheet" href="${ServiceName}/assets/js/codemirror-5.24.2/lib/codemirror.css">
 <link rel="stylesheet" href="${ServiceName}/assets/js/codemirror-5.24.2/theme/blackboard.css">
 </head>
 <body>
-    <textarea id="editor"></textarea>
+    <form>
+        <textarea id="editor">$!{content}</textarea>
+	</form>
     <script>
+		
 		var editor = document.getElementById('editor');
+		
+		// 自定义保存事件
+		CodeMirror.commands.save = function (cm) {
+        	save();
+    	};
+		
+		var runKey = "Ctrl-S";
+		var extraKeys = {};
+		extraKeys[runKey] = "save";
 		
 		var codeMirror = CodeMirror.fromTextArea(editor,{
 				theme:'blackboard',
@@ -21,13 +37,43 @@
 				smartIndent:true,
 				indentUnit:4,
 				tabSize:4,
-				scrollbarStyle:'null'
+				scrollbarStyle:'null',
+				extraKeys : extraKeys
             });
 		
-		//自动换行
-		//editor.setOption('lineWrapping', true);
-		//自动高度
-		//codeMirror.setSize('auto', 'auto');
+		// 内容变化触发
+		codeMirror.on('change', function(){
+			parent.updateTabTitle('$!{path}', '$!{fileName}');
+		});
+		
+		/**
+		 * 保存功能
+		 */
+		function save(){
+			var path = '$!{path}';
+			
+			if(path === ''){
+				return;
+			}
+			
+			$.ajax({
+                type: "POST",
+                url: '${ServiceName}' + "/project/save",
+                data: {
+        			path : path,
+                    content : codeMirror.getValue()
+                }
+            }).done(function (data) {
+            	if(data.code == 0){
+					layer.msg('save success');
+					parent.updateTabTitle('$!{path}', '$!{fileName}', true);
+            	}else{
+            		layer.msg('save fail');
+            	}
+            });
+		}
+		
+		
 	</script>
 </body>
 </html>
