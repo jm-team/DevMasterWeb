@@ -22,7 +22,9 @@
 		
 		// 自定义保存事件
 		CodeMirror.commands.save = function (cm) {
-        	save();
+			if(isContentChanged()){
+	        	save();
+			}
     	};
 		
 		var runKey = "Ctrl-S";
@@ -73,7 +75,11 @@
             });
 		}
 		
-		
+		function isContentChanged(){
+			var path = '$!{path}';
+			var fileName = '$!{fileName}';
+			return parent.isTitleChaned(path, fileName);
+		}
 	</script>
 </body>
 </html>

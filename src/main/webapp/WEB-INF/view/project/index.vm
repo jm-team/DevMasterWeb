@@ -96,6 +96,20 @@ function onContextMenu(e,node){
     });
 }
 
+/**
+ * 双击文件后，打开tab
+ * 如果已经打开，则选中
+ */
+function onNodeDblClick(node){
+	if(!node.folder){
+		openCodeFrame(node.id, node.text);
+	}
+}
+
+/**
+ * 双击文件后，打开tab
+ * 如果已经打开，则选中
+ */
 function openCodeFrame(path, name){
 	var ele = $('#contentTabs');
 	var tabs = ele.tabs('getTab', name);
@@ -121,12 +135,11 @@ function openCodeFrame(path, name){
 	}
 }
 
-function onNodeDblClick(node){
-	if(!node.folder){
-		openCodeFrame(node.id, node.text);
-	}
-}
-
+/**
+ * 修改tab title
+ * 如果内容变化，添加*
+ * 保存操作后，去除*
+ */
 function updateTabTitle(path, fileName, isSave){
 	if(fileName === '' || path === ''){
 		return;
@@ -160,6 +173,34 @@ function updateTabTitle(path, fileName, isSave){
 			break;
 		}
 	}
+}
+
+/**
+ * 判断tab title是否有*，以此来判断内容是否发生变化
+ */
+function isTitleChaned(path, fileName){
+	if(fileName === '' || path === ''){
+		return false;
+	}
+	
+	var ele = $('#contentTabs');
+	var tabs = ele.tabs('getTab', fileName);
+	
+	if(tabs == null || tabs == undefined || tabs.length == 0){
+		return false;
+	}
+	
+	for(var i = 0; i < tabs.length; i++){
+		if(tabs[i].id == path){
+			var index = ele.tabs('getTabIndex', tabs[i]);
+			
+			if($('#contentTabs .changed-title').length > 0){
+				return true;
+			}
+		}
+	}
+	
+	return false;
 }
 </script>
 </head>
