@@ -15,7 +15,7 @@
     }
 </style>
 <script type="text/javascript">
-function append(){
+function append(isFile){
     var t = $('#tree');
     var parent = t.tree('getSelected');
 	layer.prompt({
@@ -23,7 +23,7 @@ function append(){
         formType: 0 //prompt风格，支持0-2
     }, function(fileName , index){
 		layer.close(index);
-        addNewFile(parent , fileName);
+        addNewFile(parent , fileName, isFile);
     });
 		
 	
@@ -37,7 +37,7 @@ function expand(){
     $('#tree').tree('expand',node.target);
 }
 
-function addNewFile(parent , newFileName){
+function addNewFile(parent , newFileName, isFile){
 	//增加文件
 	$.ajax({
         type: "POST",
@@ -45,17 +45,26 @@ function addNewFile(parent , newFileName){
         data: {
 			"tplId" : ${tplId},
 			"parent" : parent.id,
-			"newFileName": newFileName
+			"newFileName": newFileName,
+			"isFile" : isFile
         }
     }).done(function (data) {
 		expand();
+		
     	if(data.code == 0){
+    		var node = {
+    			id : parent.id + '/' + newFileName,
+                text : newFileName,
+    			folder : (!isFile)
+            };
+			
+			if(!isFile){
+				node['state'] = 'closed';
+			}
+			
 			$('#tree').tree('append', {
                 parent: (parent.target),
-                data: [{
-					id : parent.id,
-                    text: newFileName
-                }]
+                data: [node]
             });
     	}else{
     		layer.msg(data.desc);
@@ -84,9 +93,11 @@ function onRename(node){
 function onContextMenu(e,node){
     e.preventDefault();
 	if(node.folder){
-		$('#append').show();
+		$('#appendDir').show();
+		$('#appendFile').show();
 	}else{
-		$('#append').hide();
+		$('#appendDir').hide();
+		$('#appendFile').hide();
 	}
 	
     $(this).tree('select',node.target);
@@ -112,27 +123,24 @@ function onNodeDblClick(node){
  */
 function openCodeFrame(path, name){
 	var ele = $('#contentTabs');
-	var tabs = ele.tabs('getTab', name);
-	
-	if(tabs == null || tabs == undefined || tabs.length == 0){
-		ele.tabs('add', {
-			id : path,
-			title : name,
-			selected : true,
-			closable : true,
-			content : '<iframe src="${ServiceName}/project/codemirror?path='+path+'" width="98%" height="98%"></iframe>'
-		});
-		
-		return;
-	}
+	var tabs = ele.tabs('tabs');
 	
 	for(var i = 0; i < tabs.length; i++){
-		if(tabs[i].id == path){
+		if(tabs[i][0].id == path){
 			var index = ele.tabs('getTabIndex', tabs[i]);
 			ele.tabs('select', index);
-			break;
+			return;
 		}
 	}
+	
+	
+	ele.tabs('add', {
+		id : path,
+		title : name,
+		selected : true,
+		closable : true,
+		content : '<iframe src="${ServiceName}/project/codemirror?path='+path+'" width="98%" height="98%"></iframe>'
+	});
 }
 
 /**
@@ -146,15 +154,15 @@ function updateTabTitle(path, fileName, isSave){
 	}
 	
 	var ele = $('#contentTabs');
-	var tabs = ele.tabs('getTab', fileName);
+	var tabs = ele.tabs('tabs');
 	
 	if(tabs == null || tabs == undefined || tabs.length == 0){
 		return;
 	}
 	
 	for(var i = 0; i < tabs.length; i++){
-		if(tabs[i].id == path){
-			var index = ele.tabs('getTabIndex', tabs[i]);
+		if(tabs[i][0].id == path){
+			var index = i;
 			
 			if(isSave){
 				$('#contentTabs .tabs-title').eq(index).text(fileName);
@@ -184,17 +192,17 @@ function isTitleChaned(path, fileName){
 	}
 	
 	var ele = $('#contentTabs');
-	var tabs = ele.tabs('getTab', fileName);
+	var tabs = ele.tabs('tabs');
 	
 	if(tabs == null || tabs == undefined || tabs.length == 0){
 		return false;
 	}
 	
 	for(var i = 0; i < tabs.length; i++){
-		if(tabs[i].id == path){
-			var index = ele.tabs('getTabIndex', tabs[i]);
+		if(tabs[i][0].id == path){
+			var index = i;
 			
-			if($('#contentTabs .changed-title').length > 0){
+			if($('#contentTabs .tabs-title').eq(index).find('.changed-title').length > 0){ 
 				return true;
 			}
 		}
@@ -303,7 +311,8 @@ function isTitleChaned(path, fileName){
 	</div>
 	<!-- context menu-->
 	<div id="mm" class="easyui-menu" style="width:120px;">
-        <div id="append" onclick="append()" data-options="iconCls:'icon-add'">添加文件</div>
+		<div id="appendDir" onclick="append(false)" data-options="iconCls:'icon-add'">添加目录</div>
+        <div id="appendFile" onclick="append(true)" data-options="iconCls:'icon-add'">添加文件</div>
         <div id="remove" onclick="remove()" data-options="iconCls:'icon-remove'">删除</div>
     </div>
 	

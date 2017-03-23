@@ -18,6 +18,7 @@ import com.jumore.devmaster.entity.DBEntity;
 import com.jumore.devmaster.entity.EntityField;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -275,27 +276,27 @@ public class ProjectController {
         String path = org.apache.commons.lang.StringUtils.isBlank(id) ? String.valueOf(tplId) : id;
         String dirStr = SessionHelper.getAbsolutePath(path);
         File dir = new File(dirStr);
-        
+
         if (!dir.exists()) {
             FileUtils.forceMkdir(dir);
         }
 
         JSONArray arr = new JSONArray();
-        
+
         if (org.apache.commons.lang.StringUtils.isBlank(id)) {
             JSONObject root = new JSONObject();
             ProjectTemplate tplPo = baseService.get(ProjectTemplate.class, tplId);
-            
+
             root.put("text", tplPo.getTitle());
             root.put("id", tplId);
             root.put("state", "closed");
             root.put("folder", true);
             arr.add(root);
-            
+
             return arr;
         }
 
-        Collection<File> files = FileUtils.listFiles(dir, null, false);
+        File[] files = dir.listFiles();
 
         for (File file : files) {
             JSONObject obj = new JSONObject();
@@ -308,29 +309,33 @@ public class ProjectController {
             } else {
                 obj.put("state", "open");
             }
-            
+
             arr.add(obj);
         }
-        
+
         return arr;
     }
 
     @ResponseBody
     @RequestMapping(value = "addFile")
-    public ResponseVo<String> addFile(Long tplId, String parent, String newFileName) throws Exception {
-        String workDir = SessionHelper.getUserWorkDir();
-        String tplDirStr = workDir + "tpls" + File.separator;
+    public ResponseVo<String> addFile(Long tplId, String parent, String newFileName, boolean isFile) throws Exception {
+        String absolutePath = SessionHelper.getAbsolutePath(parent + File.separator + newFileName);
+        File newFile = new File(absolutePath);
 
-        File newFile = new File(tplDirStr + parent + File.separator + newFileName);
-        if (!newFile.exists()) {
-            try {
-                newFile.createNewFile();
-            } catch (Exception ex) {
-                return ResponseVo.<String> BUILDER().setDesc(ex.getMessage()).setCode(Const.BUSINESS_CODE.FAILED);
-            }
-        } else {
+        if (newFile.exists()) {
             return ResponseVo.<String> BUILDER().setDesc("文件名重复").setCode(Const.BUSINESS_CODE.FAILED);
         }
+
+        try {
+            if (isFile) {
+                newFile.createNewFile();
+            } else {
+                FileUtils.forceMkdir(newFile);
+            }
+        } catch (Exception ex) {
+            return ResponseVo.<String> BUILDER().setDesc(ex.getMessage()).setCode(Const.BUSINESS_CODE.FAILED);
+        }
+
         return ResponseVo.<String> BUILDER().setCode(Const.BUSINESS_CODE.SUCCESS);
     }
 
