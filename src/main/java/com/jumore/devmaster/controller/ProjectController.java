@@ -259,47 +259,59 @@ public class ProjectController {
         return mv;
     }
 
+    /**
+     * getTemplateFiles:(这里用一句话描述这个方法的作用).
+     * 
+     * @author Administrator
+     * @date 2017年3月23日 上午10:30:39
+     * @param id 要展开文件夹的相对路径
+     * @param tplId 模板Id。当id为空时，tplId为要展开目录的相对路径
+     * @return
+     * @throws Exception
+     */
     @ResponseBody
     @RequestMapping(value = "getTemplateFiles")
     public JSONArray getTemplateFiles(String id, Long tplId) throws Exception {
-        String parent = id;
-
-        String workDir = SessionHelper.getUserWorkDir();
-        String tplDirStr = workDir + "tpls" + File.separator;
-        File tplDir = new File(tplDirStr + tplId);
-        if (!tplDir.exists()) {
-            FileUtils.forceMkdir(tplDir);
+        String path = org.apache.commons.lang.StringUtils.isBlank(id) ? String.valueOf(tplId) : id;
+        String dirStr = SessionHelper.getAbsolutePath(path);
+        File dir = new File(dirStr);
+        
+        if (!dir.exists()) {
+            FileUtils.forceMkdir(dir);
         }
 
         JSONArray arr = new JSONArray();
-        if (parent == null) {
+        
+        if (org.apache.commons.lang.StringUtils.isBlank(id)) {
             JSONObject root = new JSONObject();
             ProjectTemplate tplPo = baseService.get(ProjectTemplate.class, tplId);
+            
             root.put("text", tplPo.getTitle());
-            root.put("id", File.separator + tplId);
+            root.put("id", tplId);
             root.put("state", "closed");
             root.put("folder", true);
             arr.add(root);
+            
             return arr;
         }
 
-        Collection<File> files = FileUtils.listFiles(tplDir, null, false);
+        Collection<File> files = FileUtils.listFiles(dir, null, false);
 
         for (File file : files) {
             JSONObject obj = new JSONObject();
-            // obj.put("text", file.getName());
+            obj.put("text", file.getName());
             obj.put("folder", file.isDirectory());
-            obj.put("id", file.getAbsolutePath().replace(tplDirStr, ""));
+            obj.put("id", file.getAbsolutePath().replace('\\', '/').replace(SessionHelper.getAbsolutePath(), ""));
+
             if (file.isDirectory()) {
-                obj.put("text", file.getName());
                 obj.put("state", "closed");
             } else {
-                obj.put("text", "<a href=\"javascript:openCodeFrame('" + file.getAbsolutePath().replace('\\', '/') + "', '" + file.getName()
-                        + "');\">" + file.getName() + "</a>");
                 obj.put("state", "open");
             }
+            
             arr.add(obj);
         }
+        
         return arr;
     }
 
@@ -342,7 +354,8 @@ public class ProjectController {
         ModelAndView mv = new ModelAndView();
 
         if (org.apache.commons.lang.StringUtils.isNotBlank(path)) {
-            File file = new File(path);
+            String filePath = SessionHelper.getAbsolutePath(path);
+            File file = new File(filePath);
             String content = FileUtils.readFileToString(file);
             mv.addObject("content", content);
             mv.addObject("path", path);
@@ -356,13 +369,14 @@ public class ProjectController {
     @RequestMapping(value = "save")
     public ResponseVo<String> save(String path, String content) {
         try {
+            path = SessionHelper.getAbsolutePath(path);
             File file = new File(path);
             FileUtils.write(file, content);
         } catch (IOException e) {
             e.printStackTrace();
             return ResponseVo.<String> BUILDER().setCode(Const.BUSINESS_CODE.FAILED);
         }
-        
+
         return ResponseVo.<String> BUILDER().setCode(Const.BUSINESS_CODE.SUCCESS);
     }
 }

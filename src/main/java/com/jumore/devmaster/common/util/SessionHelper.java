@@ -26,6 +26,10 @@ public class SessionHelper {
         return cfg.getDataPath()+File.separator+getUser().getAccount()+File.separator;
     }
     
+    public static String getAbsolutePath(){
+        return getAbsolutePath("");
+    }
+    
     public static String getAbsolutePath(String path){
         String rootPath = getUserWorkDir() + Template_Dir_Name + File.separator;
         String absolutePath = rootPath;
@@ -34,6 +38,6 @@ public class SessionHelper {
             absolutePath += path;
         }
         
-        return absolutePath;
+        return absolutePath.replace('\\', '/');
     }
 }
