@@ -29,10 +29,31 @@ function append(isFile){
 	
 }
 function remove(){
-    var node = $('#tree').tree('getSelected');
-    $('#tree').tree('remove', node.target);
+	var selected = $('#tree').tree('getSelected');
+	// todo 关闭打开的窗口
+	//删除文件
+	$.ajax({
+        type: "POST",
+        url: '${ServiceName}' + "/project/deleteFile",
+        data: {
+			"tplId" : ${tplId},
+			"fileName" : selected.id
+        }
+    }).done(function (data) {
+		if(!selected.folder){
+			expand();
+		}
+    	if(data.code == 0){
+			var node = $('#tree').tree('getSelected');
+    		$('#tree').tree('remove', node.target);
+    	}else{
+    		layer.msg(data.desc);
+    	}
+    });
+    
 }
 function expand(){
+	
     var node = $('#tree').tree('getSelected');
     $('#tree').tree('expand',node.target);
 }
@@ -139,7 +160,7 @@ function openCodeFrame(path, name){
 		title : name,
 		selected : true,
 		closable : true,
-		content : '<iframe src="${ServiceName}/project/codemirror?path='+path+'" width="98%" height="98%"></iframe>'
+		content : '<iframe src="${ServiceName}/project/codemirror?path='+path+'" width="100%" height="98%"></iframe>'
 	});
 }
 
@@ -319,8 +340,10 @@ function isTitleChaned(path, fileName){
 	<!-- left end -->
 	
 	<!-- right start -->
+	<!--
 	<div data-options="region:'east',split:true,title:''" style="width:15%;padding:10px;background: transparent;">
 	</div>
+	-->
 	<!-- right end -->
 	
 	<!-- center start -->

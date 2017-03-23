@@ -7,18 +7,10 @@ import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
-
-import com.jumore.devmaster.common.util.ConnectionUtil;
-import com.jumore.devmaster.common.util.SessionHelper;
-import com.jumore.devmaster.entity.DBEntity;
-import com.jumore.devmaster.entity.EntityField;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,15 +22,16 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.jumore.devmaster.common.DevMasterConst;
+import com.jumore.devmaster.common.util.ConnectionUtil;
+import com.jumore.devmaster.common.util.SessionHelper;
+import com.jumore.devmaster.entity.DBEntity;
 import com.jumore.devmaster.entity.DevMasterUser;
+import com.jumore.devmaster.entity.EntityField;
 import com.jumore.devmaster.entity.Project;
 import com.jumore.devmaster.entity.ProjectTemplate;
 import com.jumore.dove.aop.annotation.PublicMethod;
-import com.jumore.dove.common.BusinessException;
 import com.jumore.dove.plugin.Page;
 import com.jumore.dove.service.BaseService;
-import com.jumore.dove.util.MD5;
 import com.jumore.dove.util.ParamMap;
 import com.jumore.dove.web.model.Const;
 import com.jumore.dove.web.model.ResponseVo;
@@ -341,16 +334,11 @@ public class ProjectController {
 
     @ResponseBody
     @RequestMapping(value = "deleteFile")
-    public ResponseVo<String> deleteFile(Long tplId, String parent, String fileName) throws Exception {
+    public ResponseVo<String> deleteFile(Long tplId, String fileName) throws Exception {
         String workDir = SessionHelper.getUserWorkDir();
-        File newFile = new File(workDir + "tpls" + File.separator + tplId + File.separator + fileName);
-        if (!newFile.exists()) {
-            try {
-                newFile.createNewFile();
-            } catch (Exception ex) {
-                return ResponseVo.<String> BUILDER().setDesc(ex.getMessage()).setCode(Const.BUSINESS_CODE.FAILED);
-            }
-        }
+        String tplDir = workDir + "tpls" + File.separator;
+        File file = new File(tplDir +fileName);
+        FileUtils.deleteQuietly(file);
         return ResponseVo.<String> BUILDER().setCode(Const.BUSINESS_CODE.SUCCESS);
     }
 
