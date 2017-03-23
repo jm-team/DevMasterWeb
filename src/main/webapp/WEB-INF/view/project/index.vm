@@ -121,6 +121,12 @@ function openCodeFrame(path, name){
 	}
 }
 
+function onNodeDblClick(node){
+	if(!node.folder){
+		openCodeFrame(node.id, node.text);
+	}
+}
+
 function updateTabTitle(path, fileName, isSave){
 	if(fileName === '' || path === ''){
 		return;
@@ -248,7 +254,8 @@ function updateTabTitle(path, fileName, isSave){
                 method: 'get',
                 animate: true,
                 onContextMenu: onContextMenu,
-				onAfterEdit : onRename
+				onAfterEdit : onRename,
+				onDblClick : onNodeDblClick
             ">
 		    
 		</ul>
