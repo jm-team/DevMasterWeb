@@ -296,7 +296,7 @@ public class ProjectController {
             JSONObject obj = new JSONObject();
             obj.put("text", file.getName());
             obj.put("folder", file.isDirectory());
-            obj.put("id", file.getAbsolutePath().replace('\\', '/').replace(SessionHelper.getAbsolutePath(), ""));
+            obj.put("id", getRelativePath(file));
 
             if (file.isDirectory()) {
                 obj.put("state", "closed");
@@ -338,9 +338,25 @@ public class ProjectController {
     public ResponseVo<String> deleteFile(Long tplId, String fileName) throws Exception {
         String workDir = SessionHelper.getUserWorkDir();
         String tplDir = workDir + "tpls" + File.separator;
-        File file = new File(tplDir +fileName);
+        File file = new File(tplDir + fileName);
         FileUtils.deleteQuietly(file);
         return ResponseVo.<String> BUILDER().setCode(Const.BUSINESS_CODE.SUCCESS);
+    }
+
+    @ResponseBody
+    @RequestMapping("/rename")
+    public ResponseVo<String> rename(String oldNameId, String newName) {
+        String absolutePath = SessionHelper.getAbsolutePath(oldNameId);
+        File file = new File(absolutePath);
+
+        int index = file.getAbsolutePath().lastIndexOf(file.separator);
+        String newFileName = index == -1 ? newName : file.getAbsolutePath().substring(0, index) + File.separator + newName;
+        File newFile = new File(newFileName);
+
+        boolean success = file.renameTo(newFile);
+
+        return ResponseVo.<String> BUILDER().setCode(success ? Const.BUSINESS_CODE.SUCCESS : Const.BUSINESS_CODE.FAILED)
+                .setData(getRelativePath(newFile));
     }
 
     @RequestMapping("/codemirror")
@@ -373,5 +389,14 @@ public class ProjectController {
         }
 
         return ResponseVo.<String> BUILDER().setCode(Const.BUSINESS_CODE.SUCCESS);
+    }
+
+    private String getRelativePath(File file) {
+        if (file == null) {
+            return org.apache.commons.lang.StringUtils.EMPTY;
+        }
+
+        return file.getAbsolutePath().replace('\\', '/').replace(SessionHelper.getAbsolutePath(),
+                org.apache.commons.lang.StringUtils.EMPTY);
     }
 }

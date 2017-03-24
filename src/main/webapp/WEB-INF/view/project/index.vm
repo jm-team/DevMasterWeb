@@ -28,6 +28,7 @@ function append(isFile){
 		
 	
 }
+
 function remove(){
 	var selected = $('#tree').tree('getSelected');
 	// todo 关闭打开的窗口
@@ -193,14 +194,6 @@ function updateTabTitle(path, fileName, isSave){
 				$('#contentTabs .tabs-title').eq(index).html(fileName + '<span class="changed-title" style="color:red;"> *</span>')
 			}
 			
-			// 万恶的esayui有bug
-			/*ele.tabs('update', {
-    			tab : ele.tabs('select', index),
-    			options : {
-                    title : fileName + ' *'
-    			}
-    		});*/
-			
 			break;
 		}
 	}
@@ -256,6 +249,74 @@ function closeTab(id){
 			break;
 		}
 	}
+}
+
+/**
+ * fire on rename
+ */
+function rename(){
+	var t = $('#tree');
+    var selected = t.tree('getSelected');
+	
+	layer.prompt({
+        title: '新文件名',
+        formType: 0 //prompt风格，支持0-2
+    }, function(fileName , index){
+		layer.close(index);
+		renameFile(selected, fileName, t);
+    });
+}
+
+/**
+ * 重命名成功后，页面上tree和tab节点操作
+ * 修改id和text
+ * tab update会刷新iframe页面
+ */
+function renameFile(selected, fileName, t){
+	// rename server request
+	$.ajax({
+        type: "POST",
+        url: '${ServiceName}' + "/project/rename",
+        data: {
+			"oldNameId" : selected.id,
+			"newName" : fileName
+        }
+    }).done(function (data) {
+		if(!selected.folder){
+			expand();
+		}
+		
+    	if(data.code == 0){
+			// reset tabs node options and tree node options
+			var ele = $('#contentTabs');
+        	var tabs = ele.tabs('tabs');
+        	
+        	for(var i = 0; i < tabs.length; i++){
+        		if(tabs[i][0].id == selected.id){
+        			ele.tabs('update', {
+						tab: tabs[i],
+                    	options: {
+                    		id : data.data,
+                    		title : fileName,
+							selected : true,
+							content : '<iframe src="${ServiceName}/project/codemirror?path='+data.data+'" width="100%" height="98%"></iframe>'
+                    	}
+					});
+					
+        			break;
+        		}
+        	}
+			
+			t.tree('update', {
+        		target: selected.target,
+        		text: fileName,
+				id : data.data
+    		});
+			layer.msg('rename success');
+    	}else{
+    		layer.msg('rename failed');
+    	}
+    });
 }
 </script>
 </head>
@@ -360,6 +421,7 @@ function closeTab(id){
 	<div id="mm" class="easyui-menu" style="width:120px;">
 		<div id="appendDir" onclick="append(false)" data-options="iconCls:'icon-add'">添加目录</div>
         <div id="appendFile" onclick="append(true)" data-options="iconCls:'icon-add'">添加文件</div>
+		<div id="remove" onclick="rename()" data-options="iconCls:'icon-remove'">重命名</div>
         <div id="remove" onclick="remove()" data-options="iconCls:'icon-remove'">删除</div>
     </div>
 	
