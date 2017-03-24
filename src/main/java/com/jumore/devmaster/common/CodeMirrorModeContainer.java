@@ -4,8 +4,6 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.jumore.devmaster.CodeMirrorMode;
-
 public abstract class CodeMirrorModeContainer {
     private static final String Mode_Script_Path_Prefix = "assets/js/codemirror-5.24.2/mode/";
     private static final String Hint_Script_Path_Prefix = "assets/js/codemirror-5.24.2/addon/hint/";

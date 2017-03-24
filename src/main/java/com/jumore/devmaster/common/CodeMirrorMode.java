@@ -1,4 +1,4 @@
-package com.jumore.devmaster;
+package com.jumore.devmaster.common;
 
 public class CodeMirrorMode {
     private String name;
