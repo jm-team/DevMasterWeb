@@ -10,6 +10,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -396,6 +398,16 @@ public class ProjectController {
         return ResponseVo.<String> BUILDER().setCode(Const.BUSINESS_CODE.SUCCESS);
     }
 
+    @RequestMapping(value = "/picture")
+    public void readPicture(String path, HttpServletResponse response) throws IOException{
+        path = SessionHelper.getAbsolutePath(path);
+        File file = new File(path);
+        
+        response.setHeader("Content-Type","image/jped");
+        response.getOutputStream().write(FileUtils.readFileToByteArray(file));
+        response.flushBuffer();
+    }
+    
     private String getRelativePath(File file) {
         if (file == null) {
             return org.apache.commons.lang.StringUtils.EMPTY;

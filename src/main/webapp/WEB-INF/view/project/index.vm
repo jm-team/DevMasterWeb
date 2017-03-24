@@ -163,6 +163,21 @@ function openCodeFrame(path, name){
 		}
 	}
 	
+	var imgExtends = ['jpg', 'png'];
+	var extend = name.substring(name.lastIndexOf('.') + 1);
+	
+	if(jQuery.inArray(extend, imgExtends) > 0){
+	
+		ele.tabs('add', {
+    		id : path,
+    		title : name,
+    		selected : true,
+    		closable : true,
+            content : '<div><img src="${ServiceName}/project/picture?path=' + path + '"></div>'
+    	});
+		
+		return;
+	}
 	
 	ele.tabs('add', {
 		id : path,
