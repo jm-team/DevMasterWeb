@@ -46,6 +46,8 @@ function remove(){
     	if(data.code == 0){
 			var node = $('#tree').tree('getSelected');
     		$('#tree').tree('remove', node.target);
+			
+			closeTab(node.id);
     	}else{
     		layer.msg(data.desc);
     	}
@@ -230,6 +232,30 @@ function isTitleChaned(path, fileName){
 	}
 	
 	return false;
+}
+
+/**
+ * 删除节点时，关闭打开的节点tab，并让最大的tab选中
+ */
+function closeTab(id){
+	if(id === ''){
+		return;
+	}
+	
+	var ele = $('#contentTabs');
+	var tabs = ele.tabs('tabs');
+	
+	if(tabs == null || tabs == undefined || tabs.length == 0){
+		return;
+	}
+	
+	for(var i = 0; i < tabs.length; i++){
+		if(tabs[i][0].id == id){
+			var index = i;
+			ele.tabs('close', index);
+			break;
+		}
+	}
 }
 </script>
 </head>
