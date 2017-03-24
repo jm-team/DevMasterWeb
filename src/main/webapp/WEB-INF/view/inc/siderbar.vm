@@ -1,6 +1,9 @@
 <script type="text/javascript">
 $(function(){
 	var path = window.location.pathname;
+	if(window.location.search){
+		path = path+ window.location.search;
+	}
 	var menu = $('.menu[href="'+path+'"]');
 	menu.addClass('active');
 	menu.parents('.level_1').addClass('open');
@@ -46,7 +49,22 @@ $(function(){
 		        <ul class="submenu">
 					<li>
 						<a  class="menu" href="${ServiceName}/template/templateList?scope=1"> <i class="icon-double-angle-right"></i>我的模板</a>
+					</li>
+					<li>
 						<a  class="menu" href="${ServiceName}/template/templateList?scope=2"> <i class="icon-double-angle-right"></i>共享模板</a>
+					</li>
+				</ul> 
+			</li>
+			<li  class="level_1">
+				<a href="#" class="dropdown-toggle"> <i class="icon-cloud"></i>
+				 	<span class="menu-text">组件管理</span>  <b class="arrow icon-angle-down"></b>
+				</a>
+		        <ul class="submenu">
+					<li>
+						<a  class="menu" href="${ServiceName}/component/componentList?scope=1"> <i class="icon-double-angle-right"></i>我的组件</a>
+					</li>
+					<li>
+						<a  class="menu" href="${ServiceName}/component/componentList?scope=2"> <i class="icon-double-angle-right"></i>共享组件</a>
 					</li>
 				</ul> 
 			</li>

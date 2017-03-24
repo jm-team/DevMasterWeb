@@ -18,7 +18,10 @@
 <link rel="stylesheet" href="${ServiceName}/assets/js/codemirror-5.24.2/theme/blackboard.css">
 <link rel="stylesheet" href="${ServiceName}/assets/js/codemirror-5.24.2/doc/docs.css">
 <link rel="stylesheet" href="${ServiceName}/assets/js/codemirror-5.24.2/addon/hint/show-hint.css">
-	
+<style type="text/css">
+    html,body{height:100%;overflow:hidden;margin:0px;}
+    .fullHeight{height:100%;}
+</style>	
 </head>
 <body>
     <form>
@@ -47,7 +50,7 @@
 				smartIndent:true,
 				indentUnit:4,
 				tabSize:4,
-				scrollbarStyle:'null',
+				scrollbarStyle:'native',
 				extraKeys : extraKeys
             });
 		
@@ -92,4 +95,3 @@
 	</script>
 </body>
 </html>
-				
