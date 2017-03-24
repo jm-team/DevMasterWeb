@@ -30,6 +30,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.jumore.devmaster.common.CodeMirrorModeContainer;
 import com.jumore.devmaster.common.DevMasterConst;
 import com.jumore.devmaster.entity.DevMasterUser;
 import com.jumore.devmaster.entity.Project;
@@ -365,6 +366,7 @@ public class ProjectController {
             mv.addObject("content", content);
             mv.addObject("path", path);
             mv.addObject("fileName", file.getName());
+            mv.addObject("mode", CodeMirrorModeContainer.get(file));
         }
 
         return mv;
