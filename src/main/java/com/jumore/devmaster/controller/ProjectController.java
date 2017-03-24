@@ -367,6 +367,11 @@ public class ProjectController {
             String filePath = SessionHelper.getAbsolutePath(path);
             File file = new File(filePath);
             String content = FileUtils.readFileToString(file);
+            
+            if(!StringUtils.isEmpty(content)){
+                content = content.replaceAll("</textarea>", "&lt;/textarea&gt;");
+            }
+            
             mv.addObject("content", content);
             mv.addObject("path", path);
             mv.addObject("fileName", file.getName());
