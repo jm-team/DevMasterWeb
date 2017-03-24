@@ -24,7 +24,7 @@
 </style>	
 </head>
 <body>
-    <form>
+    <form class="fullHeight">
         <textarea id="editor">$!{content}</textarea>
 	</form>
     <script>
@@ -53,6 +53,8 @@
 				scrollbarStyle:'native',
 				extraKeys : extraKeys
             });
+			
+		codeMirror.setSize('100%', '100%');
 		
 		// 内容变化触发
 		codeMirror.on('change', function(cm, changeObj){
