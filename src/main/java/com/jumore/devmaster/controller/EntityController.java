@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.jumore.devmaster.entity.DBEntity;
+import com.jumore.devmaster.entity.Project;
+import com.jumore.devmaster.entity.ProjectTemplate;
 import com.jumore.dove.aop.annotation.PublicMethod;
 import com.jumore.dove.plugin.Page;
 import com.jumore.dove.service.BaseService;
@@ -27,10 +29,17 @@ public class EntityController {
     public ModelAndView entityList(Long projectId) throws Exception {
         ModelAndView mv = new ModelAndView();
         mv.addObject("projectId", projectId);
+        Project projectPo = baseService.get(Project.class, projectId);
+        if(projectPo.getTplId()!=null){
+            ProjectTemplate tplPo = baseService.get(ProjectTemplate.class, projectPo.getTplId());
+            if(tplPo!=null){
+                mv.addObject("tplName", tplPo.getTitle());
+            }
+        }
+        
         return mv;
     }
 
-    @SuppressWarnings("rawtypes")
     @ResponseBody
     @RequestMapping(value = "listEntityData")
     public ResponseVo<Page<DBEntity>> listProjectData(Page<DBEntity> page,Long projectId) throws Exception {

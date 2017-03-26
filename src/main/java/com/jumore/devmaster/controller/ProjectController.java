@@ -33,6 +33,7 @@ import com.jumore.devmaster.entity.EntityField;
 import com.jumore.devmaster.entity.Project;
 import com.jumore.devmaster.entity.ProjectTemplate;
 import com.jumore.dove.aop.annotation.PublicMethod;
+import com.jumore.dove.common.BusinessException;
 import com.jumore.dove.plugin.Page;
 import com.jumore.dove.service.BaseService;
 import com.jumore.dove.util.ParamMap;
@@ -117,7 +118,7 @@ public class ProjectController {
         Project po = baseService.get(Project.class, project.getId());
         po.setName(project.getName());
         po.setRemark(project.getRemark());
-        po.setDbUserName(project.getDbUrl());
+        po.setDbUserName(project.getDbUserName());
         po.setDbUrl(project.getDbUrl());
         po.setDbPassword(project.getDbPassword());
         baseService.update(po);
@@ -193,8 +194,7 @@ public class ProjectController {
             }
             return true;
         } catch (Exception e) {
-            e.printStackTrace();
-            return false;
+            throw new BusinessException("同步库表信息失败" , e);
         }
     }
 
@@ -229,13 +229,26 @@ public class ProjectController {
         EntityField field;
         ResultSet columns = null;
         columns = metadata.getColumns(null, null, tableName, null);
+        List<String> pkList = new ArrayList<String>();
+        ResultSet set = metadata.getPrimaryKeys(null, null, tableName);
+        while(set.next()){
+            pkList.add(set.getString("COLUMN_NAME").toString());
+        }
         while (columns.next()) {
             field = new EntityField();
+            //{.BUFFER_LENGTH=7, .CHAR_OCTET_LENGTH=15, .COLUMN_DEF=12, .COLUMN_NAME=3, .COLUMN_SIZE=6, .
+            //DATA_TYPE=4, .DECIMAL_DIGITS=8, .IS_AUTOINCREMENT=22, .IS_GENERATEDCOLUMN=23, .IS_NULLABLE=17, .NULLABLE=10, 
+            //.NUM_PREC_RADIX=9, .ORDINAL_POSITION=16, .REMARKS=11, .SCOPE_CATALOG=18, .SCOPE_SCHEMA=19,
+            //.SCOPE_TABLE=20, .SOURCE_DATA_TYPE=21, .SQL_DATA_TYPE=13, .SQL_DATETIME_SUB=14, .TABLE_CAT=0, .TABLE_NAME=2, .TABLE_SCHEM=1, .TYPE_NAME=5}
             field.setName(columns.getString("COLUMN_NAME"));
             field.setType(columns.getString("TYPE_NAME"));
             field.setLength(Integer.parseInt(columns.getString("COLUMN_SIZE")));
-            field.setDefaultvalue(columns.getString("COLUMN_DEF"));
+            field.setDefaultValue(columns.getString("COLUMN_DEF"));
             field.setDocs(columns.getString("REMARKS"));
+            field.setAllowNull(columns.getString("IS_NULLABLE"));
+            if(pkList.contains(field.getName())){
+                field.setPrimaryKey(1);
+            }
             field.setDbentityId(entityId);
             field.setProjectId(projectId);
             lst.add(field);

@@ -12,6 +12,7 @@ import org.springframework.web.servlet.ModelAndView;
 import com.jumore.devmaster.common.util.SessionHelper;
 import com.jumore.devmaster.entity.Project;
 import com.jumore.devmaster.entity.ProjectTemplate;
+import com.jumore.devmaster.entity.TemplateSetting;
 import com.jumore.dove.aop.annotation.PublicMethod;
 import com.jumore.dove.common.BusinessException;
 import com.jumore.dove.plugin.Page;
@@ -80,4 +81,55 @@ public class TemplateController {
         return ResponseVo.<String> BUILDER().setCode(Const.BUSINESS_CODE.SUCCESS);
     }
 
+    @RequestMapping(value = "/settingList")
+    public ModelAndView settingList(Long tplId) throws Exception {
+        ModelAndView mv = new ModelAndView();
+        mv.addObject("tplId", tplId);
+        return mv;
+    }
+    
+    @ResponseBody
+    @RequestMapping(value = "listSettingData")
+    public ResponseVo<Page<TemplateSetting>> listSettingData(Page<TemplateSetting> page, Long scope) throws Exception {
+        ParamMap pm = new ParamMap();
+        page = baseService.findPageByParams(TemplateSetting.class, page, "Template.listSetting", pm);
+        return ResponseVo.<Page<TemplateSetting>> BUILDER().setData(page).setCode(Const.BUSINESS_CODE.SUCCESS);
+    }
+    
+    @RequestMapping(value = "/addSetting")
+    public ModelAndView addSetting(Long tplId) throws Exception {
+        ModelAndView mv = new ModelAndView();
+        mv.addObject("tplId", tplId);
+        return mv;
+    }
+    
+    @ResponseBody
+    @RequestMapping(value = "doAddSetting")
+    public ResponseVo<Page<Project>> doAddSetting(TemplateSetting setting) throws Exception {
+        if (StringUtils.isEmpty(setting.getName())) {
+            throw new BusinessException("参数名称不能为空");
+        }
+        if (StringUtils.isEmpty(setting.getPlaceholder())) {
+            throw new BusinessException("参数占位符不能为空");
+        }
+        baseService.save(setting);
+        return ResponseVo.<Page<Project>> BUILDER().setCode(Const.BUSINESS_CODE.SUCCESS);
+    }
+
+    @RequestMapping(value = "/chooseTemplate")
+    public ModelAndView chooseTemplate(Long projectId) throws Exception {
+        ModelAndView mv = new ModelAndView();
+        mv.addObject("scope", "public");
+        mv.addObject("projectId", projectId);
+        return mv;
+    }
+    
+    @ResponseBody
+    @RequestMapping(value = "doChooseTemplate")
+    public ResponseVo<Page<Project>> doChooseTemplate(Long projectId , Long tplId) throws Exception {
+        Project projectPo = baseService.get(Project.class, projectId);
+        projectPo.setTplId(tplId);
+        baseService.update(projectPo);
+        return ResponseVo.<Page<Project>> BUILDER().setCode(Const.BUSINESS_CODE.SUCCESS);
+    }
 }

@@ -5,4 +5,8 @@
 	<select id="listTemplate" parameterType="paramMap" resultType="Map">
 		select * from dm_project_template
 	</select>
+	
+	<select id="listSetting" parameterType="paramMap" resultType="Map">
+		select * from dm_template_setting
+	</select>
 </mapper>
