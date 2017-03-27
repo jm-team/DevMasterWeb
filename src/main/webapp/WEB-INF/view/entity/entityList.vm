@@ -17,6 +17,17 @@
 		<div class="main-content">
 			<div class="search">
     			<div class="form-group">
+					<div class="col-sm-12">
+						<span class="control-label search-label">工程模板：</span>
+						<span class="search-label">$!{tplName}</span>
+						<a class="search-label" onclick="openSelectTpl(${projectId})" href="javascript:void(0)">选择</a>
+						<button onclick="generateCode()" style="float:right;margin-right:30px;" class="btn btn-primary">生成代码</button>
+    				</div>
+    			</div>
+			</div>
+			<br/>
+			<div class="search">
+    			<div class="form-group">
     				<div class="col-sm-3">
 						<span class="control-label search-label">表名：</span>
     					<input type="text" id="name" placeholder="请输入表名" class="col-xs-6 col-sm-6" />
@@ -30,6 +41,7 @@
 					<table id="sample-table-1" class="table table-striped table-bordered table-hover">
 							<thead>
 								<tr>
+									<th style="width:35px;"></th>
 									<th>表名</th>
 									<th>说明</th>
 								    <th></th>
@@ -38,7 +50,8 @@
 
 							<tbody>
 								<tr style="display:none;" class="node_row">
-								    <td >$[name]</td>
+									<td><input class="checkbox" type="checkbox" /></td>
+								    <td ><a href="${ServiceName}/field/fieldList?projectId=$[projectId]&entityId=$[id]">$[name]</a></td>
 								    <td >$[remark]</td>
 								    <td>
 								    		<a href="javascript:void(0)" onclick="deleteEntity($[id])">删除</a>
@@ -102,28 +115,14 @@ function listData(currentResult){
     });
 }
 
-function openAddEntity(){
+function openSelectTpl(projectId){
 	layer.open({
 	  type: 2,
-	  title: '添加表',
+	  title: '选择模板',
 	  shade: 0.5,
-	  area: ['50%', '450px'],
-	  content: '${ServiceName}/entity/addEntity?projectId=${projectId}',
+	  area: ['50%', '80%'],
+	  content: '${ServiceName}/template/chooseTemplate?projectId='+projectId,
 	  cancel:function(index){
-		  listData(curResult);
-	  }
-	});
-}
-
-function openEditEntity(id){
-	layer.open({
-	  type: 2,
-	  title: '编辑表',
-	  shade: 0.5,
-	  area: ['50%', '450px'],
-	  content: '${ServiceName}/entity/editEntity?id='+id,
-	  cancel:function(index){
-		  listData(curResult);
 	  }
 	});
 }

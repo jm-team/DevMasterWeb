@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>index</title>
+<link rel="stylesheet" type="text/css" href="${ServiceName}/assets/easyui/themes/metro/easyui.css">
+<link rel="stylesheet" type="text/css" href="${ServiceName}/assets/easyui/themes/icon.css">
+<script type="text/javascript" src="${ServiceName}/assets/easyui/jquery.min.js"></script>
+<script src='${ServiceName}/assets/js/layer/layer.js' ></script>
+<script type="text/javascript" src="${ServiceName}/assets/easyui/jquery.easyui.min.js"></script>
+<!--<script type="text/javascript" src="${ServiceName}/page/js/templateManager.js"></script>-->
+<style>
+	#tree a{
+		text-decoration:none;
+    }
+</style>
+<script type="text/javascript">
+function append(isFile){
+    var t = $('#tree');
+    var parent = t.tree('getSelected');
+	layer.prompt({
+        title: '新文件名',
+        formType: 0 //prompt风格，支持0-2
+    }, function(fileName , index){
+		layer.close(index);
+        addNewFile(parent , fileName, isFile);
+    });
+		
+	
+}
+
+function remove(){
+	var selected = $('#tree').tree('getSelected');
+	
+	if(selected.id.toString().indexOf('/') == -1){
+		layer.msg('根目录不允许删除');
+		return;
+	}
+	
+	// todo 关闭打开的窗口
+	//删除文件
+	$.ajax({
+        type: "POST",
+        url: '${ServiceName}' + "/project/deleteFile",
+        data: {
+			"tplId" : ${tplId},
+			"fileName" : selected.id
+        }
+    }).done(function (data) {
+		if(!selected.folder){
+			expand();
+		}
+    	if(data.code == 0){
+			var node = $('#tree').tree('getSelected');
+    		$('#tree').tree('remove', node.target);
+			
+			closeTab(node.id);
+    	}else{
+    		layer.msg(data.desc);
+    	}
+    });
+    
+}
+function expand(){
+	
+    var node = $('#tree').tree('getSelected');
+    $('#tree').tree('expand',node.target);
+}
+
+function addNewFile(parent , newFileName, isFile){
+	//增加文件
+	$.ajax({
+        type: "POST",
+        url: '${ServiceName}' + "/project/addFile",
+        data: {
+			"tplId" : ${tplId},
+			"parent" : parent.id,
+			"newFileName": newFileName,
+			"isFile" : isFile
+        }
+    }).done(function (data) {
+		expand();
+		
+    	if(data.code == 0){
+    		var node = {
+    			id : parent.id + '/' + newFileName,
+                text : newFileName,
+    			folder : (!isFile)
+            };
+			
+			if(!isFile){
+				node['state'] = 'closed';
+			}
+			
+			$('#tree').tree('append', {
+                parent: (parent.target),
+                data: [node]
+            });
+    	}else{
+    		layer.msg(data.desc);
+    	}
+    });
+}
+
+function onRename(node){
+	//增加文件
+	$.ajax({
+        type: "POST",
+        url: '${ServiceName}' + "/project/rename",
+        data: {
+			"tplId" : ${tplId},
+            "id": node.id,
+			"newFileName": node.text
+        }
+    }).done(function (data) {
+    	if(data.code == 0){
+    	}else{
+    		layer.msg(data.desc);
+    	}
+    });
+}
+
+function onContextMenu(e,node){
+    e.preventDefault();
+	if(node.folder){
+		$('#appendDir').show();
+		$('#appendFile').show();
+	}else{
+		$('#appendDir').hide();
+		$('#appendFile').hide();
+	}
+	
+    $(this).tree('select',node.target);
+    $('#mm').menu('show',{
+        left: e.pageX,
+        top: e.pageY
+    });
+}
+
+/**
+ * 双击文件后，打开tab
+ * 如果已经打开，则选中
+ */
+function onNodeDblClick(node){
+	if(!node.folder){
+		openCodeFrame(node.id, node.text);
+	}
+}
+
+/**
+ * 双击文件后，打开tab
+ * 如果已经打开，则选中
+ */
+function openCodeFrame(path, name){
+	var ele = $('#contentTabs');
+	var tabs = ele.tabs('tabs');
+	
+	for(var i = 0; i < tabs.length; i++){
+		if(tabs[i][0].id == path){
+			var index = ele.tabs('getTabIndex', tabs[i]);
+			ele.tabs('select', index);
+			return;
+		}
+	}
+	
+	var imgExtends = ['jpg', 'png'];
+	var extend = name.substring(name.lastIndexOf('.') + 1);
+	
+	if(jQuery.inArray(extend, imgExtends) > 0){
+	
+		ele.tabs('add', {
+    		id : path,
+    		title : name,
+    		selected : true,
+    		closable : true,
+            content : '<div><img src="${ServiceName}/project/picture?path=' + path + '"></div>'
+    	});
+		
+		return;
+	}
+	
+	ele.tabs('add', {
+		id : path,
+		title : name,
+		selected : true,
+		closable : true,
+		content : '<iframe src="${ServiceName}/project/codemirror?path='+path+'" width="100%" height="98%"></iframe>'
+	});
+}
+
+/**
+ * 修改tab title
+ * 如果内容变化，添加*
+ * 保存操作后，去除*
+ */
+function updateTabTitle(path, fileName, isSave){
+	if(fileName === '' || path === ''){
+		return;
+	}
+	
+	var ele = $('#contentTabs');
+	var tabs = ele.tabs('tabs');
+	
+	if(tabs == null || tabs == undefined || tabs.length == 0){
+		return;
+	}
+	
+	for(var i = 0; i < tabs.length; i++){
+		if(tabs[i][0].id == path){
+			var index = i;
+			
+			if(isSave){
+				$('#contentTabs .tabs-title').eq(index).text(fileName);
+			} else {
+				$('#contentTabs .tabs-title').eq(index).html(fileName + '<span class="changed-title" style="color:red;"> *</span>')
+			}
+			
+			break;
+		}
+	}
+}
+
+/**
+ * 判断tab title是否有*，以此来判断内容是否发生变化
+ */
+function isTitleChaned(path, fileName){
+	if(fileName === '' || path === ''){
+		return false;
+	}
+	
+	var ele = $('#contentTabs');
+	var tabs = ele.tabs('tabs');
+	
+	if(tabs == null || tabs == undefined || tabs.length == 0){
+		return false;
+	}
+	
+	for(var i = 0; i < tabs.length; i++){
+		if(tabs[i][0].id == path){
+			var index = i;
+			
+			if($('#contentTabs .tabs-title').eq(index).find('.changed-title').length > 0){ 
+				return true;
+			}
+		}
+	}
+	
+	return false;
+}
+
+/**
+ * 删除节点时，关闭打开的节点tab，并让最大的tab选中
+ */
+function closeTab(id){
+	if(id === ''){
+		return;
+	}
+	
+	var ele = $('#contentTabs');
+	var tabs = ele.tabs('tabs');
+	
+	if(tabs == null || tabs == undefined || tabs.length == 0){
+		return;
+	}
+	
+	for(var i = 0; i < tabs.length; i++){
+		if(tabs[i][0].id == id){
+			var index = i;
+			ele.tabs('close', index);
+			break;
+		}
+	}
+}
+
+/**
+ * fire on rename
+ */
+function rename(){
+	var t = $('#tree');
+    var selected = t.tree('getSelected');
+	
+	if(selected.id.toString().indexOf('/') == -1){
+		layer.msg('根目录不允许重命名');
+		return;
+	}
+	
+	layer.prompt({
+        title: '新文件名',
+        formType: 0 //prompt风格，支持0-2
+    }, function(fileName , index){
+		layer.close(index);
+		renameFile(selected, fileName, t);
+    });
+}
+
+/**
+ * 重命名成功后，页面上tree和tab节点操作
+ * 修改id和text
+ * tab update会刷新iframe页面
+ */
+function renameFile(selected, fileName, t){
+	// rename server request
+	$.ajax({
+        type: "POST",
+        url: '${ServiceName}' + "/project/rename",
+        data: {
+			"oldNameId" : selected.id,
+			"newName" : fileName
+        }
+    }).done(function (data) {
+		if(!selected.folder){
+			expand();
+		}
+		
+    	if(data.code == 0){
+			// reset tabs node options and tree node options
+			
+			if(!selected.folder){
+    			var ele = $('#contentTabs');
+            	var tabs = ele.tabs('tabs');
+            	
+            	for(var i = 0; i < tabs.length; i++){
+            		if(tabs[i][0].id == selected.id){
+            			ele.tabs('update', {
+    						tab: tabs[i],
+                        	options: {
+                        		id : data.data,
+                        		title : fileName,
+    							selected : true,
+    							content : '<iframe src="${ServiceName}/project/codemirror?path='+data.data+'" width="100%" height="98%"></iframe>'
+                        	}
+    					});
+    					
+            			break;
+            		}
+            	}
+			}
+			
+			t.tree('update', {
+        		target: selected.target,
+        		text: fileName,
+				id : data.data
+    		});
+			layer.msg('rename success');
+    	}else{
+    		layer.msg('rename failed');
+    	}
+    });
+}
+</script>
+</head>
+<body class="easyui-layout">
+	<!-- header start -->
+	<div data-options="region:'north',border:true" style="height:40px;background: #f1f1f1;">
+		<a href="javascript:void(0)" id="header-button-cloud9" class="easyui-menubutton" 
+			data-options="menu:'#header-button-cloud9-menu'" style="height:40px;">
+			Cloud9
+		</a>
+		<a href="javascript:void(0)" id="header-button-file" class="easyui-menubutton" 
+			data-options="menu:'#header-button-file-menu'" style="height:40px;">
+			File
+		</a>
+		<a href="javascript:void(0)" id="header-button-edit" class="easyui-menubutton" 
+			data-options="menu:'#header-button-edit-menu'" style="height:40px;">
+			Edit
+		</a>
+		<a href="javascript:void(0)" id="header-button-find" class="easyui-menubutton" 
+			data-options="menu:'#header-button-find-menu'" style="height:40px;">
+			Find
+		</a>
+		<a href="javascript:void(0)" id="header-button-view" class="easyui-menubutton" 
+			data-options="menu:'#header-button-view-menu'" style="height:40px;">
+			View
+		</a>
+		<a href="javascript:void(0)" id="header-button-goto" class="easyui-menubutton" 
+			data-options="menu:'#header-button-goto-menu'" style="height:40px;">
+			Goto
+		</a>
+		<a href="javascript:void(0)" id="header-button-run" class="easyui-menubutton" 
+			data-options="menu:'#header-button-run-menu'" style="height:40px;">
+			Run
+		</a>
+		<a href="javascript:void(0)" id="header-button-tools" class="easyui-menubutton" 
+			data-options="menu:'#header-button-tools-menu'" style="height:40px;">
+			Tools
+		</a>
+		<a href="javascript:void(0)" id="header-button-window" class="easyui-menubutton" 
+			data-options="menu:'#header-button-window-menu'" style="height:40px;">
+			Window
+		</a>
+		<div id="header-button-cloud9-menu" style="width:150px;">
+		    <div data-options="iconCls:'icon-undo'">Undo</div>
+		    <div data-options="iconCls:'icon-redo'">Redo</div>
+		    <div class="menu-sep"></div>
+		    <div>Cut</div>
+		    <div>Copy</div>
+		    <div>Paste</div>
+		    <div class="menu-sep"></div>
+		    <div data-options="iconCls:'icon-remove'">Delete</div>
+		    <div>Select All</div>
+		</div>
+		
+		<div id="header-button-file-menu" style="width:150px;">
+		    <div>Cut</div>
+		</div>
+		
+		<div id="header-button-edit-menu" style="width:150px;">
+		    <div>Cut</div>
+		</div>
+		
+		<div id="header-button-find-menu" style="width:150px;">
+		    <div>Cut</div>
+		</div>
+		
+		<div id="header-button-view-menu" style="width:150px;">
+		    <div>Cut</div>
+		</div>
+		
+		<div id="header-button-goto-menu" style="width:150px;">
+		    <div>Cut</div>
+		</div>
+		
+		<div id="header-button-run-menu" style="width:150px;">
+		    <div>Cut</div>
+		</div>
+		
+		<div id="header-button-tools-menu" style="width:150px;">
+		    <div>Cut</div>
+		</div>
+		
+		<div id="header-button-window-menu" style="width:150px;">
+		    <div>Cut</div>
+		</div>
+	</div>
+	<!-- header end -->
+	
+	<!-- left start -->
+	<div data-options="region:'west',split:true,title:''" style="width:15%;padding:10px;background: transparent;">
+		<ul id="tree" class="easyui-tree" url="${ServiceName}/project/getTemplateFiles?tplId=${tplId}" data-options="
+                method: 'get',
+                animate: true,
+                onContextMenu: onContextMenu,
+				onAfterEdit : onRename,
+				onDblClick : onNodeDblClick
+            ">
+		    
+		</ul>
+	</div>
+	<!-- context menu-->
+	<div id="mm" class="easyui-menu" style="width:120px;">
+		<div id="appendDir" onclick="append(false)" data-options="iconCls:'icon-add'">添加目录</div>
+        <div id="appendFile" onclick="append(true)" data-options="iconCls:'icon-add'">添加文件</div>
+		<div id="remove" onclick="rename()" data-options="iconCls:'icon-remove'">重命名</div>
+        <div id="remove" onclick="remove()" data-options="iconCls:'icon-remove'">删除</div>
+    </div>
+	
+	<!-- left end -->
+	
+	<!-- right start -->
+	<!--
+	<div data-options="region:'east',split:true,title:''" style="width:15%;padding:10px;background: transparent;">
+	</div>
+	-->
+	<!-- right end -->
+	
+	<!-- center start -->
+	<div data-options="region:'center',border:false,title:''">
+		<div class="easyui-layout" data-options="fit:true">
+			<!-- center top start -->
+			<div data-options="region:'center',split:true" style="background:#fbfbfb;">
+				<div id="contentTabs" class="easyui-tabs" style="width:100%;height:100%;"></div>
+			</div>
+			<!-- center top end -->
+			
+			<!-- center bottom start -->
+			<div data-options="region:'south',split:true" style="height:20%;background:#fbfbfb;">
+				<div id="bottomTab" class="easyui-tabs" style="width:100%;height:100%;">
+				    <div title="root@localhost" style="padding:20px;display:none;">
+				        root@localhost
+				    </div>
+				    <div title="immediate(java)" data-options="closable:true" style="overflow:auto;padding:20px;display:none;">
+				        immediate(java)
+				    </div>
+				</div>
+			</div>
+			<!-- center bottom end -->
+		</div>
+	</div>
+	<!-- center end -->
+</body>
+</html>

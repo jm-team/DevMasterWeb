@@ -1,12 +1,24 @@
 package com.jumore.devmaster.entity;
 
+import com.jumore.dove.aop.AutoIncrease;
+import com.jumore.dove.aop.Column;
+import com.jumore.dove.aop.Entity;
+import com.jumore.dove.aop.Id;
+import com.jumore.dove.aop.Table;
+
+@Entity
+@Table(name = "dm_project_member")
 public class ProjectMember {
 
+    @Id
+    @AutoIncrease
     private Long id;
     
+    @Column(name="project_id")
     private Long projectId;
     
-    private Long memberUserId;
+    @Column(name="member_uid")
+    private Long memberUid;
 
     public Long getId() {
         return id;
@@ -24,13 +36,12 @@ public class ProjectMember {
         this.projectId = projectId;
     }
 
-    public Long getMemberUserId() {
-        return memberUserId;
+    public Long getMemberUid() {
+        return memberUid;
     }
 
-    public void setMemberUserId(Long memberUserId) {
-        this.memberUserId = memberUserId;
+    public void setMemberUid(Long memberUid) {
+        this.memberUid = memberUid;
     }
-
     
 }
