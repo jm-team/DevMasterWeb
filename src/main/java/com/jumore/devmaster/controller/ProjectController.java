@@ -19,7 +19,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.alibaba.fastjson.JSONArray;
@@ -27,7 +29,6 @@ import com.alibaba.fastjson.JSONObject;
 import com.jumore.devmaster.common.CodeMirrorModeContainer;
 import com.jumore.devmaster.common.TreeIconClassContainer;
 import com.jumore.devmaster.common.util.ConnectionUtil;
-import com.jumore.devmaster.common.util.FTPUtils;
 import com.jumore.devmaster.common.util.SessionHelper;
 import com.jumore.devmaster.entity.DBEntity;
 import com.jumore.devmaster.entity.DevMasterUser;
@@ -35,6 +36,7 @@ import com.jumore.devmaster.entity.EntityField;
 import com.jumore.devmaster.entity.Project;
 import com.jumore.devmaster.entity.ProjectTemplate;
 import com.jumore.dove.aop.annotation.PublicMethod;
+import com.jumore.dove.common.BusinessException;
 import com.jumore.dove.plugin.Page;
 import com.jumore.dove.service.BaseService;
 import com.jumore.dove.util.ParamMap;
@@ -422,16 +424,28 @@ public class ProjectController {
     }
 
     @ResponseBody
-    @RequestMapping(value = "upload")
-    private ResponseVo<String> upload(String fileName){
-        File file = new File(SessionHelper.getAbsolutePath(fileName));
-        
-        try {
-            FTPUtils.upload(file);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseVo.<String> BUILDER().setCode(Const.BUSINESS_CODE.FAILED);
+    @RequestMapping(value = "/upload")
+    public ResponseVo<String> upload(@RequestParam(value = "uploadFile", required = false)MultipartFile file, String parent) throws IOException{
+        if(org.apache.commons.lang.StringUtils.isBlank(parent) || file == null){
+            throw new BusinessException("parent directory cannot be empty or file cannot be null");
         }
+        
+        String path = SessionHelper.getAbsolutePath(parent);
+        File dir = new File(path);
+        
+        if(!dir.exists() || !dir.isDirectory()){
+            throw new BusinessException("parent directory is not exists or is not a directory");
+        }
+        
+        File localFile = new File(dir.getAbsolutePath() + File.separator + file.getOriginalFilename());
+        
+        if(localFile.exists()){
+            throw new BusinessException("the file "+ file.getOriginalFilename() + " is already exists");
+        }
+        
+        localFile.createNewFile();
+        FileUtils.writeByteArrayToFile(localFile, file.getBytes());
+        
         return ResponseVo.<String> BUILDER().setCode(Const.BUSINESS_CODE.SUCCESS);
     }
 }
