@@ -27,6 +27,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.jumore.devmaster.common.CodeMirrorModeContainer;
 import com.jumore.devmaster.common.TreeIconClassContainer;
 import com.jumore.devmaster.common.util.ConnectionUtil;
+import com.jumore.devmaster.common.util.FTPUtils;
 import com.jumore.devmaster.common.util.SessionHelper;
 import com.jumore.devmaster.entity.DBEntity;
 import com.jumore.devmaster.entity.DevMasterUser;
@@ -418,5 +419,19 @@ public class ProjectController {
 
         return file.getAbsolutePath().replace('\\', '/').replace(SessionHelper.getAbsolutePath(),
                 org.apache.commons.lang.StringUtils.EMPTY);
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "upload")
+    private ResponseVo<String> upload(String fileName){
+        File file = new File(SessionHelper.getAbsolutePath(fileName));
+        
+        try {
+            FTPUtils.upload(file);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseVo.<String> BUILDER().setCode(Const.BUSINESS_CODE.FAILED);
+        }
+        return ResponseVo.<String> BUILDER().setCode(Const.BUSINESS_CODE.SUCCESS);
     }
 }

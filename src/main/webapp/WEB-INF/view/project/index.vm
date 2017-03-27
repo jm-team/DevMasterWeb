@@ -414,6 +414,28 @@ function renameFile(selected, fileName, t){
     	}
     });
 }
+
+/**
+ * 上传文件或者文件夹
+ */
+function upload(){
+	var t = $('#tree');
+    var selected = t.tree('getSelected');
+	
+	$.ajax({
+        type: "POST",
+        url: '${ServiceName}' + "/project/upload",
+        data: {
+			fileName : selected.id
+        }
+    }).done(function (data) {
+		if(data.code == 0){
+			layer.msg('upload success');
+		}else{
+    		layer.msg('upload failed');
+    	}
+	});
+}
 </script>
 </head>
 <body class="easyui-layout">
@@ -519,6 +541,7 @@ function renameFile(selected, fileName, t){
         <div id="appendFile" onclick="append(true)" data-options="iconCls:'icon-add'">添加文件</div>
 		<div id="remove" onclick="rename()" data-options="iconCls:'icon-remove'">重命名</div>
         <div id="remove" onclick="remove()" data-options="iconCls:'icon-remove'">删除</div>
+		<div id="remove" onclick="upload()" data-options="iconCls:'icon-remove'">上传</div>
     </div>
 	
 	<!-- left end -->
