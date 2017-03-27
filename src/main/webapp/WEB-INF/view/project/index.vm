@@ -13,6 +13,40 @@
 	#tree a{
 		text-decoration:none;
     }
+	
+	.my-tree-folder-icon{
+		width: 18px;
+		background: url(${ServiceName}/assets/easyui/themes/icons/custom/folder_flat_light.png) no-repeat;
+	}
+	
+	.my-tree-html-icon{
+		background: url(${ServiceName}/assets/easyui/themes/icons/custom/html.png) no-repeat;
+	}
+	
+	.my-tree-js-icon{
+		background: url(${ServiceName}/assets/easyui/themes/icons/custom/page_white_code.png) no-repeat;
+	}
+	
+	.my-tree-css-icon{
+		background: url(${ServiceName}/assets/easyui/themes/icons/custom/page_white_code_red.png) no-repeat;
+	}
+	
+	.my-tree-xml-icon{
+		background: url(${ServiceName}/assets/easyui/themes/icons/custom/page_white_text.png) no-repeat;
+	}
+	
+	.my-tree-picture-icon{
+		background: url(${ServiceName}/assets/easyui/themes/icons/custom/image.png) no-repeat;
+	}
+	
+	.my-tree-sql-icon{
+		background: url(${ServiceName}/assets/easyui/themes/icons/custom/page_white_text.png) no-repeat;
+	}
+	
+	.my-tree-default-icon{
+		background: url(${ServiceName}/assets/easyui/themes/icons/custom/page_white.png) no-repeat;
+	}
+	
 </style>
 <script type="text/javascript">
 function append(isFile){
@@ -85,7 +119,8 @@ function addNewFile(parent , newFileName, isFile){
     		var node = {
     			id : parent.id + '/' + newFileName,
                 text : newFileName,
-    			folder : (!isFile)
+    			folder : (!isFile),
+				iconCls : getIconClass(newFileName, isFile)
             };
 			
 			if(!isFile){
@@ -100,6 +135,37 @@ function addNewFile(parent , newFileName, isFile){
     		layer.msg(data.desc);
     	}
     });
+}
+
+var extensionClassMapper = {};
+extensionClassMapper['folder']  = 'my-tree-folder-icon';
+extensionClassMapper['html']    = 'my-tree-html-icon';
+extensionClassMapper['js']      = 'my-tree-js-icon';
+extensionClassMapper['css']     = 'my-tree-css-icon';
+extensionClassMapper['xml']     = 'my-tree-xml-icon';
+extensionClassMapper['sql']     = 'my-tree-sql-icon';
+extensionClassMapper['default'] = 'my-tree-default-icon';
+
+extensionClassMapper['jpg']     = 'my-tree-picture-icon';
+extensionClassMapper['png']     = 'my-tree-picture-icon';
+
+function getIconClass(fileName, isFile){
+	if(!isFile){
+		return extensionClassMapper['folder'];
+	}
+	
+	if(fileName == null || fileName == undefined || fileName == '' || fileName.lastIndexOf('.') == -1){
+		return extensionClassMapper['default'];
+	}
+	
+	var extension = fileName.substring(fileName.lastIndexOf('.') + 1).toLowerCase();
+	var iconClass = extensionClassMapper[extension];
+	
+	if(iconClass == null || iconClass == undefined || iconClass == ''){
+		iconClass = extensionClassMapper['default'];
+	}
+	
+	return iconClass;
 }
 
 function onRename(node){
@@ -339,7 +405,8 @@ function renameFile(selected, fileName, t){
 			t.tree('update', {
         		target: selected.target,
         		text: fileName,
-				id : data.data
+				id : data.data,
+				iconCls : getIconClass(fileName, !selected.folder)
     		});
 			layer.msg('rename success');
     	}else{

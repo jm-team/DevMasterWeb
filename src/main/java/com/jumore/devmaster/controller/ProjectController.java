@@ -25,6 +25,7 @@ import org.springframework.web.servlet.ModelAndView;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.jumore.devmaster.common.CodeMirrorModeContainer;
+import com.jumore.devmaster.common.TreeIconClassContainer;
 import com.jumore.devmaster.common.util.ConnectionUtil;
 import com.jumore.devmaster.common.util.SessionHelper;
 import com.jumore.devmaster.entity.DBEntity;
@@ -287,6 +288,7 @@ public class ProjectController {
             root.put("id", tplId);
             root.put("state", "closed");
             root.put("folder", true);
+            root.put("iconCls", TreeIconClassContainer.getIconClass(dir));
             arr.add(root);
 
             return arr;
@@ -299,6 +301,7 @@ public class ProjectController {
             obj.put("text", file.getName());
             obj.put("folder", file.isDirectory());
             obj.put("id", getRelativePath(file));
+            obj.put("iconCls", TreeIconClassContainer.getIconClass(file));
 
             if (file.isDirectory()) {
                 obj.put("state", "closed");
