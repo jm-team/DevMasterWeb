@@ -35,6 +35,17 @@ public class Project {
     @Column(name="db_password")
     private String  dbPassword;
 
+    @Column(name="tpl_id")
+    private Long tplId;
+    
+    public Long getTplId() {
+        return tplId;
+    }
+
+    public void setTplId(Long tplId) {
+        this.tplId = tplId;
+    }
+
     public Long getId() {
         return id;
     }
