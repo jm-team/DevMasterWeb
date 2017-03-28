@@ -5,14 +5,50 @@
 <title>index</title>
 <link rel="stylesheet" type="text/css" href="${ServiceName}/assets/easyui/themes/metro/easyui.css">
 <link rel="stylesheet" type="text/css" href="${ServiceName}/assets/easyui/themes/icon.css">
+<!-- <link rel="stylesheet" type="text/css" href="${ServiceName}/assets/uploadify/uploadify.css"> -->
 <script type="text/javascript" src="${ServiceName}/assets/easyui/jquery.min.js"></script>
 <script src='${ServiceName}/assets/js/layer/layer.js' ></script>
 <script type="text/javascript" src="${ServiceName}/assets/easyui/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="${ServiceName}/assets/uploadify/jquery.uploadify.min.js"></script>
 <!--<script type="text/javascript" src="${ServiceName}/page/js/templateManager.js"></script>-->
 <style>
 	#tree a{
 		text-decoration:none;
     }
+	
+	.my-tree-folder-icon{
+		width: 18px;
+		background: url(${ServiceName}/assets/easyui/themes/icons/custom/folder_flat_light.png) no-repeat;
+	}
+	
+	.my-tree-html-icon{
+		background: url(${ServiceName}/assets/easyui/themes/icons/custom/html.png) no-repeat;
+	}
+	
+	.my-tree-js-icon{
+		background: url(${ServiceName}/assets/easyui/themes/icons/custom/page_white_code.png) no-repeat;
+	}
+	
+	.my-tree-css-icon{
+		background: url(${ServiceName}/assets/easyui/themes/icons/custom/page_white_code_red.png) no-repeat;
+	}
+	
+	.my-tree-xml-icon{
+		background: url(${ServiceName}/assets/easyui/themes/icons/custom/page_white_text.png) no-repeat;
+	}
+	
+	.my-tree-picture-icon{
+		background: url(${ServiceName}/assets/easyui/themes/icons/custom/image.png) no-repeat;
+	}
+	
+	.my-tree-sql-icon{
+		background: url(${ServiceName}/assets/easyui/themes/icons/custom/page_white_text.png) no-repeat;
+	}
+	
+	.my-tree-default-icon{
+		background: url(${ServiceName}/assets/easyui/themes/icons/custom/page_white.png) no-repeat;
+	}
+	
 </style>
 <script type="text/javascript">
 function append(isFile){
@@ -85,7 +121,8 @@ function addNewFile(parent , newFileName, isFile){
     		var node = {
     			id : parent.id + '/' + newFileName,
                 text : newFileName,
-    			folder : (!isFile)
+    			folder : (!isFile),
+				iconCls : getIconClass(newFileName, isFile)
             };
 			
 			if(!isFile){
@@ -100,6 +137,37 @@ function addNewFile(parent , newFileName, isFile){
     		layer.msg(data.desc);
     	}
     });
+}
+
+var extensionClassMapper = {};
+extensionClassMapper['folder']  = 'my-tree-folder-icon';
+extensionClassMapper['html']    = 'my-tree-html-icon';
+extensionClassMapper['js']      = 'my-tree-js-icon';
+extensionClassMapper['css']     = 'my-tree-css-icon';
+extensionClassMapper['xml']     = 'my-tree-xml-icon';
+extensionClassMapper['sql']     = 'my-tree-sql-icon';
+extensionClassMapper['default'] = 'my-tree-default-icon';
+
+extensionClassMapper['jpg']     = 'my-tree-picture-icon';
+extensionClassMapper['png']     = 'my-tree-picture-icon';
+
+function getIconClass(fileName, isFile){
+	if(!isFile){
+		return extensionClassMapper['folder'];
+	}
+	
+	if(fileName == null || fileName == undefined || fileName == '' || fileName.lastIndexOf('.') == -1){
+		return extensionClassMapper['default'];
+	}
+	
+	var extension = fileName.substring(fileName.lastIndexOf('.') + 1).toLowerCase();
+	var iconClass = extensionClassMapper[extension];
+	
+	if(iconClass == null || iconClass == undefined || iconClass == ''){
+		iconClass = extensionClassMapper['default'];
+	}
+	
+	return iconClass;
 }
 
 function onRename(node){
@@ -125,9 +193,11 @@ function onContextMenu(e,node){
 	if(node.folder){
 		$('#appendDir').show();
 		$('#appendFile').show();
+		$('#uploadFile').show();
 	}else{
 		$('#appendDir').hide();
 		$('#appendFile').hide();
+		$('#uploadFile').hide();
 	}
 	
     $(this).tree('select',node.target);
@@ -339,7 +409,8 @@ function renameFile(selected, fileName, t){
 			t.tree('update', {
         		target: selected.target,
         		text: fileName,
-				id : data.data
+				id : data.data,
+				iconCls : getIconClass(fileName, !selected.folder)
     		});
 			layer.msg('rename success');
     	}else{
@@ -347,6 +418,46 @@ function renameFile(selected, fileName, t){
     	}
     });
 }
+
+/**
+ * upload
+ */
+$(function() {
+    $('#file_upload').uploadify({
+		height     : 18,
+		buttonText : '上传文件',
+	    fileObjName: 'uploadFile',
+        swf        : '${ServiceName}/assets/uploadify/uploadify.swf',
+        uploader   : '',
+		onUploadStart : function(file) {
+			expand();
+			var t = $('#tree');
+    		var selected = t.tree('getSelected');
+			
+			$('#file_upload').uploadify('settings','uploader','${ServiceName}/project/upload?parent=' + selected.id);
+		},
+		onUploadSuccess : function(file, data, response){
+			var t = $('#tree');
+    		var selected = t.tree('getSelected');
+		
+			var node = {
+    			id : selected.id + '/' + file.name,
+                text : file.name,
+    			folder : false,
+				iconCls : getIconClass(file.name, true)
+            };
+			
+			$('#tree').tree('append', {
+                parent: (selected.target),
+                data: [node]
+            });
+			
+		},
+		onQueueComplete : function(queueData) {
+			$('#file_upload').uploadify('settings','uploader','');
+		}
+    });
+});
 </script>
 </head>
 <body class="easyui-layout">
@@ -450,8 +561,11 @@ function renameFile(selected, fileName, t){
 	<div id="mm" class="easyui-menu" style="width:120px;">
 		<div id="appendDir" onclick="append(false)" data-options="iconCls:'icon-add'">添加目录</div>
         <div id="appendFile" onclick="append(true)" data-options="iconCls:'icon-add'">添加文件</div>
-		<div id="remove" onclick="rename()" data-options="iconCls:'icon-remove'">重命名</div>
+		<div id="rename" onclick="rename()" data-options="iconCls:'icon-remove'">重命名</div>
         <div id="remove" onclick="remove()" data-options="iconCls:'icon-remove'">删除</div>
+		<div id="uploadFile" onclick="" data-options="iconCls:'icon-add'">
+			<input type="file" name="uploadFile" id="file_upload" />
+		</div>
     </div>
 	
 	<!-- left end -->

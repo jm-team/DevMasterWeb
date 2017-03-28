@@ -2,19 +2,16 @@
       <div class="modal-content">
          <div class="modal-body">
             <form id="form" class="form-horizontal" >
-				<input type="hidden" name="tplId" value="${tplId}"/>
-				<div class="form-group">
-					<span class="col-sm-3 control-label no-padding-right">参数名称：</span> 
-					<div class="col-sm-9">
-						<input type="text"  name="name" class="col-xs-10 col-sm-5" />
-					</div>
-				</div>
-				<div class="form-group">
-					<span class="col-sm-3 control-label no-padding-right">站位符：</span> 
-					<div class="col-sm-9">
-						<input type="text"  name="placeholder" class="col-xs-10 col-sm-5" />
-					</div>
-				</div>
+				<input type="hidden" name="projectId" value="${projectId}" />
+				<input type="hidden" name="entityId" value="${entityId}" />
+				#foreach( $setting in $settingList)
+                    <div class="form-group">
+    					<span class="col-sm-3 control-label no-padding-right">$setting.name：</span> 
+    					<div class="col-sm-9">
+    						<input type="text"  name="$setting.placeholder" value="$!setting.value" class="col-xs-10 col-sm-5" />
+    					</div>
+    				</div>
+                #end
 			</form>
          </div>
          <div class="modal-footer">
@@ -31,7 +28,7 @@ $("#item_submit").on("click", function (e) {
     var data = $('#form').serialize();
     $.ajax({
         type: "POST",
-        url: '${ServiceName}' + "/template/doAddSetting",
+        url: '${ServiceName}' + "/template/doGenerateCode",
         data: data,
         dataType:'json'
     }).done(function (data) {

@@ -1,25 +1,16 @@
-package com.jumore.devmaster.entity;
+package com.jumore.devmaster.common.model.vo;
 
-import com.jumore.dove.aop.AutoIncrease;
-import com.jumore.dove.aop.Column;
-import com.jumore.dove.aop.Entity;
-import com.jumore.dove.aop.Id;
-import com.jumore.dove.aop.Table;
+public class TemplateSettingVO {
 
-@Entity
-@Table(name = "dm_template_setting")
-public class TemplateSetting {
-
-    @Id
-    @AutoIncrease
     private Long id;
     
     private String name;
     
     private String placeholder;
     
-    @Column(name="tpl_id")
     private Long tplId;
+    
+    private String value;
 
     public Long getId() {
         return id;
@@ -51,5 +42,13 @@ public class TemplateSetting {
 
     public void setTplId(Long tplId) {
         this.tplId = tplId;
+    }
+
+    public String getValue() {
+        return value;
+    }
+
+    public void setValue(String value) {
+        this.value = value;
     }
 }

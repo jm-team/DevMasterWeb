@@ -115,6 +115,24 @@ function listData(currentResult){
     });
 }
 
+function generateCode(){
+//checkbox
+	var items = $('.checkbox:checked');
+	if(items.length==0){
+		layer.msg('请先选择表');
+		return;
+	}
+	layer.open({
+	  type: 2,
+	  title: '设置参数',
+	  shade: 0.5,
+	  area: ['50%', '80%'],
+	  content: '${ServiceName}/template/fullfillTemplate?projectId=${projectId}',
+	  cancel:function(index){
+	  }
+	});
+}
+
 function openSelectTpl(projectId){
 	layer.open({
 	  type: 2,

@@ -19,12 +19,15 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.jumore.devmaster.common.CodeMirrorModeContainer;
+import com.jumore.devmaster.common.TreeIconClassContainer;
 import com.jumore.devmaster.common.util.ConnectionUtil;
 import com.jumore.devmaster.common.util.SessionHelper;
 import com.jumore.devmaster.entity.DBEntity;
@@ -40,7 +43,6 @@ import com.jumore.dove.util.ParamMap;
 import com.jumore.dove.web.model.Const;
 import com.jumore.dove.web.model.ResponseVo;
 
-@PublicMethod
 @Controller
 @RequestMapping(value = "/project")
 public class ProjectController {
@@ -300,6 +302,7 @@ public class ProjectController {
             root.put("id", tplId);
             root.put("state", "closed");
             root.put("folder", true);
+            root.put("iconCls", TreeIconClassContainer.getIconClass(dir));
             arr.add(root);
 
             return arr;
@@ -312,6 +315,7 @@ public class ProjectController {
             obj.put("text", file.getName());
             obj.put("folder", file.isDirectory());
             obj.put("id", getRelativePath(file));
+            obj.put("iconCls", TreeIconClassContainer.getIconClass(file));
 
             if (file.isDirectory()) {
                 obj.put("state", "closed");
@@ -428,5 +432,31 @@ public class ProjectController {
 
         return file.getAbsolutePath().replace('\\', '/').replace(SessionHelper.getAbsolutePath(),
                 org.apache.commons.lang.StringUtils.EMPTY);
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/upload")
+    public ResponseVo<String> upload(@RequestParam(value = "uploadFile", required = false)MultipartFile file, String parent) throws IOException{
+        if(org.apache.commons.lang.StringUtils.isBlank(parent) || file == null){
+            throw new BusinessException("parent directory cannot be empty or file cannot be null");
+        }
+        
+        String path = SessionHelper.getAbsolutePath(parent);
+        File dir = new File(path);
+        
+        if(!dir.exists() || !dir.isDirectory()){
+            throw new BusinessException("parent directory is not exists or is not a directory");
+        }
+        
+        File localFile = new File(dir.getAbsolutePath() + File.separator + file.getOriginalFilename());
+        
+        if(localFile.exists()){
+            throw new BusinessException("the file "+ file.getOriginalFilename() + " is already exists");
+        }
+        
+        localFile.createNewFile();
+        FileUtils.writeByteArrayToFile(localFile, file.getBytes());
+        
+        return ResponseVo.<String> BUILDER().setCode(Const.BUSINESS_CODE.SUCCESS);
     }
 }

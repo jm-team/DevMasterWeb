@@ -38,6 +38,20 @@ public class Project {
     @Column(name="tpl_id")
     private Long tplId;
     
+    @Column(name="tpl_setting_data")
+    private String tplSettingData;
+    
+    @Column(name="generate_entity_ids")
+    private String generateEntityIds;
+    
+    public String getGenerateEntityIds() {
+        return generateEntityIds;
+    }
+
+    public void setGenerateEntityIds(String generateEntityIds) {
+        this.generateEntityIds = generateEntityIds;
+    }
+
     public Long getTplId() {
         return tplId;
     }
@@ -108,6 +122,14 @@ public class Project {
 
     public void setDbPassword(String dbPassword) {
         this.dbPassword = dbPassword;
+    }
+
+    public String getTplSettingData() {
+        return tplSettingData;
+    }
+
+    public void setTplSettingData(String tplSettingData) {
+        this.tplSettingData = tplSettingData;
     }
 
 }

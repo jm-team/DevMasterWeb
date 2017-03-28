@@ -14,7 +14,6 @@ import com.jumore.dove.util.ParamMap;
 import com.jumore.dove.web.model.Const;
 import com.jumore.dove.web.model.ResponseVo;
 
-@PublicMethod
 @Controller
 @RequestMapping(value = "/field")
 public class FieldController {

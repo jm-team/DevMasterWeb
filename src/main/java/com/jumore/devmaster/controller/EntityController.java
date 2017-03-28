@@ -17,7 +17,6 @@ import com.jumore.dove.util.ParamMap;
 import com.jumore.dove.web.model.Const;
 import com.jumore.dove.web.model.ResponseVo;
 
-@PublicMethod
 @Controller
 @RequestMapping(value = "/entity")
 public class EntityController {
@@ -44,6 +43,7 @@ public class EntityController {
     @RequestMapping(value = "listEntityData")
     public ResponseVo<Page<DBEntity>> listProjectData(Page<DBEntity> page,Long projectId) throws Exception {
         ParamMap pm = new ParamMap();
+        page.setPageSize(200);
         pm.put("projectId", projectId);
         page = baseService.findPageByParams(DBEntity.class , page, "Entity.listEntity", pm);
         return ResponseVo.<Page<DBEntity>> BUILDER().setData(page).setCode(Const.BUSINESS_CODE.SUCCESS);

@@ -8,5 +8,11 @@
 	
 	<select id="listSetting" parameterType="paramMap" resultType="Map">
 		select * from dm_template_setting
+		where tpl_id = #{tplId}
+	</select>
+	
+	<select id="listSettingInstance" parameterType="paramMap" resultType="Map">
+		select * from dm_template_setting setting, dm_setting_instance instance
+		where setting.id = instance.setting_id and instance.project_id=${projectId}
 	</select>
 </mapper>
