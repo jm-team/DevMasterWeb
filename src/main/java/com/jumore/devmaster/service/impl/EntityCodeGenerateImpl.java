@@ -1,6 +1,5 @@
 package com.jumore.devmaster.service.impl;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -60,12 +59,21 @@ public class EntityCodeGenerateImpl extends BaseServiceImpl implements CodeGener
         }
 
         private EntityContentResolver resolveImport() {
-            contentBuilder.append("import com.jumore.dove.aop.Table").append(NEW_LINE)
-                .append("import com.jumore.dove.aop.Entity").append(NEW_LINE)
-                .append("import com.jumore.dove.aop.Sequence").append(NEW_LINE)
-                .append("import com.jumore.dove.aop.Id").append(NEW_LINE)
-                .append("import com.jumore.dove.aop.Column").append(NEW_LINE)
-                .append("import com.jumore.dove.aop.AutoIncrease").append(TWO_NEW_LINE);
+            for (EntityField field : fields) {
+                String javaType = TypeConverter.convertToJavaType(field.getType());
+                
+                if("Date".equals(javaType)){
+                    contentBuilder.append("import java.util.Date;").append(TWO_NEW_LINE);
+                    break;
+                }
+            }
+            
+            contentBuilder.append("import com.jumore.dove.aop.Table;").append(NEW_LINE)
+                .append("import com.jumore.dove.aop.Entity;").append(NEW_LINE)
+                .append("import com.jumore.dove.aop.Sequence;").append(NEW_LINE)
+                .append("import com.jumore.dove.aop.Id;").append(NEW_LINE)
+                .append("import com.jumore.dove.aop.Column;").append(NEW_LINE)
+                .append("import com.jumore.dove.aop.AutoIncrease;").append(TWO_NEW_LINE);
             
             return this;
         }
