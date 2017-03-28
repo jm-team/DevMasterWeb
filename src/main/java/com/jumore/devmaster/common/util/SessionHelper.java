@@ -40,4 +40,16 @@ public class SessionHelper {
         
         return absolutePath.replace('\\', '/');
     }
+    
+    public static String getCodeGenerateDir(String projectName){
+        return getUserWorkDir()+"codeGenerate" + File.separator + projectName + File.separator;
+    }
+    
+    public static String getTplDir(Long tplId){
+        return getUserWorkDir()+"tpls" + File.separator + tplId + File.separator;
+    }
+    
+    public static String getTplFileRelativePath(String tplPath , Long tplId){
+        return tplPath.replace(getTplDir(tplId), "");
+    }
 }
