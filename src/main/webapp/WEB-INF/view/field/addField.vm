@@ -4,6 +4,7 @@
             <form id="form" class="form-horizontal" >
 				<input type="hidden" name="projectId" value="${projectId}" />
 				<input type="hidden" name="entityId" value="${entityId}" />
+				<input type="hidden" name="dbentityId" value="${entityId}" />
 				<div class="form-group">
 					<span class="col-sm-3 control-label no-padding-right">字段名：</span> 
 					<div class="col-sm-9">
@@ -40,6 +41,21 @@
 					<span class="col-sm-3 control-label no-padding-right">注释：</span> 
 					<div class="col-sm-9">
 						<textarea rows="3" cols="" name="docs"  class="col-xs-10 col-sm-5" ></textarea>
+					</div>
+				</div>
+				<div class="form-group">
+					<span class="col-sm-3 control-label no-padding-right">是否主键：</span> 
+					<div class="col-sm-9">
+						<input type="text"  name="primaryKey" class="col-xs-10 col-sm-5" />
+					</div>
+				</div>
+				<div class="form-group">
+					<span class="col-sm-3 control-label no-padding-right">是否可空：</span> 
+					<div class="col-sm-9">
+                        <select type="text"  name="allowNull" class="col-xs-10 col-sm-5" >
+							<option value="YES">YES</option>
+							<option value="NO">NO</option>
+						</select>
 					</div>
 				</div>
 			</form>

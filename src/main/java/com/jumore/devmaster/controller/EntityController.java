@@ -1,5 +1,7 @@
 package com.jumore.devmaster.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
@@ -8,9 +10,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.jumore.devmaster.entity.DBEntity;
+import com.jumore.devmaster.entity.EntityField;
 import com.jumore.devmaster.entity.Project;
 import com.jumore.devmaster.entity.ProjectTemplate;
-import com.jumore.dove.aop.annotation.PublicMethod;
 import com.jumore.dove.plugin.Page;
 import com.jumore.dove.service.BaseService;
 import com.jumore.dove.util.ParamMap;
@@ -41,10 +43,11 @@ public class EntityController {
 
     @ResponseBody
     @RequestMapping(value = "listEntityData")
-    public ResponseVo<Page<DBEntity>> listProjectData(Page<DBEntity> page,Long projectId) throws Exception {
+    public ResponseVo<Page<DBEntity>> listEntityData(Page<DBEntity> page,Long projectId, String name) throws Exception {
         ParamMap pm = new ParamMap();
         page.setPageSize(200);
         pm.put("projectId", projectId);
+        pm.put("name", name);
         page = baseService.findPageByParams(DBEntity.class , page, "Entity.listEntity", pm);
         return ResponseVo.<Page<DBEntity>> BUILDER().setData(page).setCode(Const.BUSINESS_CODE.SUCCESS);
     }
@@ -59,13 +62,29 @@ public class EntityController {
     @ResponseBody
     @RequestMapping(value = "/doAddEntity")
     public ResponseVo<String> doAddEntity(DBEntity entity) throws Exception {
-        if (StringUtils.isEmpty(entity.getName())) {
-            throw new RuntimeException("表名不能为空");
-        }
+        validateEntity(entity);
+    	checkNameDuplicate(entity);
         baseService.save(entity);
         return ResponseVo.<String> BUILDER().setData("").setCode(Const.BUSINESS_CODE.SUCCESS);
     }
+
+	private void validateEntity(DBEntity entity) {
+		if (StringUtils.isEmpty(entity.getName())) {
+            throw new RuntimeException("表名不能为空");
+        }
+	}
     
+	// 检查名称重复
+	private void checkNameDuplicate(DBEntity entity) {
+		DBEntity example = new DBEntity();
+    	example.setName(entity.getName());
+    	example.setProjectId(entity.getProjectId());
+    	List<EntityField> list = baseService.listByExample(example);
+    	if (list != null && list.size() > 0) {
+    		throw new RuntimeException("表名已存在");
+    	}
+	}
+	
     @RequestMapping(value = "/editEntity")
     public ModelAndView editEntity(Long id) throws Exception {
         ModelAndView mv = new ModelAndView();
@@ -77,10 +96,11 @@ public class EntityController {
     @ResponseBody
     @RequestMapping(value = "/doUpdateEntity")
     public ResponseVo<String> doUpdateEntity(DBEntity entity) throws Exception {
-        if (StringUtils.isEmpty(entity.getName())) {
-            throw new RuntimeException("表名不能为空");
-        }
+        validateEntity(entity);
         DBEntity po = baseService.get(DBEntity.class, entity.getId());
+        if (!po.getName().equals(entity.getName())) { // 如果修改了名称，要检查名称重复
+        	checkNameDuplicate(entity);
+        }
         po.setName(entity.getName());
         po.setRemark(entity.getRemark());
         baseService.update(po);
