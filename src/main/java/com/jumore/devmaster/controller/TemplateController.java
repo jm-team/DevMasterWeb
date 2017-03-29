@@ -16,6 +16,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.StringUtil;
 import com.jumore.devmaster.common.model.vo.TemplateSettingVO;
 import com.jumore.devmaster.common.util.SessionHelper;
+import com.jumore.devmaster.entity.DevMasterUser;
 import com.jumore.devmaster.entity.Project;
 import com.jumore.devmaster.entity.ProjectTemplate;
 import com.jumore.devmaster.entity.TemplateSetting;
@@ -57,6 +58,31 @@ public class TemplateController extends BaseController{
         baseService.save(tpl);
         return ResponseVo.<Page<Project>> BUILDER().setCode(Const.BUSINESS_CODE.SUCCESS);
     }
+    
+    @RequestMapping(value = "/editTemplate")
+    public ModelAndView editTemplate(Long id) throws Exception {
+        ModelAndView mv = new ModelAndView();
+        ProjectTemplate tplPo = baseService.get(ProjectTemplate.class, id);
+        mv.addObject("tpl", tplPo);
+        return mv;
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "doUpdateTemplate")
+    public ResponseVo<Page<Project>> doUpdateTemplate(ProjectTemplate tpl) throws Exception {
+        if (StringUtils.isEmpty(tpl.getTitle())) {
+            throw new BusinessException("标题不能为空");
+        }
+        ProjectTemplate tplPo = baseService.get(ProjectTemplate.class, tpl.getId());
+        if(tplPo==null){
+            throw new BusinessException("模板不存在或已经删除");
+        }
+        tplPo.setTitle(tpl.getTitle());
+        tplPo.setRemark(tpl.getRemark());
+        tplPo.setExts(tpl.getExts());
+        baseService.update(tplPo);
+        return ResponseVo.<Page<Project>> BUILDER().setCode(Const.BUSINESS_CODE.SUCCESS);
+    }
 
     @RequestMapping(value = "/templateList")
     public ModelAndView templateList(Long scope) throws Exception {
@@ -70,7 +96,8 @@ public class TemplateController extends BaseController{
     public ResponseVo<Page<ProjectTemplate>> listTemplateData(Page<ProjectTemplate> page, Long scope) throws Exception {
         ParamMap pm = new ParamMap();
         if (1==scope) {
-            pm.put("uid", "12");
+            DevMasterUser user = SessionHelper.getUser();
+            pm.put("uid", user.getId());
         } else {
             pm.put("scope", 2);
         }
@@ -144,13 +171,16 @@ public class TemplateController extends BaseController{
     }
     
     @RequestMapping(value = "/fullfillTemplate")
-    public ModelAndView fullfillTemplate(Long projectId) throws Exception {
+    public ModelAndView fullfillTemplate(Long projectId , String entityIds) throws Exception {
         ModelAndView mv = new ModelAndView();
         mv.addObject("projectId", projectId);
         Project projectPo = baseService.get(Project.class, projectId);
         if(projectPo.getTplId()==null){
             throw new BusinessException("请先设置工程模板");
         }
+        projectPo.setGenerateEntityIds(entityIds);
+        baseService.update(projectPo);
+        
         TemplateSetting settingVo = new TemplateSetting();
         settingVo.setTplId(projectPo.getTplId());
         JSONObject tplSettingData = new JSONObject();
@@ -175,10 +205,9 @@ public class TemplateController extends BaseController{
     
     @ResponseBody
     @RequestMapping(value = "doGenerateCode")
-    public ResponseVo<Page<Project>> doGenerateCode(String entityIds ,Long projectId) throws Exception {
+    public ResponseVo<Page<Project>> doGenerateCode(Long projectId) throws Exception {
         Project projectPo = baseService.get(Project.class, projectId);
         projectPo.setTplSettingData(JSON.toJSONString(this.getPageData()));
-        projectPo.setGenerateEntityIds(entityIds);
         baseService.update(projectPo);
         
         String codePath = SessionHelper.getCodeGenerateDir(projectPo.getName());
