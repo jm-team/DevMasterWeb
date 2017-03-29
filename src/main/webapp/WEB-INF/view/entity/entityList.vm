@@ -21,6 +21,7 @@
 						<span class="control-label search-label">工程模板：</span>
 						<span class="search-label">$!{tplName}</span>
 						<a class="search-label" onclick="openSelectTpl(${projectId})" href="javascript:void(0)">选择</a>
+						<a target="_blank" href="${ServiceName}/code/view?projectId=${projectId}" style="float:right;margin-right:30px;" class="btn btn-primary">查看代码</a>
 						<button onclick="generateCode()" style="float:right;margin-right:30px;" class="btn btn-primary">生成代码</button>
     				</div>
     			</div>
@@ -50,7 +51,7 @@
 
 							<tbody>
 								<tr style="display:none;" class="node_row">
-									<td><input class="checkbox" type="checkbox" /></td>
+									<td><input class="checkbox" value="$[id]" type="checkbox" /></td>
 								    <td ><a href="${ServiceName}/field/fieldList?projectId=$[projectId]&entityId=$[id]">$[name]</a></td>
 								    <td >$[remark]</td>
 								    <td>
@@ -122,12 +123,16 @@ function generateCode(){
 		layer.msg('请先选择表');
 		return;
 	}
+	var entityIds = '';
+	for(var i=0;i<items.length;i++){
+		entityIds += items[i].value+',';
+	}
 	layer.open({
 	  type: 2,
 	  title: '设置参数',
 	  shade: 0.5,
 	  area: ['50%', '80%'],
-	  content: '${ServiceName}/template/fullfillTemplate?projectId=${projectId}',
+	  content: '${ServiceName}/template/fullfillTemplate?projectId=${projectId}&entityIds='+entityIds,
 	  cancel:function(index){
 	  }
 	});

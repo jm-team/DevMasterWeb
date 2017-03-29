@@ -17,7 +17,7 @@
 								<span class="user-info">
 									<small>您好：</small>
 									#if($!subject.isAuthenticated())
-										$!session.getAttribute("session_user").getUsername()
+										$!session.getAttribute("session_user").getAccount()
 									#end
 									#if(!$!subject.isAuthenticated())
 										匿名用户

@@ -3,7 +3,15 @@
 <mapper namespace="Template">
 
 	<select id="listTemplate" parameterType="paramMap" resultType="Map">
-		select * from dm_project_template
+		select * from dm_project_template 
+		<where>
+			<if test="scope!=null">
+				and scope=#{scope}
+			</if>
+			<if test="uid!=null">
+				and uid=#{uid}
+			</if>
+		</where>
 	</select>
 	
 	<select id="listSetting" parameterType="paramMap" resultType="Map">

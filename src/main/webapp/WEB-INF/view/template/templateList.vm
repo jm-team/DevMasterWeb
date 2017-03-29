@@ -41,13 +41,14 @@
 
 							<tbody>
 								<tr style="display:none;" class="node_row">
-								    <td ><a href="${ServiceName}/project/index?tplId=$[id]">$[title]</a></td>
+								    <td ><a target="_blank" href="${ServiceName}/project/index?tplId=$[id]">$[title]</a></td>
 								    <td >$[remark]</td>
 									<td >$[createTime]</td>
 									<td >$[createUser]</td>
                                     <td ><a href="javascript:void(0)" onclick="setScope($[id],$[scope])" script="true">getScopeText($[scope])</a></td>
 								    <td>
 											<a href="javascript:void(0)" onclick="openSettingList($[id])">参数配置</a>
+											<a href="javascript:void(0)" onclick="openEditTemplate($[id])">修改</a>
 											<a href="javascript:void(0)" onclick="deleteTemplate($[id])">删除</a>
 								    </td>
 								</tr>
@@ -133,6 +134,19 @@ function openAddTemplate(){
 	  }
 	});
 }
+
+function openEditTemplate(id){
+	layer.open({
+	  type: 2,
+	  title: '修改模板',
+	  shade: 0.5,
+	  area: ['50%', '450px'],
+	  content: '${ServiceName}/template/editTemplate?id='+id,
+	  cancel:function(index){
+	  }
+	});
+}
+
 
 function setScope(id , scope){
 	if(scope==1){
