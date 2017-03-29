@@ -143,14 +143,23 @@ function syncDatabase(id){
         url: '${ServiceName}' + "/project/syncDatabase",
         data: {
             "id": id
-        }
+        },
+		beforeSend : function(){
+			var index = layer.load(1, {
+              shade: [0.1,'#fff'] //0.1透明度的白色背景
+            });
+		}
     }).done(function (data) {
+		layer.closeAll();
+		
     	if(data.code == 0){
 	    	layer.msg('同步成功');
     	}else{
     		layer.msg(data.desc);
     	}
-    });
+    }).fail(function(jqXHR, textStatus, errorThrown) { 
+		layer.closeAll();
+	});
 }
 
 function deleteProject(id){
