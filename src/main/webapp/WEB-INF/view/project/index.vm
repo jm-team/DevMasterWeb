@@ -245,7 +245,7 @@ function openCodeFrame(path, name){
 	
 	var extend = name.substring(name.lastIndexOf('.') + 1).toLowerCase();
 	
-	if(jQuery.inArray(extend, imgExtends) > 0){
+	if(jQuery.inArray(extend, imgExtends) >= 0){
 	
 		ele.tabs('add', {
     		id : path,
