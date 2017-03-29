@@ -3,13 +3,28 @@
 <mapper namespace="Template">
 
 	<select id="listTemplate" parameterType="paramMap" resultType="Map">
-		select * from dm_project_template 
+		select pt.id
+		      ,pt.title 
+		      ,pt.uid
+		      ,pt.remark
+		      ,pt.create_time createTime
+		      ,pt.update_time updateTime
+		      ,pt.delete_flag deleteFlag
+		      ,pt.preview_image previewImage
+		      ,pt.scope
+		      ,pt.exts
+		      ,u.account createUser
+		from dm_project_template pt
+		left join dm_user u on u.id = pt.uid
 		<where>
 			<if test="scope!=null">
-				and scope=#{scope}
+				and pt.scope=#{scope}
 			</if>
 			<if test="uid!=null">
-				and uid=#{uid}
+				and pt.uid=#{uid}
+			</if>
+			<if test="title != null and title != ''">
+				and pt.title like CONCAT('%', #{title}, '%')
 			</if>
 		</where>
 	</select>

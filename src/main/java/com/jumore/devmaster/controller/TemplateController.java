@@ -3,6 +3,7 @@ package com.jumore.devmaster.controller;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -93,7 +94,7 @@ public class TemplateController extends BaseController{
 
     @ResponseBody
     @RequestMapping(value = "listTemplateData")
-    public ResponseVo<Page<ProjectTemplate>> listTemplateData(Page<ProjectTemplate> page, Long scope) throws Exception {
+    public ResponseVo<Page<Map>> listTemplateData(Page<Map> page, Long scope, String title) throws Exception {
         ParamMap pm = new ParamMap();
         if (1==scope) {
             DevMasterUser user = SessionHelper.getUser();
@@ -101,8 +102,9 @@ public class TemplateController extends BaseController{
         } else {
             pm.put("scope", 2);
         }
-        page = baseService.findPageByParams(ProjectTemplate.class, page, "Template.listTemplate", pm);
-        return ResponseVo.<Page<ProjectTemplate>> BUILDER().setData(page).setCode(Const.BUSINESS_CODE.SUCCESS);
+        pm.put("title", title);
+        page = baseService.findPageByParams(page, "Template.listTemplate", pm);
+        return ResponseVo.<Page<Map>> BUILDER().setData(page).setCode(Const.BUSINESS_CODE.SUCCESS);
     }
 
     @ResponseBody
