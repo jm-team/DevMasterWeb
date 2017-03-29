@@ -72,6 +72,24 @@ function createPager(pageId , totalPages ,onchange){
 	return pager;
 }
 
+//表单FORM序列化成json
+$.fn.serializeJson=function(){
+	var serializeObj={};
+	var array=this.serializeArray();
+	$(array).each(function(){
+		if(serializeObj[this.name]){
+			if($.isArray(serializeObj[this.name])){
+				serializeObj[this.name].push(this.value);
+			}else{
+				serializeObj[this.name]=[serializeObj[this.name],this.value];
+			}
+		}else{
+			serializeObj[this.name]=this.value;
+		}
+	});
+	return serializeObj;
+};
+
 function validateForm(formId) {
 	if (formId == null || formId == undefined || formId === '') {
 		return true;

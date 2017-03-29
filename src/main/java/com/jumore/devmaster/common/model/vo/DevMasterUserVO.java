@@ -1,40 +1,38 @@
-package com.jumore.devmaster.entity;
+package com.jumore.devmaster.common.model.vo;
 
 import java.util.Date;
 
-import com.jumore.dove.aop.AutoIncrease;
-import com.jumore.dove.aop.Column;
-import com.jumore.dove.aop.Entity;
-import com.jumore.dove.aop.Id;
-import com.jumore.dove.aop.Table;
-
-@Entity
-@Table(name = "dm_user")
-public class DevMasterUser {
-
-    @Id
-    @AutoIncrease
-    @Column(name="id")
+/**
+ * DevMasterUserVO
+ * Created by Long on 2017/3/28.
+ */
+public class DevMasterUserVO {
     private Long id;
 
-    @Column(name="account")
     private String account;
 
-    @Column(name="password")
     private String password;
 
-    @Column(name="email")
     private String email;
 
-    @Column(name="mobile")
     private String mobile;
-    
-    @Column(name="create_time")
+
     private Date createTime;
-    
-    @Column(name="delete_flag")
+
     private Integer deleteFlag;
-    
+
+    private String rePassword;
+
+    private String smsCode;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public String getAccount() {
         return account;
     }
@@ -49,22 +47,6 @@ public class DevMasterUser {
 
     public void setPassword(String password) {
         this.password = password;
-    }
-
-    public Integer getDeleteFlag() {
-        return deleteFlag;
-    }
-
-    public void setDeleteFlag(Integer deleteFlag) {
-        this.deleteFlag = deleteFlag;
-    }
-    
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public String getEmail() {
@@ -89,5 +71,29 @@ public class DevMasterUser {
 
     public void setCreateTime(Date createTime) {
         this.createTime = createTime;
+    }
+
+    public Integer getDeleteFlag() {
+        return deleteFlag;
+    }
+
+    public void setDeleteFlag(Integer deleteFlag) {
+        this.deleteFlag = deleteFlag;
+    }
+
+    public String getRePassword() {
+        return rePassword;
+    }
+
+    public void setRePassword(String rePassword) {
+        this.rePassword = rePassword;
+    }
+
+    public String getSmsCode() {
+        return smsCode;
+    }
+
+    public void setSmsCode(String smsCode) {
+        this.smsCode = smsCode;
     }
 }

@@ -79,4 +79,6 @@
 	<mvc:default-servlet-handler/>
 	<mvc:view-controller path="/" view-name="index"/> 
 	<!-- 拦截器配置 -->
+
+
 </beans>
