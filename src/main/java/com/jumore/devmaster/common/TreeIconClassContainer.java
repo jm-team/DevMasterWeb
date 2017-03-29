@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.jumore.devmaster.common.util.ImageUtils;
 import com.jumore.dove.common.BusinessException;
 
 public abstract class TreeIconClassContainer {
@@ -22,8 +23,9 @@ public abstract class TreeIconClassContainer {
         extensionClassMapper.put("sql", "my-tree-sql-icon");
         extensionClassMapper.put("default", "my-tree-default-icon");
         
-        extensionClassMapper.put("jpg", "my-tree-picture-icon");
-        extensionClassMapper.put("png", "my-tree-picture-icon");
+        for (String extension : ImageUtils.EXTENSIONS) {
+            extensionClassMapper.put(extension, "my-tree-picture-icon");
+        }
     }
     
     private static String getIconClassSafety(String  extension){

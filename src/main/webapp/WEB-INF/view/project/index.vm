@@ -144,6 +144,9 @@ function addNewFile(parent , newFileName, isFile){
     });
 }
 
+var imgExtends = ['jpg', 'jpeg', 'png', 'bmp', 'gif', 'psd', 'pcx', 'tiff', 'tga', 'exif', 'fpx', 'svg', 
+	'cdr', 'pcd', 'dxf', 'ufo', 'eps', 'hdri', 'ai', 'raw', 'wmf', 'emf', 'lic'];
+
 var extensionClassMapper = {};
 extensionClassMapper['folder']  = 'my-tree-folder-icon';
 extensionClassMapper['html']    = 'my-tree-html-icon';
@@ -153,8 +156,10 @@ extensionClassMapper['xml']     = 'my-tree-xml-icon';
 extensionClassMapper['sql']     = 'my-tree-sql-icon';
 extensionClassMapper['default'] = 'my-tree-default-icon';
 
-extensionClassMapper['jpg']     = 'my-tree-picture-icon';
-extensionClassMapper['png']     = 'my-tree-picture-icon';
+$.each(imgExtends, function(index, value, array) {
+    extensionClassMapper[value] = 'my-tree-picture-icon';
+});
+
 
 function getIconClass(fileName, isFile){
 	if(!isFile){
@@ -238,8 +243,7 @@ function openCodeFrame(path, name){
 		}
 	}
 	
-	var imgExtends = ['jpg', 'png'];
-	var extend = name.substring(name.lastIndexOf('.') + 1);
+	var extend = name.substring(name.lastIndexOf('.') + 1).toLowerCase();
 	
 	if(jQuery.inArray(extend, imgExtends) > 0){
 	
