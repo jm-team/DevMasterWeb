@@ -92,7 +92,12 @@ function listData(currentResult){
 	$.ajax({
         type: "POST",
         url: '${ServiceName}/field/listFieldData',
-        data: {currentResult:currentResult , name:name , projectId:${projectId} , entityId : ${entityId}},
+        data: {
+        	currentResult:currentResult,
+        	name:name,
+        	projectId:${projectId},
+        	entityId : ${entityId}
+        },
         dataType:'json'
     }).done(function (result) {
         if(result.code!=0){
@@ -115,9 +120,9 @@ function listData(currentResult){
 function openAddField(){
 	layer.open({
 	  type: 2,
-	  title: '添加表',
+	  title: '添加字段',
 	  shade: 0.5,
-	  area: ['50%', '450px'],
+	  area: ['50%', '550px'],
 	  content: '${ServiceName}/field/addField?projectId=${projectId}&entityId=${entityId}',
 	  cancel:function(index){
 		  listData(curResult);
@@ -128,9 +133,9 @@ function openAddField(){
 function openEditField(id){
 	layer.open({
 	  type: 2,
-	  title: '编辑表',
+	  title: '编辑字段',
 	  shade: 0.5,
-	  area: ['50%', '450px'],
+	  area: ['50%', '550px'],
 	  content: '${ServiceName}/field/editField?id='+id,
 	  cancel:function(index){
 		  listData(curResult);
