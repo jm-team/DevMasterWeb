@@ -4,9 +4,10 @@
             <form id="form" class="form-horizontal" >
 				<input type="hidden" value="${entity.id}" name="id"/>
 				<div class="form-group">
-					<span class="col-sm-3 control-label no-padding-right">表名：</span> 
+					<span class="col-sm-3 control-label no-padding-right">表名：<span style="color:red;">*</span></span> 
 					<div class="col-sm-9">
-						<input type="text"  name="name" value="${entity.name}" class="col-xs-10 col-sm-5" />
+						<input type="text"  name="name" value="${entity.name}" class="col-xs-10 col-sm-5" 
+							data-null-msg="表名不能为空" maxlength="50" />
 					</div>
 				</div>
 				<div class="form-group">
