@@ -35,6 +35,9 @@ public abstract class CodeMirrorModeContainer {
         container.put("xml", new CodeMirrorMode("xml", 
                 Mode_Script_Path_Prefix + "xml/xml.js", 
                 Hint_Script_Path_Prefix + "xml-hint.js"));
+        
+        container.put("java", new CodeMirrorMode("text/x-java", 
+                Mode_Script_Path_Prefix + "clike/clike.js"));
     }
 
     public static CodeMirrorMode get(String key) {
