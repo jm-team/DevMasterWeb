@@ -21,6 +21,7 @@
 						<span class="control-label search-label">工程模板：</span>
 						<span class="search-label">$!{tplName}</span>
 						<a class="search-label" onclick="openSelectTpl(${projectId})" href="javascript:void(0)">选择</a>
+						<button onclick="downloadCode()" style="float:right;margin-right:30px;" class="btn btn-primary">下载代码</button>
 						<a target="_blank" href="${ServiceName}/code/view?projectId=${projectId}" style="float:right;margin-right:30px;" class="btn btn-primary">查看代码</a>
 						<button onclick="generateCode()" style="float:right;margin-right:30px;" class="btn btn-primary">生成代码</button>
     				</div>
@@ -138,6 +139,31 @@ function generateCode(){
 	});
 }
 
+function downloadCode(){
+	//checkbox
+	var items = $('.checkbox:checked');
+	if(items.length==0){
+		layer.msg('请先选择表');
+		return;
+	}
+	layer.msg('建设中');
+	return;
+	
+	/* var entityIds = '';
+	for(var i=0;i<items.length;i++){
+		entityIds += items[i].value+',';
+	}
+	layer.open({
+	  type: 2,
+	  title: '设置参数',
+	  shade: 0.5,
+	  area: ['50%', '80%'],
+	  content: '${ServiceName}/template/fullfillTemplate?projectId=${projectId}&entityIds='+entityIds,
+	  cancel:function(index){
+	  }
+	}); */
+}
+
 function openSelectTpl(projectId){
 	layer.open({
 	  type: 2,
@@ -150,7 +176,33 @@ function openSelectTpl(projectId){
 	});
 }
 
-function deleteProject(id){
+function openAddEntity(){
+	layer.open({
+	  type: 2,
+	  title: '添加表',
+	  shade: 0.5,
+	  area: ['50%', '400px'],
+	  content: '${ServiceName}/entity/addEntity?projectId=${projectId}',
+	  cancel:function(index){
+		  listData(curResult);
+	  }
+	});
+}
+
+function openEditEntity(id){
+	layer.open({
+	  type: 2,
+	  title: '编辑表',
+	  shade: 0.5,
+	  area: ['50%', '400px'],
+	  content: '${ServiceName}/entity/editEntity?id='+id,
+	  cancel:function(index){
+		  listData(curResult);
+	  }
+	});
+}
+
+function deleteEntity(id){
 	layer.confirm('确定要删除该条数据吗？', {
 		  btn: ['是','否'] //按钮
 		}, function(){
