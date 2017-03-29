@@ -6,13 +6,14 @@
 				<input type="hidden" name="projectId" value="$!{field.projectId}" />
 				<input type="hidden" name="dbentityId" value="$!{field.dbentityId}" />
 				<div class="form-group">
-					<span class="col-sm-3 control-label no-padding-right">字段名：</span> 
+					<span class="col-sm-3 control-label no-padding-right">字段名：<span style="color:red;">*</span></span> 
 					<div class="col-sm-9">
-						<input type="text"  name="name" class="col-xs-10 col-sm-5" value="$!{field.name}"/>
+						<input type="text"  name="name" class="col-xs-10 col-sm-5" value="$!{field.name}"
+							data-null-msg="字段名不能为空" maxlength="50"/>
 					</div>
 				</div>
 				<div class="form-group">
-					<span class="col-sm-3 control-label no-padding-right">字段类型：</span> 
+					<span class="col-sm-3 control-label no-padding-right">字段类型：<span style="color:red;">*</span></span> 
 					<div class="col-sm-9">
                         <select type="text"  name="type" class="col-xs-10 col-sm-5" id="type">
 							<option value="bigint">bigint</option>
@@ -28,29 +29,30 @@
 				<div class="form-group">
 					<span class="col-sm-3 control-label no-padding-right">字段长度：</span> 
 					<div class="col-sm-9">
-						<input type="number"  name="length" class="col-xs-10 col-sm-5"  value="$!{field.length}"/>
+						<input type="number"  name="length" class="col-xs-10 col-sm-5"  value="$!{field.length}" maxlength="50"/>
 					</div>
 				</div>
 				<div class="form-group">
 					<span class="col-sm-3 control-label no-padding-right">默认值：</span> 
 					<div class="col-sm-9">
-						<input type="text"  name="defaultValue" class="col-xs-10 col-sm-5"  value="$!{field.defaultValue}"/>
+						<input type="text"  name="defaultValue" class="col-xs-10 col-sm-5"  value="$!{field.defaultValue}" maxlength="50"/>
 					</div>
 				</div>
 				<div class="form-group">
 					<span class="col-sm-3 control-label no-padding-right">注释：</span> 
 					<div class="col-sm-9">
-						<textarea rows="3" cols="" name="docs"  class="col-xs-10 col-sm-5" >$!{field.docs}</textarea>
+						<textarea rows="3" cols="" name="docs"  class="col-xs-10 col-sm-5"  maxlength="50">$!{field.docs}</textarea>
 					</div>
 				</div>
 				<div class="form-group">
-					<span class="col-sm-3 control-label no-padding-right">是否主键：</span> 
+					<span class="col-sm-3 control-label no-padding-right">是否主键：<span style="color:red;">*</span></span> 
 					<div class="col-sm-9">
-						<input type="text"  name="primaryKey" class="col-xs-10 col-sm-5"  value="$!{field.primaryKey}"/>
+						<input type="text"  name="primaryKey" class="col-xs-10 col-sm-5"  value="$!{field.primaryKey}"
+							data-null-msg="是否主键不能为空" maxlength="50"/>
 					</div>
 				</div>
 				<div class="form-group">
-					<span class="col-sm-3 control-label no-padding-right">是否可空：</span> 
+					<span class="col-sm-3 control-label no-padding-right">是否可空：<span style="color:red;">*</span></span> 
 					<div class="col-sm-9">
                         <select type="text"  name="allowNull" class="col-xs-10 col-sm-5"  id="allowNull">
 							<option value="YES">YES</option>
@@ -84,6 +86,10 @@ selectItemByValue(allowNull, '$!{field.allowNull}');
 //提交
 $("#item_submit").on("click", function (e) {
     //check form data
+	if(!validateForm('form')){
+		return;
+	}
+	
     var data = $('#form').serialize();
     $.ajax({
         type: "POST",

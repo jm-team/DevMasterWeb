@@ -29,6 +29,10 @@
 //提交
 $("#item_submit").on("click", function (e) {
     //check form data
+	if(!validateForm('form')){
+		return;
+	}
+	
     var data = $('#form').serialize();
     $.ajax({
         type: "POST",
