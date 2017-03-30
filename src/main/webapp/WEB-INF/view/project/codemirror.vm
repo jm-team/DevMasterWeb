@@ -131,7 +131,9 @@
             	}else{
             		layer.msg('save fail');
             	}
-            });
+            }).fail(function( jqXHR, textStatus, errorThrown ) {
+				layer.msg('save fail');
+			});
 		}
 		
 		function isContentChanged(){
