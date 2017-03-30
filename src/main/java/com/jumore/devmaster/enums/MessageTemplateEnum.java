@@ -9,7 +9,9 @@ import org.apache.commons.lang.StringUtils;
  * @history:
  */
 public enum MessageTemplateEnum {
-    SMS_REGISTER("新用户注册", "JMT-000001", "JMT-000001");
+    REGISTER_USER("新用户注册", "JMT-000001", "JMT-000001"),
+
+    RESET_PWD("修改密码", "JMT-000003", "JMT-000003");
 
     String operation; //操作
     String code;     // 编号

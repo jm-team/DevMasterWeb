@@ -16,11 +16,11 @@ import com.jumore.dove.util.ParamMap;
 import com.jumore.dove.util.RSAUtils;
 import com.jumore.dove.web.model.Const;
 import com.jumore.dove.web.model.ResponseVo;
-import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -89,7 +89,7 @@ public class RegisterController {
 
         DevMasterUser devMasterUser = new DevMasterUser();
         userParam.setCreateTime(new Date());
-        BeanUtils.copyProperties(devMasterUser, userParam);
+        BeanUtils.copyProperties(userParam, devMasterUser);
 
         devMasterUser.setDeleteFlag(DevMasterConst.Flag.NotDelete);
         try {
@@ -121,11 +121,11 @@ public class RegisterController {
         }
 
         if(StringUtil.isEmpty(userParam.getRePassword())){
-            msg += "重复密码不能为空！<br>";
+            msg += "确认密码不能为空！<br>";
         }
 
         if(StringUtil.isEmpty(userParam.getAccount())){
-            msg += "验证码不能为空！<br>";
+            msg += "账号不能为空！<br>";
         }
 
         if(StringUtil.isNotEmpty(userParam.getPassword()) && StringUtil.isNotEmpty(userParam.getRePassword()) && !userParam.getPassword().equals(userParam.getRePassword())){
@@ -157,8 +157,6 @@ public class RegisterController {
         return msg;
     }
 
-
-
     /**
      * 发送短信验证码
      * @param param
@@ -166,31 +164,21 @@ public class RegisterController {
      */
     @RequestMapping(value = "/sendVerifyCodeMsg")
     @ResponseBody
-    public ResponseVo<String> sendVerifyCodeMsg(HttpServletRequest request, DevMasterUser param) {
+    public ResponseVo<String> sendVerifyCodeMsg(HttpServletRequest request, DevMasterUserVO param) {
         if(StringUtils.isBlank(param.getMobile())) {
             return ResponseVo.<String> BUILDER().setDesc("手机号码不能为空").setCode(Const.BUSINESS_CODE.FAILED);
         }
 
         //生成验证码放入缓存
-        String objType = DevMasterConst.CacheKey.SYS_KEY_MAIN + ":" + DevMasterConst.CacheKey.USER_REGISTER;
+        String objType = DevMasterConst.CacheKey.SYS_KEY_MAIN + ":" + (param.getSentSmsType().equals("1") ? DevMasterConst.CacheKey.USER_REGISTER : DevMasterConst.CacheKey.RESET_PWD);
         String veriCode = StringUtil.getRandomNum2();
         LOGGER.info("短信验证码："+veriCode);
         cacheService.set(objType, param.getMobile(), veriCode, DevMasterConst.CacheKey.MOBILE_CHK_CODE_EXPIRE_TIME);
 
         //发送短信
-        String ip = request.getHeader("x-forwarded-for");
-        if (ip == null || ip.length() ==0 || "unknown".equalsIgnoreCase(ip)) {
-            ip = request.getHeader("Proxy-Client-IP");
-        }
-        if (ip == null || ip.length() ==0 || "unknown".equalsIgnoreCase(ip)) {
-            ip = request.getHeader("WL-Proxy-Client-IP");
-        }
-        if (ip == null || ip.length() ==0 || "unknown".equalsIgnoreCase(ip)) {
-            ip = request.getRemoteAddr();
-        }
         MessageParam messageParam ;
         //对短信验证码进行判断，判断是忘记密码还是注册
-        messageParam = new MessageParam(param.getMobile(), MessageTemplateEnum.SMS_REGISTER, veriCode);
+        messageParam = new MessageParam(param.getMobile(), param.getSentSmsType().equals("1") ? MessageTemplateEnum.REGISTER_USER : MessageTemplateEnum.RESET_PWD, veriCode);
 
         //异步提交
         asyncEventBus.post(messageParam);

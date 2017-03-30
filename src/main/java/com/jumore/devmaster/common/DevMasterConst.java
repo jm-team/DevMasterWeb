@@ -36,6 +36,11 @@ public interface DevMasterConst {
         final String USER_REGISTER = "user_register";
 
         /**
+         * 重置密码
+         */
+        final String RESET_PWD = "reset_pwd";
+
+        /**
          * 手机验证码失效时间
          */
         final int MOBILE_CHK_CODE_EXPIRE_TIME = 300;

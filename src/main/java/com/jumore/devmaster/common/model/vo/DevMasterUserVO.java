@@ -25,6 +25,11 @@ public class DevMasterUserVO {
 
     private String smsCode;
 
+    /**
+     * 发送短信类型 1:用户注册；2：修改密码
+     */
+    private String sentSmsType;
+
     public Long getId() {
         return id;
     }
@@ -95,5 +100,13 @@ public class DevMasterUserVO {
 
     public void setSmsCode(String smsCode) {
         this.smsCode = smsCode;
+    }
+
+    public String getSentSmsType() {
+        return sentSmsType;
+    }
+
+    public void setSentSmsType(String sentSmsType) {
+        this.sentSmsType = sentSmsType;
     }
 }

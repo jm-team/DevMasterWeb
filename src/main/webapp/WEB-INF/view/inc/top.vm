@@ -69,8 +69,8 @@
 			  type: 2,
 			  title: '修改密码',
 			  shade: 0.5,
-			  area: ['450px', '400px'],
-			  content: serviceName + '/user/resetPwd'
+			  area: ['430px', '350px'],
+			  content: serviceName + '/user/resetPwd?id='
 			});
 	}
 	function openBindMobile(){
