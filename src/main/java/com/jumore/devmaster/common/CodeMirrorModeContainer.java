@@ -28,6 +28,16 @@ public abstract class CodeMirrorModeContainer {
                 Mode_Script_Path_Prefix + "css/css.js", 
                 Hint_Script_Path_Prefix + "css-hint.js"));
         
+        container.put("vm", new CodeMirrorMode("text/html", 
+                Mode_Script_Path_Prefix + "htmlmixed/htmlmixed.js", 
+                Hint_Script_Path_Prefix + "html-hint.js",
+                Mode_Script_Path_Prefix + "xml/xml.js", 
+                Hint_Script_Path_Prefix + "xml-hint.js", 
+                Mode_Script_Path_Prefix + "javascript/javascript.js", 
+                Hint_Script_Path_Prefix + "javascript-hint.js", 
+                Mode_Script_Path_Prefix + "css/css.js", 
+                Hint_Script_Path_Prefix + "css-hint.js"));
+        
         container.put("sql", new CodeMirrorMode("text/x-sql", 
                 Mode_Script_Path_Prefix + "sql/sql.js", 
                 Hint_Script_Path_Prefix + "sql-hint.js"));
