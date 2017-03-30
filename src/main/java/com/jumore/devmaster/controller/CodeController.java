@@ -3,6 +3,8 @@ package com.jumore.devmaster.controller;
 import java.io.File;
 import java.io.IOException;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -19,6 +21,8 @@ import com.jumore.devmaster.common.util.PathUtils;
 import com.jumore.devmaster.common.util.SessionHelper;
 import com.jumore.devmaster.entity.Project;
 import com.jumore.dove.service.BaseService;
+import com.jumore.dove.web.model.Const;
+import com.jumore.dove.web.model.ResponseVo;
 
 @Controller
 @RequestMapping(value = "/code")
@@ -33,7 +37,6 @@ public class CodeController {
         Project projectPo = baseService.get(Project.class, projectId);
         mv.addObject("projectId", projectId);
         mv.addObject("projectName", projectPo.getName());
-        mv.addObject("tplId", 0);
         mv.addObject("readonly", true);
         return mv;
     }
@@ -87,5 +90,36 @@ public class CodeController {
         mv.addObject("mode", CodeMirrorModeContainer.get(file));
         mv.setViewName("project/codemirror");
         return mv;
+    }
+    
+    @ResponseBody
+    @RequestMapping(value = "/checkDownload")
+    public ResponseVo<String> checkDownload(Long projectId) throws Exception {
+        Project projectPo = baseService.get(Project.class, projectId);
+        String codePath = SessionHelper.getCodeGenerateDir(projectPo.getName());
+        File[] files = new File(codePath).listFiles();
+        if (files == null || files.length == 0) {
+        	throw new RuntimeException("代码不存在，请先生成代码");
+        }
+        
+        return ResponseVo.<String> BUILDER().setData("").setCode(Const.BUSINESS_CODE.SUCCESS);
+    }
+    
+    @RequestMapping("/download")
+    public void download(HttpServletResponse response, Long projectId) throws Exception {
+        // 参数不能为空，否则不支持下载
+        if (projectId == null || response == null) {
+            return;
+        }
+        
+        Project projectPo = baseService.get(Project.class, projectId);
+        String codePath = SessionHelper.getCodeGenerateDir(projectPo.getName());
+        
+        response.setContentType("application/zip");
+        
+        response.setHeader("Content-Disposition", String.format("attachment; filename=\"" + projectPo.getName() +".zip\""));
+
+        // response.setContentLength((int)file.length());
+        PathUtils.compressZipfile(codePath, response.getOutputStream());
     }
 }

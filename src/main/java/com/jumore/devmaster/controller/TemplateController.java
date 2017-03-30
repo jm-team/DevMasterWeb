@@ -15,6 +15,7 @@ import org.springframework.web.servlet.ModelAndView;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.StringUtil;
+import com.jumore.devmaster.common.DevMasterConst;
 import com.jumore.devmaster.common.model.vo.TemplateSettingVO;
 import com.jumore.devmaster.common.util.SessionHelper;
 import com.jumore.devmaster.entity.DevMasterUser;
@@ -48,16 +49,19 @@ public class TemplateController extends BaseController{
 
     @ResponseBody
     @RequestMapping(value = "doAddTemplate")
-    public ResponseVo<Page<Project>> doAddTemplate(ProjectTemplate tpl) throws Exception {
+    public ResponseVo<String> doAddTemplate(ProjectTemplate tpl) throws Exception {
         if (StringUtils.isEmpty(tpl.getTitle())) {
             throw new BusinessException("标题不能为空");
+        }
+        if (StringUtils.isEmpty(tpl.getExts())) {
+            throw new BusinessException("模板文件的扩展名不能为空");
         }
         tpl.setCreateTime(new Date());
         tpl.setUid(SessionHelper.getUser().getId());
         tpl.setDeleteFlag(0);
         tpl.setScope(1);
         baseService.save(tpl);
-        return ResponseVo.<Page<Project>> BUILDER().setCode(Const.BUSINESS_CODE.SUCCESS);
+        return ResponseVo.<String> BUILDER().setCode(Const.BUSINESS_CODE.SUCCESS);
     }
     
     @RequestMapping(value = "/editTemplate")
@@ -70,7 +74,7 @@ public class TemplateController extends BaseController{
 
     @ResponseBody
     @RequestMapping(value = "doUpdateTemplate")
-    public ResponseVo<Page<Project>> doUpdateTemplate(ProjectTemplate tpl) throws Exception {
+    public ResponseVo<String> doUpdateTemplate(ProjectTemplate tpl) throws Exception {
         if (StringUtils.isEmpty(tpl.getTitle())) {
             throw new BusinessException("标题不能为空");
         }
@@ -82,7 +86,7 @@ public class TemplateController extends BaseController{
         tplPo.setRemark(tpl.getRemark());
         tplPo.setExts(tpl.getExts());
         baseService.update(tplPo);
-        return ResponseVo.<Page<Project>> BUILDER().setCode(Const.BUSINESS_CODE.SUCCESS);
+        return ResponseVo.<String> BUILDER().setCode(Const.BUSINESS_CODE.SUCCESS);
     }
 
     @RequestMapping(value = "/templateList")
@@ -144,7 +148,7 @@ public class TemplateController extends BaseController{
     
     @ResponseBody
     @RequestMapping(value = "doAddSetting")
-    public ResponseVo<Page<Project>> doAddSetting(TemplateSetting setting) throws Exception {
+    public ResponseVo<String> doAddSetting(TemplateSetting setting) throws Exception {
         if (StringUtils.isEmpty(setting.getName())) {
             throw new BusinessException("参数名称不能为空");
         }
@@ -152,9 +156,19 @@ public class TemplateController extends BaseController{
             throw new BusinessException("参数占位符不能为空");
         }
         baseService.save(setting);
-        return ResponseVo.<Page<Project>> BUILDER().setCode(Const.BUSINESS_CODE.SUCCESS);
+        return ResponseVo.<String> BUILDER().setCode(Const.BUSINESS_CODE.SUCCESS);
     }
 
+    @ResponseBody
+    @RequestMapping(value = "deleteSetting")
+    public ResponseVo<String> deleteSetting(Long settingId) throws Exception {
+        TemplateSetting po = baseService.get(TemplateSetting.class, settingId);
+        if(po!=null){
+            baseService.delete(po);
+        }
+        return ResponseVo.<String> BUILDER().setCode(Const.BUSINESS_CODE.SUCCESS);
+    }
+    
     @RequestMapping(value = "/chooseTemplate")
     public ModelAndView chooseTemplate(Long projectId) throws Exception {
         ModelAndView mv = new ModelAndView();
@@ -165,11 +179,11 @@ public class TemplateController extends BaseController{
     
     @ResponseBody
     @RequestMapping(value = "doChooseTemplate")
-    public ResponseVo<Page<Project>> doChooseTemplate(Long projectId , Long tplId) throws Exception {
+    public ResponseVo<String> doChooseTemplate(Long projectId , Long tplId) throws Exception {
         Project projectPo = baseService.get(Project.class, projectId);
         projectPo.setTplId(tplId);
         baseService.update(projectPo);
-        return ResponseVo.<Page<Project>> BUILDER().setCode(Const.BUSINESS_CODE.SUCCESS);
+        return ResponseVo.<String> BUILDER().setCode(Const.BUSINESS_CODE.SUCCESS);
     }
     
     @RequestMapping(value = "/fullfillTemplate")
@@ -207,7 +221,7 @@ public class TemplateController extends BaseController{
     
     @ResponseBody
     @RequestMapping(value = "doGenerateCode")
-    public ResponseVo<Page<Project>> doGenerateCode(Long projectId) throws Exception {
+    public ResponseVo<String> doGenerateCode(Long projectId) throws Exception {
         Project projectPo = baseService.get(Project.class, projectId);
         projectPo.setTplSettingData(JSON.toJSONString(this.getPageData()));
         baseService.update(projectPo);
@@ -215,6 +229,33 @@ public class TemplateController extends BaseController{
         String codePath = SessionHelper.getCodeGenerateDir(projectPo.getName());
         String tplPath = SessionHelper.getTplDir(projectPo.getTplId());
         codeGenerateService.generateCode(projectPo , tplPath, codePath);
-        return ResponseVo.<Page<Project>> BUILDER().setCode(Const.BUSINESS_CODE.SUCCESS);
+        return ResponseVo.<String> BUILDER().setCode(Const.BUSINESS_CODE.SUCCESS);
+    }
+    
+    @ResponseBody
+    @RequestMapping(value = "doCloneTemplate")
+    public ResponseVo<String> doChooseTemplate(Long tplId , String newTplTitle) throws Exception {
+        if(StringUtils.isEmpty(newTplTitle)){
+            throw new BusinessException("模板名称不能为空");
+        }
+        ProjectTemplate original = baseService.get(ProjectTemplate.class, tplId);
+        ProjectTemplate tpl = new ProjectTemplate();
+        tpl.setTitle(newTplTitle);
+        tpl.setUid(SessionHelper.getUser().getId());
+        ProjectTemplate po = (ProjectTemplate)baseService.getByExample(tpl);
+        if(po!=null){
+            throw new BusinessException("模板名称重复，你先修改模板名称");
+        }
+        
+        tpl.setCreateTime(new Date());
+        tpl.setDeleteFlag(DevMasterConst.Flag.NotDelete);
+        
+        tpl.setRemark(original.getRemark());
+        tpl.setScope(DevMasterConst.Scope.Private);
+        tpl.setUpdateTime(new Date());
+        tpl.setExts(original.getExts());
+        baseService.save(tpl);
+        
+        return ResponseVo.<String> BUILDER().setCode(Const.BUSINESS_CODE.SUCCESS);
     }
 }

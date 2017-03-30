@@ -25,22 +25,6 @@ function getRootPath() {
 	return (localhostPaht + serviceName);
 }
 
-/**
- * 获取配置中心管理页面接口路径前缀
- * @returns {String}
- */
-function getDisconfMgrPath() {
-	return getRootPath() + "/disconf/mgr";
-}
-
-/**
- * 获取配置中心api接口路径前缀
- * @returns {String}
- */
-function getDisconfApiPath() {
-	return getRootPath() + "/disconf/api";
-}
-
 
 function openPage(url){
 	$.get(url, function(data) {
@@ -71,6 +55,24 @@ function createPager(pageId , totalPages ,onchange){
     });
 	return pager;
 }
+
+//表单FORM序列化成json
+$.fn.serializeJson=function(){
+	var serializeObj={};
+	var array=this.serializeArray();
+	$(array).each(function(){
+		if(serializeObj[this.name]){
+			if($.isArray(serializeObj[this.name])){
+				serializeObj[this.name].push(this.value);
+			}else{
+				serializeObj[this.name]=[serializeObj[this.name],this.value];
+			}
+		}else{
+			serializeObj[this.name]=this.value;
+		}
+	});
+	return serializeObj;
+};
 
 function validateForm(formId) {
 	if (formId == null || formId == undefined || formId === '') {

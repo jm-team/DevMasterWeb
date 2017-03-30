@@ -46,6 +46,15 @@ public class EntityField {
     @Column(name="allow_null")
     private String allowNull;
     
+    /**是否表单输入
+     * 1需要，0不需要
+    */
+    @Column(name="show_input")
+    private Integer showInput;
+    
+    @Column(name="input_label")
+    private String inputLabel;
+    
     public Integer getPrimaryKey() {
         return primaryKey;
     }
@@ -126,5 +135,21 @@ public class EntityField {
 
     public void setProjectId(Long projectId) {
         this.projectId = projectId;
+    }
+
+    public Integer getShowInput() {
+        return showInput;
+    }
+
+    public void setShowInput(Integer showInput) {
+        this.showInput = showInput;
+    }
+
+    public String getInputLabel() {
+        return inputLabel;
+    }
+
+    public void setInputLabel(String inputLabel) {
+        this.inputLabel = inputLabel;
     }
 }

@@ -18,4 +18,14 @@ public class Configuration {
     public String getDataPath() {
         return dataPath;
     }
+
+    /**
+     *聚灵通短信服务地址
+     */
+    @Value("${jlt.url}")
+    private String jltUrl;
+
+    public String getJltUrl() {
+        return jltUrl;
+    }
 }

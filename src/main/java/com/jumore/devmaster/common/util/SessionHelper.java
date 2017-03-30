@@ -52,4 +52,16 @@ public class SessionHelper {
     public static String getTplFileRelativePath(String tplPath , Long tplId){
         return tplPath.replace(getTplDir(tplId), "");
     }
+
+    /**
+     * 聚灵通url
+     * @return
+     */
+    public static String getJltUrl(){
+        if(cfg==null){
+            cfg = SpringContextHelper.getBean(Configuration.class);
+        }
+
+        return cfg.getJltUrl();
+    }
 }

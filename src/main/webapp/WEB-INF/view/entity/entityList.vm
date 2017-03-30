@@ -89,6 +89,15 @@ function doSearch(){
 	pager=null;
 	listData(0);
 }
+function initCheckBox(){
+	var ids = '$!{entityIds}';
+	var items = $('.checkbox');
+	for(var i=0;i<items.length;i++){
+		if(ids.indexOf(items[i].value)>-1){
+			items[i].checked=true;
+		}
+	}
+}
 
 function listData(currentResult){
 	curResult = currentResult;
@@ -114,6 +123,7 @@ function listData(currentResult){
 				listData((num-1)*result.data.pageSize);	
 			});
 		}
+		initCheckBox();
     });
 }
 
@@ -140,28 +150,19 @@ function generateCode(){
 }
 
 function downloadCode(){
-	//checkbox
-	var items = $('.checkbox:checked');
-	if(items.length==0){
-		layer.msg('请先选择表');
-		return;
-	}
-	layer.msg('建设中');
-	return;
-	
-	/* var entityIds = '';
-	for(var i=0;i<items.length;i++){
-		entityIds += items[i].value+',';
-	}
-	layer.open({
-	  type: 2,
-	  title: '设置参数',
-	  shade: 0.5,
-	  area: ['50%', '80%'],
-	  content: '${ServiceName}/template/fullfillTemplate?projectId=${projectId}&entityIds='+entityIds,
-	  cancel:function(index){
-	  }
-	}); */
+	$.ajax({
+        type: "POST",
+        url: '${ServiceName}/code/checkDownload',
+        data: {
+            "projectId": ${projectId}
+        }
+    }).done(function (data) {
+    	if(data.code == 0){
+    		window.location.href = "${ServiceName}/code/download?projectId=${projectId}";
+    	}else{
+    		layer.msg(data.desc);
+    	}
+    });
 }
 
 function openSelectTpl(projectId){
