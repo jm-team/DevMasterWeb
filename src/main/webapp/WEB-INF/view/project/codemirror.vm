@@ -20,11 +20,11 @@
 <script src="${ServiceName}/assets/js/codemirror-5.24.2/addon/fold/indent-fold.js"></script>
 <script src="${ServiceName}/assets/js/codemirror-5.24.2/addon/fold/markdown-fold.js"></script>
 <script src="${ServiceName}/assets/js/codemirror-5.24.2/addon/fold/comment-fold.js"></script>
-<!-- 选中高亮 -->
+<!-- 选中高亮 
 <script src="${ServiceName}/assets/js/codemirror-5.24.2/addon/scroll/annotatescrollbar.js"></script>
 <script src="${ServiceName}/assets/js/codemirror-5.24.2/addon/search/matchesonscrollbar.js"></script>
 <script src="${ServiceName}/assets/js/codemirror-5.24.2/addon/search/searchcursor.js"></script>
-<script src="${ServiceName}/assets/js/codemirror-5.24.2/addon/search/match-highlighter.js"></script>
+<script src="${ServiceName}/assets/js/codemirror-5.24.2/addon/search/match-highlighter.js"></script> -->
 <!-- 标签匹配 -->
 <script src="${ServiceName}/assets/js/codemirror-5.24.2/addon/edit/matchtags.js"></script>
 
