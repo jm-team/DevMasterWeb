@@ -26,7 +26,7 @@ public class DBEntity {
     /**dm_project.id*/
     @Column(name="project_id")
     private Long projectId;
-
+    
     public Long getId() {
         return id;
     }

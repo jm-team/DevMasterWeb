@@ -116,4 +116,13 @@ public class FieldController {
         baseService.update(updateField);
         return ResponseVo.<String> BUILDER().setData("").setCode(Const.BUSINESS_CODE.SUCCESS);
     }
+    
+    @ResponseBody
+    @RequestMapping(value = "/setShowInput")
+    public ResponseVo<String> setShowInput(Long id , Integer showInput) throws Exception {
+        EntityField po = baseService.get(EntityField.class, id);
+        po.setShowInput(showInput);
+        baseService.update(po);
+        return ResponseVo.<String> BUILDER().setCode(Const.BUSINESS_CODE.SUCCESS);
+    }
 }

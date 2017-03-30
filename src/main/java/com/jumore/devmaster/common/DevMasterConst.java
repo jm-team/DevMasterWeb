@@ -44,5 +44,15 @@ public interface DevMasterConst {
          * 手机验证码失效时间
          */
         final int MOBILE_CHK_CODE_EXPIRE_TIME = 300;
+    
+    }
+    interface Scope {
+        final Integer Public = 2;
+        final Integer Private = 1;
+    }
+    
+    interface ShowInput {
+        final Integer Yes = 1;
+        final Integer No = 0;
     }
 }

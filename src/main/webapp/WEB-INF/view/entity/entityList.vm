@@ -89,6 +89,15 @@ function doSearch(){
 	pager=null;
 	listData(0);
 }
+function initCheckBox(){
+	var ids = '$!{entityIds}';
+	var items = $('.checkbox');
+	for(var i=0;i<items.length;i++){
+		if(ids.indexOf(items[i].value)>-1){
+			items[i].checked=true;
+		}
+	}
+}
 
 function listData(currentResult){
 	curResult = currentResult;
@@ -114,6 +123,7 @@ function listData(currentResult){
 				listData((num-1)*result.data.pageSize);	
 			});
 		}
+		initCheckBox();
     });
 }
 
