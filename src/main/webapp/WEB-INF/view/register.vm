@@ -1,6 +1,15 @@
 #parse("./inc/head.vm")
-<script type="text/javascript" src="${ServiceName}/assets/js/security.js">
-</script>
+<script type="text/javascript" src="${ServiceName}/assets/js/security.js"></script>
+<style type="text/css">
+    #tableForm tr td {
+        padding-bottom: 15px;
+        height: 28px;
+    }
+
+    #tableForm tr td input[type="text"],#tableForm tr td input[type="password"]{
+        width:200px;
+    }
+</style>
 <body class="login-layout">
 <div class="main-content login-body">
     <div class="row">
@@ -20,37 +29,36 @@
                             <div class="widget-main">
                                 <form id="commentForm" role="form" class="form-horizontal" method="post">
                                     <fieldset>
-                                        <label class="block clearfix">
-                                        </label>
-                                        <table>
+                                        <label class="block clearfix"></label>
+                                        <table id="tableForm">
                                             <tr>
                                                 <td>姓名：</td>
-                                                <td><input type="text" class="form-control" id="account" name="account" placeholder="请输入真实姓名" />
+                                                <td><input type="text" id="account" name="account" placeholder="请输入真实姓名" />
                                                 </td>
                                             </tr>
                                             <tr>
                                                 <td>邮箱：</td>
-                                                <td><input type="text" class="form-control" id="mail" name="mail" placeholder="请输入邮箱"/>
+                                                <td><input type="text" id="mail" name="mail" placeholder="请输入邮箱"/>
                                                 </td>
                                             </tr>
                                             <tr>
                                                 <td>手机号：</td>
-                                                <td> <input type="text" class="form-control" id="mobile" name="mobile" placeholder="请输入11位手机号" />
+                                                <td> <input type="text" id="mobile" name="mobile" placeholder="请输入11位手机号" />
                                                 </td>
                                             </tr>
                                             <tr>
                                                 <td>短信验证码：</td>
-                                                <td><input type="text" class="form-control" id="smsCode" name="smsCode" placeholder="请输入验证码" /><input id="sendMsgBtn" type="button" class="sent-btn" value="获取验证码" onclick="getVerificationCode('1')" />
+                                                <td><input type="text" id="smsCode" name="smsCode" placeholder="请输入验证码" /><input id="sendMsgBtn" type="button" class="sent-btn" value="获取验证码" onclick="getVerificationCode('1')" />
                                                 </td>
                                             </tr>
                                             <tr>
                                                 <td>设置密码：</td>
-                                                <td><input type="password" class="form-control" id="password" name="password" placeholder="请输入至少6位密码"/>
+                                                <td><input type="password" id="password" name="password" placeholder="请输入至少6位密码"/>
                                                 </td>
                                             </tr>
                                             <tr>
                                                 <td>确认密码：</td>
-                                                <td><input type="password" class="form-control" id="rePassword" name="rePassword" placeholder="请输入至少6位密码"/>
+                                                <td><input type="password" id="rePassword" name="rePassword" placeholder="请输入至少6位密码"/>
                                                 </td>
                                             </tr>
                                             #*<tr>
@@ -64,7 +72,7 @@
                                             </tr>*#
                                         </table>
 
-                                        <div class="clearfix">
+                                        <div class="clearfix" style="text-align:center;">
                                             <input value="注册" type="button" id="register_button" type="submit" class="width-35 btn btn-sm btn-primary" onclick="doSubmit()">
 
                                         </div>
