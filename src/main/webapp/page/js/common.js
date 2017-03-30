@@ -25,22 +25,6 @@ function getRootPath() {
 	return (localhostPaht + serviceName);
 }
 
-/**
- * 获取配置中心管理页面接口路径前缀
- * @returns {String}
- */
-function getDisconfMgrPath() {
-	return getRootPath() + "/disconf/mgr";
-}
-
-/**
- * 获取配置中心api接口路径前缀
- * @returns {String}
- */
-function getDisconfApiPath() {
-	return getRootPath() + "/disconf/api";
-}
-
 
 function openPage(url){
 	$.get(url, function(data) {

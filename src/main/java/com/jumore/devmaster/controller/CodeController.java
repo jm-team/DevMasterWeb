@@ -37,7 +37,6 @@ public class CodeController {
         Project projectPo = baseService.get(Project.class, projectId);
         mv.addObject("projectId", projectId);
         mv.addObject("projectName", projectPo.getName());
-        mv.addObject("tplId", 0);
         mv.addObject("readonly", true);
         return mv;
     }

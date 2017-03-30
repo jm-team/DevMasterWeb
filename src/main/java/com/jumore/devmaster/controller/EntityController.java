@@ -31,6 +31,7 @@ public class EntityController {
         ModelAndView mv = new ModelAndView();
         mv.addObject("projectId", projectId);
         Project projectPo = baseService.get(Project.class, projectId);
+        mv.addObject("entityIds", projectPo.getGenerateEntityIds());
         if(projectPo.getTplId()!=null){
             ProjectTemplate tplPo = baseService.get(ProjectTemplate.class, projectPo.getTplId());
             if(tplPo!=null){
@@ -117,6 +118,5 @@ public class EntityController {
         baseService.delete(po);
         return ResponseVo.<String> BUILDER().setCode(Const.BUSINESS_CODE.SUCCESS);
     }
-
-
+    
 }

@@ -49,6 +49,7 @@
 								    <td>
 											<a href="javascript:void(0)" onclick="openSettingList($[id])">参数配置</a>
 											<a href="javascript:void(0)" onclick="openEditTemplate($[id])">修改</a>
+											<a href="javascript:void(0)" onclick="cloneTemplate($[id])">克隆</a>
 											<a href="javascript:void(0)" onclick="deleteTemplate($[id])">删除</a>
 								    </td>
 								</tr>
@@ -168,6 +169,30 @@ function setScope(id , scope){
     	}else{
     		layer.msg(data.desc);
     	}
+    });
+}
+
+function cloneTemplate(tplId){
+	layer.prompt({
+        title: '模板名称',
+        formType: 0 //prompt风格，支持0-2
+    }, function(newTplTitle , index){
+		layer.close(index);
+        $.ajax({
+            type: "POST",
+            url: '${ServiceName}' + "/template/doCloneTemplate",
+            data: {
+                "newTplTitle": newTplTitle,
+    			"tplId": tplId
+            }
+        }).done(function (data) {
+        	if(data.code == 0){
+    	    	listData(curResult);
+    	    	layer.msg('克隆成功，请在我的模板中查看');
+        	}else{
+        		layer.msg(data.desc);
+        	}
+        });
     });
 }
 
