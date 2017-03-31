@@ -25,7 +25,7 @@ import java.util.List;
 @Service
 public class ProjectServiceImpl extends BaseServiceImpl implements ProjectService {
     /**
-     * 添加表与列数据
+     * 同步库表之添加表与列数据
      *
      * @param project Project
      * @param driverClass 驱动
@@ -37,7 +37,6 @@ public class ProjectServiceImpl extends BaseServiceImpl implements ProjectServic
         // 保存之前先删除老的数据
         execute("Entity.delField", pm);
         execute("Entity.delEntity", pm);
-
         try {
             Connection connection = ConnectionUtil.initConnection(driverClass, project.getDbUrl(), project.getDbUserName(),
                     project.getDbPassword());
