@@ -63,7 +63,7 @@ public class TemplateController extends BaseController {
         tpl.setDeleteFlag(0);
         //默认私有
         if(tpl.getScope() == null){
-            tpl.setScope(1);
+            tpl.setScope(DevMasterConst.Scope.Private);
         }
         baseService.save(tpl);
         return ResponseVo.<String> BUILDER().setCode(Const.BUSINESS_CODE.SUCCESS);
