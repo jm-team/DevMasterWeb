@@ -66,7 +66,12 @@ public class ProjectServiceImpl extends BaseServiceImpl implements ProjectServic
                 batchSave(entityFieldList);
             }
             return true;
-        } catch (Exception e) {
+        }catch (SQLException ex){
+            if(ex.getSQLState().equals("08001")){
+                throw new BusinessException("数据库连接驱动错误" , ex);
+            }
+            throw new BusinessException(ex.getLocalizedMessage() , ex);
+        }catch (Exception e) {
             throw new BusinessException("同步库表信息失败" , e);
         }
     }
