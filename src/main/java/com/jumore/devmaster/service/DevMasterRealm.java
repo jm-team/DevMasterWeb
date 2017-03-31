@@ -58,7 +58,7 @@ public class DevMasterRealm extends AuthorizingRealm {
             throw new BusinessException("账号密码不正确");
         }
         SecurityUtils.getSubject().getSession().setAttribute(DevMasterConst.Session.Session_User_Key, userPo);
-        AuthenticationInfo authcInfo = new SimpleAuthenticationInfo(userPo, userPo.getPassword(), this.getName());
-        return authcInfo;
+        AuthenticationInfo authInfo = new SimpleAuthenticationInfo(userPo, userPo.getPassword(), this.getName());
+        return authInfo;
     }
 }

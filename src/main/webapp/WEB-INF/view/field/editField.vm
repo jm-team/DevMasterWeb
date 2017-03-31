@@ -16,13 +16,13 @@
 					<span class="col-sm-3 control-label no-padding-right">字段类型：<span style="color:red;">*</span></span> 
 					<div class="col-sm-9">
                         <select type="text"  name="type" class="col-xs-10 col-sm-5" id="type">
-							<option value="bigint">bigint</option>
-							<option value="varchar">varchar</option>
-							<option value="int">int</option>
-							<option value="smallint">smallint</option>
-							<option value="datetime">datetime</option>
-							<option value="float">float</option>
-							<option value="decimal">decimal</option>
+							<option value="bigint">BIGINT</option>
+							<option value="varchar">VARCHAR</option>
+							<option value="int">INT</option>
+							<option value="smallint">SMALLINT</option>
+							<option value="datetime">DATETIME</option>
+							<option value="float">FLOAT</option>
+							<option value="decimal">DECIMAL</option>
 						</select>
 					</div>
 				</div>
