@@ -8,6 +8,9 @@
 			<if test="projectId!=null">
 				and project_id=#{projectId}
 			</if>
+			<if test="name!= null and name!=''">
+				and name like CONCAT('%', #{name},'%')
+			</if>
 		</where>
 	</select>
 

@@ -24,8 +24,8 @@ public class EntityField {
     private Integer length;
 
     /***/
-    @Column(name="defaultValue")
-    private String defaultvalue;
+    @Column(name="default_value")
+    private String defaultValue;
 
     /***/
     @Column(name="docs")
@@ -38,6 +38,39 @@ public class EntityField {
     /**dm_project.id*/
     @Column(name="project_id")
     private Long projectId;
+
+    /**1是，0否*/
+    @Column(name="primary_key")
+    private Integer primaryKey;
+    
+    @Column(name="allow_null")
+    private String allowNull;
+    
+    /**是否表单输入
+     * 1需要，0不需要
+    */
+    @Column(name="show_input")
+    private Integer showInput;
+    
+    @Column(name="input_label")
+    private String inputLabel;
+    
+    public Integer getPrimaryKey() {
+        return primaryKey;
+    }
+
+    public void setPrimaryKey(Integer primaryKey) {
+        this.primaryKey = primaryKey;
+    }
+
+
+    public String getAllowNull() {
+        return allowNull;
+    }
+
+    public void setAllowNull(String allowNull) {
+        this.allowNull = allowNull;
+    }
 
     public Long getId() {
         return id;
@@ -71,12 +104,13 @@ public class EntityField {
         this.length = length;
     }
 
-    public String getDefaultvalue() {
-        return defaultvalue;
+
+    public String getDefaultValue() {
+        return defaultValue;
     }
 
-    public void setDefaultvalue(String defaultvalue) {
-        this.defaultvalue = defaultvalue == null ? null : defaultvalue.trim();
+    public void setDefaultValue(String defaultValue) {
+        this.defaultValue = defaultValue;
     }
 
     public String getDocs() {
@@ -101,5 +135,21 @@ public class EntityField {
 
     public void setProjectId(Long projectId) {
         this.projectId = projectId;
+    }
+
+    public Integer getShowInput() {
+        return showInput;
+    }
+
+    public void setShowInput(Integer showInput) {
+        this.showInput = showInput;
+    }
+
+    public String getInputLabel() {
+        return inputLabel;
+    }
+
+    public void setInputLabel(String inputLabel) {
+        this.inputLabel = inputLabel;
     }
 }

@@ -1,0 +1,108 @@
+#parse("./inc/head.vm")
+      <div class="modal-content">
+         <div class="modal-body">
+            <form id="form" class="form-horizontal" >
+            	<input type="hidden" name="id" value="$!{field.id}" />
+				<input type="hidden" name="projectId" value="$!{field.projectId}" />
+				<input type="hidden" name="dbentityId" value="$!{field.dbentityId}" />
+				<div class="form-group">
+					<span class="col-sm-3 control-label no-padding-right">字段名：<span style="color:red;">*</span></span> 
+					<div class="col-sm-9">
+						<input type="text"  name="name" class="col-xs-10 col-sm-5" value="$!{field.name}"
+							data-null-msg="字段名不能为空" maxlength="50"/>
+					</div>
+				</div>
+				<div class="form-group">
+					<span class="col-sm-3 control-label no-padding-right">字段类型：<span style="color:red;">*</span></span> 
+					<div class="col-sm-9">
+                        <select type="text"  name="type" class="col-xs-10 col-sm-5" id="type">
+							<option value="bigint">bigint</option>
+							<option value="varchar">varchar</option>
+							<option value="int">int</option>
+							<option value="smallint">smallint</option>
+							<option value="datetime">datetime</option>
+							<option value="float">float</option>
+							<option value="decimal">decimal</option>
+						</select>
+					</div>
+				</div>
+				<div class="form-group">
+					<span class="col-sm-3 control-label no-padding-right">字段长度：</span> 
+					<div class="col-sm-9">
+						<input type="number"  name="length" class="col-xs-10 col-sm-5"  value="$!{field.length}" maxlength="50"/>
+					</div>
+				</div>
+				<div class="form-group">
+					<span class="col-sm-3 control-label no-padding-right">默认值：</span> 
+					<div class="col-sm-9">
+						<input type="text"  name="defaultValue" class="col-xs-10 col-sm-5"  value="$!{field.defaultValue}" maxlength="50"/>
+					</div>
+				</div>
+				<div class="form-group">
+					<span class="col-sm-3 control-label no-padding-right">注释：</span> 
+					<div class="col-sm-9">
+						<textarea rows="3" cols="" name="docs"  class="col-xs-10 col-sm-5"  maxlength="50">$!{field.docs}</textarea>
+					</div>
+				</div>
+				<div class="form-group">
+					<span class="col-sm-3 control-label no-padding-right">是否主键：<span style="color:red;">*</span></span> 
+					<div class="col-sm-9">
+						<input type="text"  name="primaryKey" class="col-xs-10 col-sm-5"  value="$!{field.primaryKey}"
+							data-null-msg="是否主键不能为空" maxlength="50"/>
+					</div>
+				</div>
+				<div class="form-group">
+					<span class="col-sm-3 control-label no-padding-right">是否可空：<span style="color:red;">*</span></span> 
+					<div class="col-sm-9">
+                        <select type="text"  name="allowNull" class="col-xs-10 col-sm-5"  id="allowNull">
+							<option value="YES">YES</option>
+							<option value="NO">NO</option>
+						</select>
+					</div>
+				</div>
+			</form>
+         </div>
+         <div class="modal-footer">
+            <button type="button" id="item_submit" class="btn btn-primary">
+               	保存
+            </button>
+         </div>
+      </div>
+
+<script type="text/javascript">
+function selectItemByValue(elmnt, value){
+   for(var i=0; i < elmnt.options.length; i++) {
+     if(elmnt.options[i].value == value)
+       elmnt.selectedIndex = i;
+   }
+}
+
+var type = document.getElementById('type');
+selectItemByValue(type, '$!{field.type}');
+
+var allowNull = document.getElementById('allowNull');
+selectItemByValue(allowNull, '$!{field.allowNull}');
+
+//提交
+$("#item_submit").on("click", function (e) {
+    //check form data
+	if(!validateForm('form')){
+		return;
+	}
+	
+    var data = $('#form').serialize();
+    $.ajax({
+        type: "POST",
+        url: '${ServiceName}' + "/field/doUpdateField",
+        data: data,
+        dataType:'json'
+    }).done(function (data) {
+        if (data.code == -1) {
+            layer.msg(data.desc);
+        } else {
+        	layer.msg('保存成功');
+        	closeWindowAndRefreshParent();
+        }
+    });
+});
+</script>

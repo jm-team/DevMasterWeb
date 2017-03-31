@@ -14,14 +14,19 @@ public class DevMasterUser {
 
     @Id
     @AutoIncrease
+    @Column(name="id")
     private Long id;
-    
+
+    @Column(name="account")
     private String account;
-    
+
+    @Column(name="password")
     private String password;
-    
+
+    @Column(name="email")
     private String email;
-    
+
+    @Column(name="mobile")
     private String mobile;
     
     @Column(name="create_time")

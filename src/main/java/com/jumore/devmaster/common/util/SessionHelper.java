@@ -10,7 +10,7 @@ import com.jumore.devmaster.entity.DevMasterUser;
 import com.jumore.dove.util.SpringContextHelper;
 
 public class SessionHelper {
-
+    
     private static Configuration cfg;
     
     public static DevMasterUser getUser() {
@@ -23,5 +23,17 @@ public class SessionHelper {
             cfg = SpringContextHelper.getBean(Configuration.class);
         }
         return cfg.getDataPath()+File.separator+getUser().getAccount()+File.separator;
+    }
+    
+    /**
+     * 聚灵通url
+     * @return
+     */
+    public static String getJltUrl(){
+        if(cfg==null){
+            cfg = SpringContextHelper.getBean(Configuration.class);
+        }
+
+        return cfg.getJltUrl();
     }
 }

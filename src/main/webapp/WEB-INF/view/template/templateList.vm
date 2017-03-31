@@ -41,12 +41,15 @@
 
 							<tbody>
 								<tr style="display:none;" class="node_row">
-								    <td ><a href="${ServiceName}/project/index?tplId=$[id]">$[title]</a></td>
+								    <td ><a target="_blank" href="${ServiceName}/project/index?tplId=$[id]">$[title]</a></td>
 								    <td >$[remark]</td>
 									<td >$[createTime]</td>
 									<td >$[createUser]</td>
                                     <td ><a href="javascript:void(0)" onclick="setScope($[id],$[scope])" script="true">getScopeText($[scope])</a></td>
 								    <td>
+											<a href="javascript:void(0)" onclick="openSettingList($[id])">参数配置</a>
+											<a href="javascript:void(0)" onclick="openEditTemplate($[id])">修改</a>
+											<a href="javascript:void(0)" onclick="cloneTemplate($[id])">克隆</a>
 											<a href="javascript:void(0)" onclick="deleteTemplate($[id])">删除</a>
 								    </td>
 								</tr>
@@ -107,15 +110,40 @@ function listData(currentResult){
     });
 }
 
+function openSettingList(id){
+	layer.open({
+	  type: 2,
+	  title: '参数配置',
+	  shade: 0.5,
+	  area: ['50%', '80%'],
+	  content: '${ServiceName}/template/settingList?tplId='+id,
+	  cancel:function(index){
+		  listData(curResult);
+	  }
+	});
+}
+
 function openAddTemplate(){
 	layer.open({
 	  type: 2,
-	  title: '添加项目',
+	  title: '添加模板',
 	  shade: 0.5,
 	  area: ['50%', '450px'],
 	  content: '${ServiceName}/template/addTemplate',
 	  cancel:function(index){
 		  listData(curResult);
+	  }
+	});
+}
+
+function openEditTemplate(id){
+	layer.open({
+	  type: 2,
+	  title: '修改模板',
+	  shade: 0.5,
+	  area: ['50%', '450px'],
+	  content: '${ServiceName}/template/editTemplate?id='+id,
+	  cancel:function(index){
 	  }
 	});
 }
@@ -143,6 +171,30 @@ function setScope(id , scope){
     });
 }
 
+function cloneTemplate(tplId){
+	layer.prompt({
+        title: '模板名称',
+        formType: 0 //prompt风格，支持0-2
+    }, function(newTplTitle , index){
+		layer.close(index);
+        $.ajax({
+            type: "POST",
+            url: '${ServiceName}' + "/template/doCloneTemplate",
+            data: {
+                "newTplTitle": newTplTitle,
+    			"tplId": tplId
+            }
+        }).done(function (data) {
+        	if(data.code == 0){
+    	    	listData(curResult);
+    	    	layer.msg('克隆成功，请在我的模板中查看');
+        	}else{
+        		layer.msg(data.desc);
+        	}
+        });
+    });
+}
+
 function getScopeText(scope){
 	if(scope==1){
 		return '私有';
@@ -153,15 +205,15 @@ function getScopeText(scope){
 	}
 }
 function deleteTemplate(id){
-	layer.confirm('确定要删除该条数据吗？', {
+	layer.confirm('删除模板不可恢复，确定要执行操作吗？', {
 		  btn: ['是','否'] //按钮
 		}, function(){
 		  //yes
 			$.ajax({
 		        type: "POST",
-		        url: '${ServiceName}' + "/template/delete?id="+id,
+		        url: '${ServiceName}' + "/template/deleteTemplate",
 		        data: {
-		            "id": id
+		            "tplId": id
 		        }
 		    }).done(function (data) {
 		    	if(data.code == 0){

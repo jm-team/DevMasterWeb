@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="Field">
+
+	<select id="listField" parameterType="paramMap" resultType="paramMap">
+		select * from dm_entity_field
+		<where>
+			<if test="projectId!=null">
+				and project_id=#{projectId}
+			</if>
+			<if test="entityId!=null">
+				and dbentity_id=#{entityId}
+			</if>
+			<if test="name!= null and name!=''">
+				and name like CONCAT('%', #{name},'%')
+			</if>
+		</where>
+	</select>
+
+</mapper>

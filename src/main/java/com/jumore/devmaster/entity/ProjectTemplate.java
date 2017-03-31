@@ -40,6 +40,14 @@ public class ProjectTemplate {
      */
     private Integer scope;
 
+    /**
+     * 可作为模板文件的扩展名
+     */
+    private String exts;
+    
+    @Column(name="entity_name_function")
+    private String entityNameFunction;
+    
     public Integer getScope() {
         return scope;
     }
@@ -111,5 +119,21 @@ public class ProjectTemplate {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getExts() {
+        return exts;
+    }
+
+    public void setExts(String exts) {
+        this.exts = exts;
+    }
+
+    public String getEntityNameFunction() {
+        return entityNameFunction;
+    }
+
+    public void setEntityNameFunction(String entityNameFunction) {
+        this.entityNameFunction = entityNameFunction;
     }
 }

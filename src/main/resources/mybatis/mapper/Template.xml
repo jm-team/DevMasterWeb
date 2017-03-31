@@ -3,6 +3,39 @@
 <mapper namespace="Template">
 
 	<select id="listTemplate" parameterType="paramMap" resultType="Map">
-		select * from dm_project_template
+		select pt.id
+		      ,pt.title 
+		      ,pt.uid
+		      ,pt.remark
+		      ,pt.create_time createTime
+		      ,pt.update_time updateTime
+		      ,pt.delete_flag deleteFlag
+		      ,pt.preview_image previewImage
+		      ,pt.scope
+		      ,pt.exts
+		      ,u.account createUser
+		from dm_project_template pt
+		left join dm_user u on u.id = pt.uid
+		<where>
+			<if test="scope!=null">
+				and pt.scope=#{scope}
+			</if>
+			<if test="uid!=null">
+				and pt.uid=#{uid}
+			</if>
+			<if test="title != null and title != ''">
+				and pt.title like CONCAT('%', #{title}, '%')
+			</if>
+		</where>
+	</select>
+	
+	<select id="listSetting" parameterType="paramMap" resultType="Map">
+		select * from dm_template_setting
+		where tpl_id = #{tplId}
+	</select>
+	
+	<select id="listSettingInstance" parameterType="paramMap" resultType="Map">
+		select * from dm_template_setting setting, dm_setting_instance instance
+		where setting.id = instance.setting_id and instance.project_id=${projectId}
 	</select>
 </mapper>

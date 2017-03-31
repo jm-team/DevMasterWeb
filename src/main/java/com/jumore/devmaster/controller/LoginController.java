@@ -6,6 +6,7 @@ import java.util.HashMap;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.jumore.devmaster.common.util.RSAKeyUtil;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.UsernamePasswordToken;
@@ -29,18 +30,7 @@ public class LoginController {
     @RequestMapping(value = "/login")
     public ModelAndView login(HttpServletRequest request) throws Exception {
         ModelAndView mv = new ModelAndView();
-        HashMap<String, Object> map = RSAUtils.getKeys();
-        // 生成公钥和私钥
-        RSAPublicKey publicKey = (RSAPublicKey) map.get(RSAUtils.RAS_Key_Public);
-        RSAPrivateKey privateKey = (RSAPrivateKey) map.get(RSAUtils.RAS_Key_Private);
-
-        request.getSession().setAttribute(RSAUtils.RAS_Key_Private, privateKey);// 私钥保存在session中，用于解密
-
-        // 公钥信息保存在页面，用于加密
-        String publicKeyExponent = publicKey.getPublicExponent().toString(16);
-        String publicKeyModulus = publicKey.getModulus().toString(16);
-        mv.addObject("publicKeyExponent", publicKeyExponent);
-        mv.addObject("publicKeyModulus", publicKeyModulus);
+        RSAKeyUtil.getRSAKey(request, mv);
         return mv;
     }
 

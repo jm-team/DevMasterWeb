@@ -19,6 +19,12 @@
 	<!-- 控制器扫描 -->
 	<context:component-scan base-package="com.jumore.devmaster.controller" />
 	
+	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver"> 
+		<property name="defaultEncoding" value="utf-8"></property>     
+        <property name="maxUploadSize" value="10485760000"></property>    
+        <property name="maxInMemorySize" value="40960"></property>    
+    </bean>
+	
 	<!-- 自定义异常处理 -->
 	<!-- 优先要比DefaultHandlerExceptionResolver高，否则部分异常得不到处理机会 -->
 	<!-- DefaultHandlerExceptionResolver order为2，所以此处order设置value为1 -->
@@ -73,4 +79,6 @@
 	<mvc:default-servlet-handler/>
 	<mvc:view-controller path="/" view-name="index"/> 
 	<!-- 拦截器配置 -->
+
+
 </beans>

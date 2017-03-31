@@ -17,6 +17,19 @@
 		<div class="main-content">
 			<div class="search">
     			<div class="form-group">
+					<div class="col-sm-12">
+						<span class="control-label search-label">工程模板：</span>
+						<span class="search-label">$!{tplName}</span>
+						<a class="search-label" onclick="openSelectTpl(${projectId})" href="javascript:void(0)">选择</a>
+						<button onclick="downloadCode()" style="float:right;margin-right:30px;" class="btn btn-primary">下载代码</button>
+						<a target="_blank" href="${ServiceName}/code/view?projectId=${projectId}" style="float:right;margin-right:30px;" class="btn btn-primary">查看代码</a>
+						<button onclick="generateCode()" style="float:right;margin-right:30px;" class="btn btn-primary">生成代码</button>
+    				</div>
+    			</div>
+			</div>
+			<br/>
+			<div class="search">
+    			<div class="form-group">
     				<div class="col-sm-3">
 						<span class="control-label search-label">表名：</span>
     					<input type="text" id="name" placeholder="请输入表名" class="col-xs-6 col-sm-6" />
@@ -30,6 +43,7 @@
 					<table id="sample-table-1" class="table table-striped table-bordered table-hover">
 							<thead>
 								<tr>
+									<th style="width:35px;"></th>
 									<th>表名</th>
 									<th>说明</th>
 								    <th></th>
@@ -38,7 +52,8 @@
 
 							<tbody>
 								<tr style="display:none;" class="node_row">
-								    <td >$[name]</td>
+									<td><input class="checkbox" value="$[id]" type="checkbox" /></td>
+								    <td ><a href="${ServiceName}/field/fieldList?projectId=$[projectId]&entityId=$[id]">$[name]</a></td>
 								    <td >$[remark]</td>
 								    <td>
 								    		<a href="javascript:void(0)" onclick="deleteEntity($[id])">删除</a>
@@ -74,6 +89,15 @@ function doSearch(){
 	pager=null;
 	listData(0);
 }
+function initCheckBox(){
+	var ids = '$!{entityIds}';
+	var items = $('.checkbox');
+	for(var i=0;i<items.length;i++){
+		if(ids.indexOf(items[i].value)>-1){
+			items[i].checked=true;
+		}
+	}
+}
 
 function listData(currentResult){
 	curResult = currentResult;
@@ -99,7 +123,58 @@ function listData(currentResult){
 				listData((num-1)*result.data.pageSize);	
 			});
 		}
+		initCheckBox();
     });
+}
+
+function generateCode(){
+//checkbox
+	var items = $('.checkbox:checked');
+	if(items.length==0){
+		layer.msg('请先选择表');
+		return;
+	}
+	var entityIds = '';
+	for(var i=0;i<items.length;i++){
+		entityIds += items[i].value+',';
+	}
+	layer.open({
+	  type: 2,
+	  title: '设置参数',
+	  shade: 0.5,
+	  area: ['50%', '80%'],
+	  content: '${ServiceName}/template/fullfillTemplate?projectId=${projectId}&entityIds='+entityIds,
+	  cancel:function(index){
+	  }
+	});
+}
+
+function downloadCode(){
+	$.ajax({
+        type: "POST",
+        url: '${ServiceName}/code/checkDownload',
+        data: {
+            "projectId": ${projectId}
+        }
+    }).done(function (data) {
+    	if(data.code == 0){
+    		window.location.href = "${ServiceName}/code/download?projectId=${projectId}";
+    	}else{
+    		layer.msg(data.desc);
+    	}
+    });
+}
+
+function openSelectTpl(projectId){
+	layer.open({
+	  type: 2,
+	  title: '选择模板',
+	  shade: 0.5,
+	  area: ['50%', '80%'],
+	  content: '${ServiceName}/template/chooseTemplate?projectId='+projectId,
+	  cancel:function(index){
+	  }
+	});
 }
 
 function openAddEntity(){
@@ -107,7 +182,7 @@ function openAddEntity(){
 	  type: 2,
 	  title: '添加表',
 	  shade: 0.5,
-	  area: ['50%', '450px'],
+	  area: ['50%', '400px'],
 	  content: '${ServiceName}/entity/addEntity?projectId=${projectId}',
 	  cancel:function(index){
 		  listData(curResult);
@@ -120,7 +195,7 @@ function openEditEntity(id){
 	  type: 2,
 	  title: '编辑表',
 	  shade: 0.5,
-	  area: ['50%', '450px'],
+	  area: ['50%', '400px'],
 	  content: '${ServiceName}/entity/editEntity?id='+id,
 	  cancel:function(index){
 		  listData(curResult);
@@ -128,7 +203,7 @@ function openEditEntity(id){
 	});
 }
 
-function deleteProject(id){
+function deleteEntity(id){
 	layer.confirm('确定要删除该条数据吗？', {
 		  btn: ['是','否'] //按钮
 		}, function(){

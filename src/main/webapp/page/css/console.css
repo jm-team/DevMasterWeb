@@ -1,3 +1,40 @@
 
 .search{padding-left:12px;}
 .search-label{line-height:28px;width:90px;float:left;}
+
+.file-tree a{
+	text-decoration:none;
+   }
+
+.my-tree-folder-icon{
+	width: 18px;
+	background: url(../img/icons/folder_flat_light.png) no-repeat;
+}
+
+.my-tree-html-icon{
+	background: url(../img/icons/html.png) no-repeat;
+}
+
+.my-tree-js-icon{
+	background: url(../img/icons/page_white_code.png) no-repeat;
+}
+
+.my-tree-css-icon{
+	background: url(../img/icons/page_white_code_red.png) no-repeat;
+}
+
+.my-tree-xml-icon{
+	background: url(../img/icons/page_white_text.png) no-repeat;
+}
+
+.my-tree-picture-icon{
+	background: url(../img/icons/image.png) no-repeat;
+}
+
+.my-tree-sql-icon{
+	background: url(../img/icons/page_white_text.png) no-repeat;
+}
+
+.my-tree-default-icon{
+	background: url(../img/icons/page_white.png) no-repeat;
+}

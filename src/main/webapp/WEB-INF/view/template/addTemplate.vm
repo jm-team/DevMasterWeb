@@ -3,13 +3,28 @@
          <div class="modal-body">
             <form id="form" class="form-horizontal" >
 				<div class="form-group">
-					<span class="col-sm-3 control-label no-padding-right">标题：</span> 
+					<span class="col-sm-3 control-label no-padding-right">名称：<span style="color:red;">*</span></span> 
 					<div class="col-sm-9">
-						<input type="text"  name="title" class="col-xs-10 col-sm-5" />
+						<input type="text"  name="title" class="col-xs-10 col-sm-5" 
+							data-null-msg="名称不能为空" maxlength="50" />
 					</div>
 				</div>
 				<div class="form-group">
-					<span class="col-sm-3 control-label no-padding-right">项目描述：</span> 
+					<span class="col-sm-3 control-label no-padding-right">模板文件扩展名：<span style="color:red;">*</span></span> 
+					<div class="col-sm-9">
+						<input type="text"  name="exts" placeholder="vm,js,html,css,java,jsp" class="col-xs-10 col-sm-5" 
+							data-null-msg="模板文件扩展名不能为空" maxlength="50"/>
+					</div>
+				</div>
+				<div class="form-group">
+					<span class="col-sm-3 control-label no-padding-right">实体类名解析器：</span> 
+					<div class="col-sm-9">
+						<input type="text"  name="entityNameFunction" placeholder="模板跟目录的相对路径(parse.js)" class="col-xs-10 col-sm-5" 
+							data-null-msg="" maxlength="100"/>
+					</div>
+				</div>
+				<div class="form-group">
+					<span class="col-sm-3 control-label no-padding-right">模板描述：</span> 
 					<div class="col-sm-9">
 						<textarea rows="5" cols="" name="remark"  class="col-xs-10 col-sm-5" ></textarea>
 					</div>
@@ -27,6 +42,10 @@
 //提交
 $("#item_submit").on("click", function (e) {
     //check form data
+	if(!validateForm('form')){
+		return;
+	}
+	
     var data = $('#form').serialize();
     $.ajax({
         type: "POST",

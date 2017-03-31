@@ -1,25 +1,132 @@
 #parse("./inc/head.vm")
+<script type="text/javascript" src="${ServiceName}/assets/js/security.js"></script>
+<style type="text/css">
+    .form-group {
+        padding-left: 10px;
+    }
+    .form-group div label{
+        width:100px;
+    }
+    .form-group div{
+        margin-bottom:15px;
+    }
+
+
+    .resetPwdBtn {
+        background-color: #428bca;
+        width: 35%;
+        margin:0 auto;
+    }
+</style>
+
       <div class="modal-content">
          <div class="modal-body">
-            <form id="form" class="form-horizontal" >
-				<input type="hidden" name="id" value="${user.id}"/>
-				
+            <form id="commentForm" class="form-horizontal" >
 				<div class="form-group">
-					<span class="col-sm-3 control-label no-padding-right">重置密码：</span> 
-					<div class="col-sm-9">
-						<input type="text" id="password" name="password" value="" class="col-xs-10 col-sm-5" />
+                    <div>
+                        <label>手机号：</label>
+                        <input type="text" id="mobile" name="mobile" readonly value="$!session.getAttribute("session_user").getMobile()" />
+                    </div>
+                    <div>
+                        <label>验证码：</label>
+                        <input type="text" id="smsCode" name="smsCode" placeholder="请输入验证码" />
+                        <input id="sendMsgBtn" type="button" value="获取验证码" onclick="getVerificationCode('2')"  style="margin-left: 15px;"/>
+                    </div>
+                    <div>
+                        <label>新密码：</label>
+                        <input type="password" id="password" name="password" placeholder="请输入新密码"/>
+                    </div>
+					<div>
+                        <label>确认新密码：</label>
+						<input type="password" id="rePassword" name="rePassword" placeholder="请输入确认新密码"/>
 					</div>
 				</div>
 			</form>
          </div>
-         <div class="modal-footer">
-            <button type="button" id="item_submit" class="btn btn-primary">
-               	保存
-            </button>
+         <div class="modal-footer" style="text-align: center;">
+             <input value="提交" class="resetPwdBtn" type="button" id="resetPwd_button" type="submit" onclick="doSubmit()">
          </div>
       </div>
+#parse("./inc/footer.vm")
+#parse("./user/verifycationCode.vm")
 
 <script type="text/javascript">
+    //表单验证
+    function formValidate() {
+        return $("#commentForm").validate({
+            rules: {
+                account: 'required',
+                mobile: {
+                    required: true,
+                },
+                password: {
+                    required: true
+                },
+                rePassword: {
+                    required: true,
+                    equalTo: '#password'
+                },
+                smsCode: {
+                    required: true
+                }
+            },
+            messages:{
+                account: '请输入账号',
+                mobile: '请输入手机号码',
+                password: '请输入密码',
+                rePassword: {
+                    required:'请输入确认密码',
+                    equalTo: '两次密码不一致'
+                },
+                smsCode: '请输入验证码'
+            }
+        })
+    }
+
+    //注册表单验证
+    $(formValidate());
+
+    //提交密码修改
+    function doSubmit(){
+        if(formValidate().form()){
+            RSAUtils.setMaxDigits(200);
+            var key = new RSAUtils.getKeyPair("${publicKeyExponent}", "", "${publicKeyModulus}");
+            var password = $("#password").val();
+            var rePassword = $('#rePassword').val();
+
+            //js里面是反序的字符串，不知道为啥
+            password = password.split("").reverse().join("");
+            rePassword = rePassword.split("").reverse().join("");
+            //加密后密码
+            password = RSAUtils.encryptedString(key,password);
+            rePassword = RSAUtils.encryptedString(key,rePassword);
+
+            var data = {smsCode:$('#smsCode').val(), password: password, rePassword: password};
+
+            $.ajax({
+                type: "POST",
+                url: '${ServiceName}/user/doResetPwd',
+                data: data,
+                dataType:'json'
+            }).done(function (jsonData) {
+                //如果为true，证明该用户已经下载过，显示已下载提示，否则直接下载
+                if (jsonData.code == 0) {
+                    //登录成功
+                    layer.alert(jsonData.desc, {icon: 1, title: '提示'});
+                } else {
+                    layer.alert(jsonData.desc, {icon: 2, title: '提示'});
+                }
+            });
+        }
+    }
+
+
+
+
+
+
+
+
 //提交
 $("#item_submit").on("click", function (e) {
     if($('#password').val() === ''){

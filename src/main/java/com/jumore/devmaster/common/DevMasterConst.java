@@ -21,4 +21,38 @@ public interface DevMasterConst {
         final Integer Delete = 1;
         final Integer NotDelete = 0;
     }
+
+    /**
+     * 缓存key
+     */
+    interface CacheKey{
+        /**
+         * 系统key
+         */
+        final String SYS_KEY_MAIN = "dev-master";
+        /**
+         * 用户注册
+         */
+        final String USER_REGISTER = "user_register";
+
+        /**
+         * 重置密码
+         */
+        final String RESET_PWD = "reset_pwd";
+
+        /**
+         * 手机验证码失效时间
+         */
+        final int MOBILE_CHK_CODE_EXPIRE_TIME = 300;
+    
+    }
+    interface Scope {
+        final Integer Public = 2;
+        final Integer Private = 1;
+    }
+    
+    interface ShowInput {
+        final Integer Yes = 1;
+        final Integer No = 0;
+    }
 }
