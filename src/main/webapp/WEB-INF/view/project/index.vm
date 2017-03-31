@@ -216,22 +216,30 @@ function remove() {
 		return;
 	}
 	
-	$.ajax({
-        type: 'POST',
-        url: '${ServiceName}/project/deleteFile',
-        data: {
-			tplId : ${tplId},
-			fileName : selected.id
-        }
-    }).done(function (data) {
-		expand();
-		
-    	if(data.code == 0){
-			var node = treeRemoveSelectedNode();
-			closeTab(node.id);
-    	}else{
-    		layer.msg(data.desc);
-    	}
+	layer.confirm('您确定要删除' + selected.text + '吗', {
+        btn: ['删除','取消']
+    }, function(){
+    	$.ajax({
+            type: 'POST',
+            url: '${ServiceName}/project/deleteFile',
+            data: {
+    			tplId : ${tplId},
+    			fileName : selected.id
+            }
+        }).done(function (data) {
+			layer.closeAll();
+			
+        	if(data.code == 0){
+    			var node = treeRemoveSelectedNode();
+    			closeTab(node.id);
+        	}else{
+        		layer.msg(data.desc);
+        	}
+        }).fail(function(){
+			layer.closeAll();
+		});
+    }, function(){
+        // 取消操作
     });
 }
 
@@ -358,6 +366,7 @@ function closeTab(id){
 	
 	for(var i = 0; i < tabs.length; i++){
 		if(tabs[i][0].id == id){
+			tabCloseRemind = false;
 			$('#contentTabs').tabs('close', i);
 			break;
 		}
