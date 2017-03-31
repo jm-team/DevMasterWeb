@@ -8,33 +8,33 @@
 
 .my-tree-folder-icon{
 	width: 18px;
-	background: url(${ServiceName}/assets/easyui/themes/icons/custom/folder_flat_light.png) no-repeat;
+	background: url(../img/icons/folder_flat_light.png) no-repeat;
 }
 
 .my-tree-html-icon{
-	background: url(${ServiceName}/assets/easyui/themes/icons/custom/html.png) no-repeat;
+	background: url(../img/icons/html.png) no-repeat;
 }
 
 .my-tree-js-icon{
-	background: url(${ServiceName}/assets/easyui/themes/icons/custom/page_white_code.png) no-repeat;
+	background: url(../img/icons/page_white_code.png) no-repeat;
 }
 
 .my-tree-css-icon{
-	background: url(${ServiceName}/assets/easyui/themes/icons/custom/page_white_code_red.png) no-repeat;
+	background: url(../img/icons/page_white_code_red.png) no-repeat;
 }
 
 .my-tree-xml-icon{
-	background: url(${ServiceName}/assets/easyui/themes/icons/custom/page_white_text.png) no-repeat;
+	background: url(../img/icons/page_white_text.png) no-repeat;
 }
 
 .my-tree-picture-icon{
-	background: url(${ServiceName}/assets/easyui/themes/icons/custom/image.png) no-repeat;
+	background: url(../img/icons/image.png) no-repeat;
 }
 
 .my-tree-sql-icon{
-	background: url(${ServiceName}/assets/easyui/themes/icons/custom/page_white_text.png) no-repeat;
+	background: url(../img/icons/page_white_text.png) no-repeat;
 }
 
 .my-tree-default-icon{
-	background: url(${ServiceName}/assets/easyui/themes/icons/custom/page_white.png) no-repeat;
+	background: url(../img/icons/page_white.png) no-repeat;
 }

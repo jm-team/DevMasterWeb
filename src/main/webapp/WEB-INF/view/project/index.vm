@@ -6,55 +6,13 @@
 <link rel="stylesheet" type="text/css" href="${ServiceName}/assets/easyui/themes/metro/easyui.css">
 <link rel="stylesheet" type="text/css" href="${ServiceName}/assets/easyui/themes/icon.css">
 <link rel="stylesheet" type="text/css" href="${ServiceName}/assets/uploadify/uploadify.css">
+<link rel="stylesheet" type="text/css" href="${ServiceName}/page/css/console.css">
 <script type="text/javascript" src="${ServiceName}/assets/easyui/jquery.min.js"></script>
 <script src='${ServiceName}/assets/js/layer/layer.js' ></script>
 <script type="text/javascript" src="${ServiceName}/assets/easyui/jquery.easyui.min.js"></script>
 <script type="text/javascript" src="${ServiceName}/assets/uploadify/jquery.uploadify.min.js"></script>
 <!--<script type="text/javascript" src="${ServiceName}/page/js/templateManager.js"></script>-->
-<style>
-	#tree a{
-		text-decoration:none;
-    }
-	
-	.upload_center{
-		margin-left:230px; 
-		margin-top:40px;
-	}
-	
-	.my-tree-folder-icon{
-		width: 18px;
-		background: url(${ServiceName}/assets/easyui/themes/icons/custom/folder_flat_light.png) no-repeat;
-	}
-	
-	.my-tree-html-icon{
-		background: url(${ServiceName}/assets/easyui/themes/icons/custom/html.png) no-repeat;
-	}
-	
-	.my-tree-js-icon{
-		background: url(${ServiceName}/assets/easyui/themes/icons/custom/page_white_code.png) no-repeat;
-	}
-	
-	.my-tree-css-icon{
-		background: url(${ServiceName}/assets/easyui/themes/icons/custom/page_white_code_red.png) no-repeat;
-	}
-	
-	.my-tree-xml-icon{
-		background: url(${ServiceName}/assets/easyui/themes/icons/custom/page_white_text.png) no-repeat;
-	}
-	
-	.my-tree-picture-icon{
-		background: url(${ServiceName}/assets/easyui/themes/icons/custom/image.png) no-repeat;
-	}
-	
-	.my-tree-sql-icon{
-		background: url(${ServiceName}/assets/easyui/themes/icons/custom/page_white_text.png) no-repeat;
-	}
-	
-	.my-tree-default-icon{
-		background: url(${ServiceName}/assets/easyui/themes/icons/custom/page_white.png) no-repeat;
-	}
-	
-</style>
+
 <script type="text/javascript">
 function append(isFile){
     var t = $('#tree');
