@@ -124,12 +124,13 @@ function openSettingList(id){
 }
 
 function openAddTemplate(){
+    var scope = '$!{scope}';
 	layer.open({
 	  type: 2,
 	  title: '添加模板',
 	  shade: 0.5,
 	  area: ['50%', '450px'],
-	  content: '${ServiceName}/template/addTemplate',
+	  content: '${ServiceName}/template/addTemplate?scope=' + scope,
 	  cancel:function(index){
 		  listData(curResult);
 	  }

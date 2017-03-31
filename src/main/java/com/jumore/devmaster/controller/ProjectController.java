@@ -1,17 +1,21 @@
 package com.jumore.devmaster.controller;
 
-import java.io.File;
-import java.io.IOException;
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import javax.servlet.http.HttpServletResponse;
-
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import com.jumore.devmaster.common.CodeMirrorModeContainer;
+import com.jumore.devmaster.common.TreeIconClassContainer;
+import com.jumore.devmaster.common.util.ConnectionUtil;
+import com.jumore.devmaster.common.util.PathUtils;
+import com.jumore.devmaster.common.util.SessionHelper;
+import com.jumore.devmaster.common.util.StringUtil;
+import com.jumore.devmaster.entity.*;
+import com.jumore.devmaster.validator.CommonValidator;
+import com.jumore.dove.common.BusinessException;
+import com.jumore.dove.plugin.Page;
+import com.jumore.dove.service.BaseService;
+import com.jumore.dove.util.ParamMap;
+import com.jumore.dove.web.model.Const;
+import com.jumore.dove.web.model.ResponseVo;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -24,25 +28,16 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
-import com.jumore.devmaster.common.CodeMirrorModeContainer;
-import com.jumore.devmaster.common.TreeIconClassContainer;
-import com.jumore.devmaster.common.util.ConnectionUtil;
-import com.jumore.devmaster.common.util.PathUtils;
-import com.jumore.devmaster.common.util.SessionHelper;
-import com.jumore.devmaster.entity.DBEntity;
-import com.jumore.devmaster.entity.DevMasterUser;
-import com.jumore.devmaster.entity.EntityField;
-import com.jumore.devmaster.entity.Project;
-import com.jumore.devmaster.entity.ProjectTemplate;
-import com.jumore.devmaster.validator.CommonValidator;
-import com.jumore.dove.common.BusinessException;
-import com.jumore.dove.plugin.Page;
-import com.jumore.dove.service.BaseService;
-import com.jumore.dove.util.ParamMap;
-import com.jumore.dove.web.model.Const;
-import com.jumore.dove.web.model.ResponseVo;
+import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 @Controller
 @RequestMapping(value = "/project")
@@ -63,8 +58,11 @@ public class ProjectController {
     @SuppressWarnings("rawtypes")
     @ResponseBody
     @RequestMapping(value = "listProjectData")
-    public ResponseVo<Page<Project>> listProjectData(Page<Project> page) throws Exception {
+    public ResponseVo<Page<Project>> listProjectData(Page<Project> page, String name) throws Exception {
         ParamMap pm = new ParamMap();
+        if(StringUtil.isNotEmpty(name)){
+            pm.put("name",name);
+        }
         page = baseService.findPageByParams(Project.class, page, "Project.listProject", pm);
         return ResponseVo.<Page<Project>> BUILDER().setData(page).setCode(Const.BUSINESS_CODE.SUCCESS);
     }

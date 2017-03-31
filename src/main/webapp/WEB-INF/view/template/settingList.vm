@@ -111,7 +111,7 @@ function deleteSetting(id){
 		  //yes
 			$.ajax({
 		        type: "POST",
-		        url: '${ServiceName}' + "/template/deleteSetting?id="+id,
+		        url: '${ServiceName}' + "/template/deleteSetting?settingId="+id,
 		        data: {
 		            "id": id
 		        }
