@@ -47,6 +47,9 @@ $("#item_submit").on("click", function (e) {
 	}
 	
     var data = $('#form').serialize();
+    if(parseInt(getUrlParam('scope')) == 2){
+        data += '&scope=2';
+    }
     $.ajax({
         type: "POST",
         url: '${ServiceName}' + "/template/doAddTemplate",
