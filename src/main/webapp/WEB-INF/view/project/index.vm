@@ -84,7 +84,7 @@
 		<div class="easyui-layout" data-options="fit:true">
 			<!-- center top start -->
 			<div data-options="region:'center',split:true" style="background:#fbfbfb;">
-				<div id="contentTabs" class="easyui-tabs" style="width:100%;height:100%;"></div>
+				<div id="contentTabs" class="easyui-tabs" style="width:100%;height:100%;" data-options="onBeforeClose:beforeTabClose"></div>
 			</div>
 			<!-- center top end -->
 			
@@ -106,6 +106,8 @@
 <script type="text/javascript">
 var imgExtends;
 var extensionClassMapper = {};
+/** 关闭tab时，是否需要提示信息 */
+var tabCloseRemind = true; 
 
 $(function() {
 	imgExtends = ['jpg', 'jpeg', 'png', 'bmp', 'gif', 'psd', 'pcx', 'tiff', 'tga', 'exif', 'fpx', 'svg', 
@@ -274,6 +276,45 @@ function onNodeDblClick(node){
 		openCodeFrame(node.id, node.text);
 	}
 }
+
+/**
+ * tab关闭之前要提示
+ */
+function beforeTabClose(title,index){
+	if(!tabCloseRemind){
+		tabCloseRemind = true;
+		layer.closeAll();
+		return true;
+	}
+	
+	var tip = '';
+	
+	if($('#contentTabs .tabs-title').eq(index).find('.changed-title').length > 0){ 
+		tip = title + '已修改，您确认要关闭吗？';
+	} else{
+		tip = '您确认要关闭' + title + '吗？';
+	}
+	
+	layer.confirm(tip, {
+        btn: ['关闭','取消']
+    }, function(){
+		tabCloseRemind = false;
+        $('#contentTabs').tabs('close', index);
+    }, function(){
+        // 取消操作
+    });
+	
+	return false;
+}
+
+/*function tabContextMenu(e, title,index){
+	e.preventDefault();
+    
+    $('#mm').menu('show',{
+        left: e.pageX,
+        top: e.pageY
+    });
+}*/
 
 /**
  * 获取左侧目录树，当前选中的节点 
