@@ -8,7 +8,7 @@ import com.jumore.devmaster.service.ProjectService;
 import com.jumore.dove.common.BusinessException;
 import com.jumore.dove.service.BaseServiceImpl;
 import com.jumore.dove.util.ParamMap;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
@@ -22,7 +22,7 @@ import java.util.List;
 /**
  * Created by Administrator on 2017/3/31.
  */
-@Component
+@Service
 public class ProjectServiceImpl extends BaseServiceImpl implements ProjectService {
     /**
      * 同步库表之添加表与列数据
