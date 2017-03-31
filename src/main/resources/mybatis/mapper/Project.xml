@@ -4,5 +4,12 @@
 
 	<select id="listProject" parameterType="paramMap" resultType="Map">
 		select * from dm_project
+		<trim>
+			<where>
+				<if test="name != null and name != ''">
+					name LIKE CONCAT('%','${name}','%' )
+				</if>
+			</where>
+		</trim>
 	</select>
 </mapper>
