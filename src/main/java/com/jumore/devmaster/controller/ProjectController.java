@@ -4,11 +4,12 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.jumore.devmaster.common.CodeMirrorModeContainer;
 import com.jumore.devmaster.common.TreeIconClassContainer;
-import com.jumore.devmaster.common.util.ConnectionUtil;
 import com.jumore.devmaster.common.util.PathUtils;
 import com.jumore.devmaster.common.util.SessionHelper;
 import com.jumore.devmaster.common.util.StringUtil;
-import com.jumore.devmaster.entity.*;
+import com.jumore.devmaster.entity.DevMasterUser;
+import com.jumore.devmaster.entity.Project;
+import com.jumore.devmaster.entity.ProjectTemplate;
 import com.jumore.devmaster.service.ProjectService;
 import com.jumore.devmaster.validator.CommonValidator;
 import com.jumore.dove.common.BusinessException;
@@ -20,8 +21,6 @@ import com.jumore.dove.web.model.ResponseVo;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -32,13 +31,7 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 @Controller
 @RequestMapping(value = "/project")
