@@ -13,6 +13,8 @@ import org.springframework.util.StringUtils;
 
 public class PathUtils {
 
+    public static final String Template_Dir_Name = "tpls";
+    
     public static String trimPathEnd(String path){
         if(StringUtils.isEmpty(path)){
             return path;
@@ -21,7 +23,35 @@ public class PathUtils {
     }
     
     public static String getGeneratedCodeAbsolutePath(String projectName , String realtivePath) {
-        return SessionHelper.getCodeGenerateDir(projectName) + realtivePath;
+        return getCodeGenerateDir(projectName) + realtivePath;
+    }
+    
+    
+    public static String getAbsolutePath(){
+        return getAbsolutePath("");
+    }
+    
+    public static String getAbsolutePath(String path){
+        String rootPath = SessionHelper.getUserWorkDir() + Template_Dir_Name + File.separator;
+        String absolutePath = rootPath;
+        
+        if(!StringUtils.isEmpty(path)){
+            absolutePath += path;
+        }
+        
+        return absolutePath.replace('\\', '/');
+    }
+    
+    public static String getCodeGenerateDir(String projectName){
+        return SessionHelper.getUserWorkDir()+"codeGenerate" + File.separator + projectName + File.separator;
+    }
+    
+    public static String getTplDir(Long tplId){
+        return SessionHelper.getUserWorkDir()+"tpls" + File.separator + tplId + File.separator;
+    }
+    
+    public static String getTplFileRelativePath(String tplPath , Long tplId){
+        return tplPath.replace(getTplDir(tplId), "");
     }
     
     public static String getExt(File file){

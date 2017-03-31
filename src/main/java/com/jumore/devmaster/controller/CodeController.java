@@ -18,7 +18,6 @@ import com.alibaba.fastjson.JSONObject;
 import com.jumore.devmaster.common.CodeMirrorModeContainer;
 import com.jumore.devmaster.common.TreeIconClassContainer;
 import com.jumore.devmaster.common.util.PathUtils;
-import com.jumore.devmaster.common.util.SessionHelper;
 import com.jumore.devmaster.entity.Project;
 import com.jumore.dove.service.BaseService;
 import com.jumore.dove.web.model.Const;
@@ -30,7 +29,7 @@ public class CodeController {
 
     @Autowired
     private BaseService baseService;
-    
+
     @RequestMapping("/view")
     public ModelAndView index(Long projectId) {
         ModelAndView mv = new ModelAndView();
@@ -40,17 +39,17 @@ public class CodeController {
         mv.addObject("readonly", true);
         return mv;
     }
-    
+
     @ResponseBody
     @RequestMapping("/getFiles")
-    public JSONArray getFiles(String id , Long projectId) {
+    public JSONArray getFiles(String id, Long projectId) {
         Project projectPo = baseService.get(Project.class, projectId);
         String path = id;
-        String codePath = SessionHelper.getCodeGenerateDir(projectPo.getName());
-        if(StringUtils.isEmpty(path)){
+        String codePath = PathUtils.getCodeGenerateDir(projectPo.getName());
+        if (StringUtils.isEmpty(path)) {
             path = codePath;
-        }else{
-            path = codePath+path;
+        } else {
+            path = codePath + path;
         }
         JSONArray result = new JSONArray();
         File[] files = new File(path).listFiles();
@@ -72,18 +71,18 @@ public class CodeController {
         }
         return result;
     }
-    
+
     @RequestMapping("/viewFile")
-    public ModelAndView viewFile(String path , String projectName) throws IOException {
+    public ModelAndView viewFile(String path, String projectName) throws IOException {
         ModelAndView mv = new ModelAndView();
         String filePath = PathUtils.getGeneratedCodeAbsolutePath(projectName, path);
         File file = new File(filePath);
         String content = FileUtils.readFileToString(file);
-        
-        if(!StringUtils.isEmpty(content)){
+
+        if (!StringUtils.isEmpty(content)) {
             content = content.replaceAll("</textarea>", "&lt;/textarea&gt;");
         }
-        
+
         mv.addObject("content", content);
         mv.addObject("path", path);
         mv.addObject("fileName", file.getName());
@@ -91,33 +90,33 @@ public class CodeController {
         mv.setViewName("project/codemirror");
         return mv;
     }
-    
+
     @ResponseBody
     @RequestMapping(value = "/checkDownload")
     public ResponseVo<String> checkDownload(Long projectId) throws Exception {
         Project projectPo = baseService.get(Project.class, projectId);
-        String codePath = SessionHelper.getCodeGenerateDir(projectPo.getName());
+        String codePath = PathUtils.getCodeGenerateDir(projectPo.getName());
         File[] files = new File(codePath).listFiles();
         if (files == null || files.length == 0) {
-        	throw new RuntimeException("代码不存在，请先生成代码");
+            throw new RuntimeException("代码不存在，请先生成代码");
         }
-        
+
         return ResponseVo.<String> BUILDER().setData("").setCode(Const.BUSINESS_CODE.SUCCESS);
     }
-    
+
     @RequestMapping("/download")
     public void download(HttpServletResponse response, Long projectId) throws Exception {
         // 参数不能为空，否则不支持下载
         if (projectId == null || response == null) {
             return;
         }
-        
+
         Project projectPo = baseService.get(Project.class, projectId);
-        String codePath = SessionHelper.getCodeGenerateDir(projectPo.getName());
-        
+        String codePath = PathUtils.getCodeGenerateDir(projectPo.getName());
+
         response.setContentType("application/zip");
-        
-        response.setHeader("Content-Disposition", String.format("attachment; filename=\"" + projectPo.getName() +".zip\""));
+
+        response.setHeader("Content-Disposition", String.format("attachment; filename=\"" + projectPo.getName() + ".zip\""));
 
         // response.setContentLength((int)file.length());
         PathUtils.compressZipfile(codePath, response.getOutputStream());

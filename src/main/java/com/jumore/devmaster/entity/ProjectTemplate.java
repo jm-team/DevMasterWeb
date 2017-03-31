@@ -45,6 +45,9 @@ public class ProjectTemplate {
      */
     private String exts;
     
+    @Column(name="entity_name_function")
+    private String entityNameFunction;
+    
     public Integer getScope() {
         return scope;
     }
@@ -124,5 +127,13 @@ public class ProjectTemplate {
 
     public void setExts(String exts) {
         this.exts = exts;
+    }
+
+    public String getEntityNameFunction() {
+        return entityNameFunction;
+    }
+
+    public void setEntityNameFunction(String entityNameFunction) {
+        this.entityNameFunction = entityNameFunction;
     }
 }

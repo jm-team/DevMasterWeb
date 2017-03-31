@@ -34,11 +34,11 @@
                     </div>
                     <div>
                         <label>新密码：</label>
-                        <input type="text" id="password" name="password" placeholder="请输入新密码"/>
+                        <input type="password" id="password" name="password" placeholder="请输入新密码"/>
                     </div>
 					<div>
                         <label>确认新密码：</label>
-						<input type="text" id="rePassword" name="rePassword" placeholder="请输入确认新密码"/>
+						<input type="password" id="rePassword" name="rePassword" placeholder="请输入确认新密码"/>
 					</div>
 				</div>
 			</form>

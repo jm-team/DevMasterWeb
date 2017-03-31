@@ -148,7 +148,6 @@ function openEditTemplate(id){
 	});
 }
 
-
 function setScope(id , scope){
 	if(scope==1){
 		scope = 2;
@@ -206,15 +205,15 @@ function getScopeText(scope){
 	}
 }
 function deleteTemplate(id){
-	layer.confirm('确定要删除该条数据吗？', {
+	layer.confirm('删除模板不可恢复，确定要执行操作吗？', {
 		  btn: ['是','否'] //按钮
 		}, function(){
 		  //yes
 			$.ajax({
 		        type: "POST",
-		        url: '${ServiceName}' + "/template/delete?id="+id,
+		        url: '${ServiceName}' + "/template/deleteTemplate",
 		        data: {
-		            "id": id
+		            "tplId": id
 		        }
 		    }).done(function (data) {
 		    	if(data.code == 0){

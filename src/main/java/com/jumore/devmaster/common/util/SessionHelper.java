@@ -2,7 +2,6 @@ package com.jumore.devmaster.common.util;
 
 import java.io.File;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.SecurityUtils;
 
 import com.jumore.devmaster.common.DevMasterConst;
@@ -11,7 +10,7 @@ import com.jumore.devmaster.entity.DevMasterUser;
 import com.jumore.dove.util.SpringContextHelper;
 
 public class SessionHelper {
-    public static final String Template_Dir_Name = "tpls";
+    
     private static Configuration cfg;
     
     public static DevMasterUser getUser() {
@@ -26,33 +25,6 @@ public class SessionHelper {
         return cfg.getDataPath()+File.separator+getUser().getAccount()+File.separator;
     }
     
-    public static String getAbsolutePath(){
-        return getAbsolutePath("");
-    }
-    
-    public static String getAbsolutePath(String path){
-        String rootPath = getUserWorkDir() + Template_Dir_Name + File.separator;
-        String absolutePath = rootPath;
-        
-        if(StringUtils.isNotBlank(path)){
-            absolutePath += path;
-        }
-        
-        return absolutePath.replace('\\', '/');
-    }
-    
-    public static String getCodeGenerateDir(String projectName){
-        return getUserWorkDir()+"codeGenerate" + File.separator + projectName + File.separator;
-    }
-    
-    public static String getTplDir(Long tplId){
-        return getUserWorkDir()+"tpls" + File.separator + tplId + File.separator;
-    }
-    
-    public static String getTplFileRelativePath(String tplPath , Long tplId){
-        return tplPath.replace(getTplDir(tplId), "");
-    }
-
     /**
      * 聚灵通url
      * @return
