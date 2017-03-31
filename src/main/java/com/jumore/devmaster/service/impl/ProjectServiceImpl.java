@@ -37,9 +37,6 @@ public class ProjectServiceImpl extends BaseServiceImpl implements ProjectServic
         // 保存之前先删除老的数据
         execute("Entity.delField", pm);
         execute("Entity.delEntity", pm);
-if(1==1){
-    throw new RuntimeException("同步失败");
-}
         try {
             Connection connection = ConnectionUtil.initConnection(driverClass, project.getDbUrl(), project.getDbUserName(),
                     project.getDbPassword());
