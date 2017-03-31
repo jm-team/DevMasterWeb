@@ -8,6 +8,7 @@ import com.jumore.devmaster.service.ProjectService;
 import com.jumore.dove.common.BusinessException;
 import com.jumore.dove.service.BaseServiceImpl;
 import com.jumore.dove.util.ParamMap;
+import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
@@ -21,9 +22,10 @@ import java.util.List;
 /**
  * Created by Administrator on 2017/3/31.
  */
+@Component
 public class ProjectServiceImpl extends BaseServiceImpl implements ProjectService {
     /**
-     * 添加表与列数据
+     * 同步库表之添加表与列数据
      *
      * @param project Project
      * @param driverClass 驱动
@@ -35,7 +37,9 @@ public class ProjectServiceImpl extends BaseServiceImpl implements ProjectServic
         // 保存之前先删除老的数据
         execute("Entity.delField", pm);
         execute("Entity.delEntity", pm);
-
+if(1==1){
+    throw new RuntimeException("同步失败");
+}
         try {
             Connection connection = ConnectionUtil.initConnection(driverClass, project.getDbUrl(), project.getDbUserName(),
                     project.getDbPassword());
