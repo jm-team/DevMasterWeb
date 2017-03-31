@@ -10,7 +10,7 @@
 			</div>
 			<div class="ace-settings-box" id="ace-settings-box">
 				<div>
-					<span><a href="javascript:void(0)" onclick="openAddTemplate();">增加模板</a></span>
+					<span><a href="javascript:void(0)" onclick="openAddComponent();">增加组件</a></span>
 				</div>
 			</div>
 		</div>
@@ -86,7 +86,7 @@ function listData(currentResult){
 	var devUsername = $('#devUsername').val();
 	$.ajax({
         type: "POST",
-        url: '${ServiceName}/template/listTemplateData',
+        url: '${ServiceName}/component/listComponentData',
         data: {currentResult:currentResult , title:title , scope:${scope}},
         dataType:'json'
     }).done(function (result) {
@@ -107,13 +107,13 @@ function listData(currentResult){
     });
 }
 
-function openAddTemplate(){
+function openAddComponent(){
 	layer.open({
 	  type: 2,
 	  title: '添加项目',
 	  shade: 0.5,
 	  area: ['50%', '450px'],
-	  content: '${ServiceName}/template/addTemplate',
+	  content: '${ServiceName}/component/addComponent',
 	  cancel:function(index){
 		  listData(curResult);
 	  }
@@ -128,7 +128,7 @@ function setScope(id , scope){
 	}
 	$.ajax({
         type: "POST",
-        url: '${ServiceName}' + "/template/setScope",
+        url: '${ServiceName}' + "/component/setScope",
         data: {
             "tplId": id,
 			"scope": scope
