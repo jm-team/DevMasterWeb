@@ -11,10 +11,9 @@
 					</div>
 				</div>
 				<div class="form-group">
-					<span class="col-sm-3 control-label no-padding-right">数据url：<span style="color:red;">*</span></span> 
+					<span class="col-sm-3 control-label no-padding-right">数据url：<span style="color:red;">*</span></span>
 					<div class="col-sm-9">
-						<input type="text"  name="dbUrl" value="${project.dbUrl}" class="col-xs-10 col-sm-5" 
-							data-null-msg="数据库url不能为空" maxlength="500"/>
+						<textarea data-null-msg="数据库url不能为空" maxlength="500" rows="3" cols="" name="dbUrl"  class="col-xs-10 col-sm-5" >${project.dbUrl}</textarea>
 					</div>
 				</div>
 				<div class="form-group">

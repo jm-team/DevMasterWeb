@@ -29,6 +29,7 @@ import com.jumore.devmaster.entity.Project;
 import com.jumore.devmaster.entity.ProjectTemplate;
 import com.jumore.devmaster.service.CodeGenerateService;
 import com.jumore.devmaster.service.ProjectGenerateService;
+import com.jumore.devmaster.service.nashorn.ParserEngine;
 import com.jumore.dove.common.BusinessException;
 import com.jumore.dove.service.BaseService;
 
@@ -47,6 +48,9 @@ public class ProjectGenerateServiceImpl implements ProjectGenerateService {
     @Override
     public void generateCode(Project project, String tplPath, String codePath) {
 
+        ParserEngine parseEngine = new ParserEngine();
+        ProjectTemplate tempalte = baseService.get(ProjectTemplate.class, project.getTplId());
+        
         if (StringUtils.isEmpty(project.getGenerateEntityIds())) {
             return;
         }
@@ -59,19 +63,19 @@ public class ProjectGenerateServiceImpl implements ProjectGenerateService {
             if(StringUtils.isEmpty(entityId)){
                 continue;
             }
+            DBEntity entityPo = baseService.get(DBEntity.class, Long.valueOf(entityId));
+            params.put("entityName", parseEngine.toEntityName(tempalte,entityPo.getName()));
             // 先生成目录
-            generateDirs(project, tplPath, codePath, params , Long.valueOf(entityId));
+            generateDirs(parseEngine,project, tempalte , tplPath, codePath, params , entityPo);
 
             // 生成文件
-            generateFiles(project , tplPath , codePath , params , Long.valueOf(entityId));
+            generateFiles(parseEngine,project ,tempalte, tplPath , codePath , params , entityPo);
         }
-        
         
     }
 
-    private void generateFiles(Project project, String tplPath, String codePath, JSONObject params , Long entityId) {
-        DBEntity entityPo = baseService.get(DBEntity.class, entityId);
-        params.put("entityName", toEntityName(entityPo.getName()));
+    private void generateFiles(ParserEngine parseEngine,Project project, ProjectTemplate tempalte, String tplPath, String codePath, JSONObject params , DBEntity entityPo) {
+        
         //生成实体类
         Object code = generateEntityClass(entityPo , null);
         params.put("entityCode", code);
@@ -85,22 +89,24 @@ public class ProjectGenerateServiceImpl implements ProjectGenerateService {
         }
         for (File tplFile : files) {
             try {
-                String dest = codePath + SessionHelper.getTplFileRelativePath(tplFile.getAbsolutePath(), project.getTplId());
+                String dest = codePath + PathUtils.getTplFileRelativePath(tplFile.getAbsolutePath(), project.getTplId());
                 dest = replacePlaceHolder(dest, params);
                 File destFile = new File(dest);
+                String realDest = destFile.getParentFile().getAbsolutePath().replace(".", File.separator)+File.separator+destFile.getName();
+                File realDestFile = new File(realDest);
                 String ext = PathUtils.getExt(tplFile);
                 if(!tpl.getExts().contains(ext)){
                     //直接拷贝文件
-                    FileUtils.copyFile(tplFile, destFile);
-                    System.out.println("move file : "+ dest);
+                    FileUtils.copyFile(tplFile, realDestFile);
+                    System.out.println("move file : "+ realDestFile.getAbsolutePath());
                     continue;
                 }
                 
                 // 使用模板解析器解析模板文件
-                String text = resolveTemplate(tplFile , entityPo , params);
+                String text = resolveTemplate(tplFile , entityPo.getId() , params);
                 
-                System.out.println("generate file : "+ dest);
-                FileUtils.writeStringToFile(destFile, text, "utf8");
+                System.out.println("generate file : "+ realDestFile.getAbsolutePath());
+                FileUtils.writeStringToFile(realDestFile, text, "utf8");
                 
                 
             } catch (IOException e) {
@@ -119,7 +125,7 @@ public class ProjectGenerateServiceImpl implements ProjectGenerateService {
      * @return
      * @throws IOException 
      */
-    private String resolveTemplate(File tplFile , DBEntity entityPo , JSONObject params) throws IOException {
+    private String resolveTemplate(File tplFile , Long dbEntityId , JSONObject params) throws IOException {
         try{
             Properties p = new Properties();  
             VelocityEngine ve = new VelocityEngine();
@@ -131,7 +137,7 @@ public class ProjectGenerateServiceImpl implements ProjectGenerateService {
             
             VelocityContext ctx = new VelocityContext(params);
             EntityField vo = new EntityField();
-            vo.setDbentityId(entityPo.getId());
+            vo.setDbentityId(dbEntityId);
             vo.setShowInput(DevMasterConst.ShowInput.Yes);
             List<EntityField> fieldList = baseService.listByExample(vo);
             ctx.put("fieldList", fieldList);
@@ -144,16 +150,17 @@ public class ProjectGenerateServiceImpl implements ProjectGenerateService {
         
     }
 
-    private void generateDirs(Project project, String tplPath, String codePath, JSONObject params , Long entityId) {
-        DBEntity entityPo = baseService.get(DBEntity.class, entityId);
-        params.put("entityName", toEntityName(entityPo.getName()));
+    private void generateDirs(ParserEngine parseEngine , Project project,ProjectTemplate tempalte, String tplPath, String codePath, JSONObject params ,DBEntity entityPo) {
         Collection<File> dirs = FileUtils.listFilesAndDirs(new File(tplPath), FalseFileFilter.INSTANCE, TrueFileFilter.INSTANCE);
         for (File dir : dirs) {
             if (dir.getAbsolutePath().equals(tplPath)) {
                 continue;
             }
-            String dest = codePath + SessionHelper.getTplFileRelativePath(dir.getAbsolutePath(), project.getTplId());
+            String dest = codePath + PathUtils.getTplFileRelativePath(dir.getAbsolutePath(), project.getTplId());
+            
             dest = replacePlaceHolder(dest, params);
+            // replace . to \
+            dest = dest.replace(".", File.separator);
             new File(dest).mkdirs();
             System.out.println(dest);
         }
@@ -171,16 +178,4 @@ public class ProjectGenerateServiceImpl implements ProjectGenerateService {
         return text;
     }
     
-    private String toEntityName(String tableName){
-        //去掉表前缀
-        String[] arr = tableName.split("_");
-        StringBuilder result = new StringBuilder();
-        // 首字母大写
-        for(String str : arr){
-            StringBuilder sb = new StringBuilder(str);
-            sb.setCharAt(0, Character.toUpperCase(sb.charAt(0)));
-            result.append(sb);
-        }
-        return result.toString();
-    }
 }

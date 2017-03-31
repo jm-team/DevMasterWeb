@@ -29,13 +29,14 @@ import com.alibaba.fastjson.JSONObject;
 import com.jumore.devmaster.common.CodeMirrorModeContainer;
 import com.jumore.devmaster.common.TreeIconClassContainer;
 import com.jumore.devmaster.common.util.ConnectionUtil;
+import com.jumore.devmaster.common.util.PathUtils;
 import com.jumore.devmaster.common.util.SessionHelper;
 import com.jumore.devmaster.entity.DBEntity;
 import com.jumore.devmaster.entity.DevMasterUser;
 import com.jumore.devmaster.entity.EntityField;
 import com.jumore.devmaster.entity.Project;
 import com.jumore.devmaster.entity.ProjectTemplate;
-import com.jumore.dove.aop.annotation.PublicMethod;
+import com.jumore.devmaster.validator.CommonValidator;
 import com.jumore.dove.common.BusinessException;
 import com.jumore.dove.plugin.Page;
 import com.jumore.dove.service.BaseService;
@@ -90,6 +91,9 @@ public class ProjectController {
             throw new RuntimeException("数据库密码不能为空");
         }
         project.setCreateTime(new Date());
+        if(CommonValidator.isEntityExsit(Project.class, new String[]{"name","ownerId"}, new Object[]{project.getName() , project.getOwnerId()})){
+            throw new RuntimeException("工程名称不能重复");
+        }
         baseService.save(project);
         return ResponseVo.<String> BUILDER().setData("").setCode(Const.BUSINESS_CODE.SUCCESS);
     }
@@ -285,7 +289,7 @@ public class ProjectController {
     @RequestMapping(value = "getTemplateFiles")
     public JSONArray getTemplateFiles(String id, Long tplId) throws Exception {
         String path = org.apache.commons.lang.StringUtils.isBlank(id) ? String.valueOf(tplId) : id;
-        String dirStr = SessionHelper.getAbsolutePath(path);
+        String dirStr = PathUtils.getAbsolutePath(path);
         File dir = new File(dirStr);
 
         if (!dir.exists()) {
@@ -332,7 +336,7 @@ public class ProjectController {
     @ResponseBody
     @RequestMapping(value = "addFile")
     public ResponseVo<String> addFile(Long tplId, String parent, String newFileName, boolean isFile) throws Exception {
-        String absolutePath = SessionHelper.getAbsolutePath(parent + File.separator + newFileName);
+        String absolutePath = PathUtils.getAbsolutePath(parent + File.separator + newFileName);
         File newFile = new File(absolutePath);
 
         if (newFile.exists()) {
@@ -365,7 +369,7 @@ public class ProjectController {
     @ResponseBody
     @RequestMapping("/rename")
     public ResponseVo<String> rename(String oldNameId, String newName) {
-        String absolutePath = SessionHelper.getAbsolutePath(oldNameId);
+        String absolutePath = PathUtils.getAbsolutePath(oldNameId);
         File file = new File(absolutePath);
 
         int index = file.getAbsolutePath().lastIndexOf(file.separator);
@@ -383,8 +387,12 @@ public class ProjectController {
         ModelAndView mv = new ModelAndView();
 
         if (org.apache.commons.lang.StringUtils.isNotBlank(path)) {
-            String filePath = SessionHelper.getAbsolutePath(path);
+            String filePath = PathUtils.getAbsolutePath(path);
             File file = new File(filePath);
+            if(!file.exists()){
+                FileUtils.forceMkdir(file.getParentFile());
+                file.createNewFile();
+            }
             String content = FileUtils.readFileToString(file);
             
             if(!StringUtils.isEmpty(content)){
@@ -404,7 +412,7 @@ public class ProjectController {
     @RequestMapping(value = "save")
     public ResponseVo<String> save(String path, String content) {
         try {
-            path = SessionHelper.getAbsolutePath(path);
+            path = PathUtils.getAbsolutePath(path);
             File file = new File(path);
             FileUtils.write(file, content);
         } catch (IOException e) {
@@ -417,7 +425,7 @@ public class ProjectController {
 
     @RequestMapping(value = "/picture")
     public void readPicture(String path, HttpServletResponse response) throws IOException{
-        path = SessionHelper.getAbsolutePath(path);
+        path = PathUtils.getAbsolutePath(path);
         File file = new File(path);
         
         response.setHeader("Content-Type","image/jped");
@@ -430,7 +438,7 @@ public class ProjectController {
             return org.apache.commons.lang.StringUtils.EMPTY;
         }
 
-        return file.getAbsolutePath().replace('\\', '/').replace(SessionHelper.getAbsolutePath(),
+        return file.getAbsolutePath().replace('\\', '/').replace(PathUtils.getAbsolutePath(),
                 org.apache.commons.lang.StringUtils.EMPTY);
     }
 
@@ -441,7 +449,7 @@ public class ProjectController {
             throw new BusinessException("parent directory cannot be empty or file cannot be null");
         }
         
-        String path = SessionHelper.getAbsolutePath(parent);
+        String path = PathUtils.getAbsolutePath(parent);
         File dir = new File(path);
         
         if(!dir.exists() || !dir.isDirectory()){
