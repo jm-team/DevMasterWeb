@@ -57,10 +57,8 @@ public class ProjectServiceImpl extends BaseServiceImpl implements ProjectServic
             if (!CollectionUtils.isEmpty(dbEntityList)) {
                 // 保存表信息
                 batchSave(dbEntityList);
-
                 // 获取列信息
                 List<EntityField> entityFieldList = getAllColumnInfoList(dbEntityList, metadata, project.getId());
-
                 // 保存列信息
                 batchSave(entityFieldList);
             }
