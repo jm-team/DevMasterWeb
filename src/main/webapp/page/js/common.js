@@ -85,12 +85,7 @@ function validateForm(formId) {
 	$.each(elements, function(index, ele) {
 		var text = '';
 		var element = $(ele);
-
-		if (ele.tagName == 'TEXTAREA') {
-			text = element.text();
-		} else {
-			text = element.val();
-		}
+		text = element.val();
 
 		if (hasAttr(element, 'data-null-msg')
 				&& element.attr('data-null-msg') != '' && text == '') {
