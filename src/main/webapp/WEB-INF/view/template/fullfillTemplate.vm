@@ -26,18 +26,28 @@
 $("#item_submit").on("click", function (e) {
     //check form data
     var data = $('#form').serialize();
+	
     $.ajax({
         type: "POST",
         url: '${ServiceName}' + "/template/doGenerateCode",
         data: data,
-        dataType:'json'
+        dataType:'json',
+		beforeSend : function(){
+			var index = layer.load(1, {
+              shade: [0.1,'#fff'] //0.1透明度的白色背景
+            });
+		}
     }).done(function (data) {
+		layer.closeAll();
+		
         if (data.code == -1) {
             layer.msg(data.desc);
         } else {
         	layer.msg('保存成功');
         	closeWindowAndRefreshParent();
         }
-    });
+    }).fail(function(){
+		layer.closeAll();
+	});
 });
 </script>
