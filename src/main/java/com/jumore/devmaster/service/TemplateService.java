@@ -4,4 +4,7 @@ import com.jumore.dove.service.BaseService;
 
 public interface TemplateService extends BaseService{
     void cloneTemplate(Long tplId, String newTplTitle) throws Exception;
+
+    void deleteTemplate(Long tplId) throws Exception;
+
 }

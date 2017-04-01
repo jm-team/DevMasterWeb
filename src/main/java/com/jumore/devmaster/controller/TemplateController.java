@@ -20,7 +20,6 @@ import com.jumore.dove.service.BaseService;
 import com.jumore.dove.util.ParamMap;
 import com.jumore.dove.web.model.Const;
 import com.jumore.dove.web.model.ResponseVo;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -28,7 +27,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -250,16 +248,18 @@ public class TemplateController extends BaseController {
         return ResponseVo.<String> BUILDER().setCode(Const.BUSINESS_CODE.SUCCESS);
     }
 
+    /**
+     * 删除模板
+     * @param tplId
+     * @return
+     * @throws Exception
+     */
     @ResponseBody
     @RequestMapping(value = "deleteTemplate")
     public ResponseVo<String> deleteTemplate(Long tplId) throws Exception {
-        ProjectTemplate po = baseService.get(ProjectTemplate.class, tplId);
-        if (po != null) {
-            baseService.delete(po);
-        }
-        // 删除文件
-        String tplDir = PathUtils.getTplDir(tplId);
-        FileUtils.deleteQuietly(new File(tplDir));
+        templateService.deleteTemplate(tplId);
+
+
         return ResponseVo.<String> BUILDER().setCode(Const.BUSINESS_CODE.SUCCESS);
     }
 }
