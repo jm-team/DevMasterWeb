@@ -7,7 +7,7 @@
 		<trim>
 			<where>
 				<if test="name != null and name != ''">
-					name LIKE CONCAT('%','${name}','%' )
+					name LIKE CONCAT('%','#{name}','%' )
 				</if>
 			</where>
 		</trim>
