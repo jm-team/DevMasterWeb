@@ -300,7 +300,8 @@ function beforeTabClose(title,index){
 	if($('#contentTabs .tabs-title').eq(index).find('.changed-title').length > 0){ 
 		tip = title + '已修改，您确认要关闭吗？';
 	} else{
-		tip = '您确认要关闭' + title + '吗？';
+		//tip = '您确认要关闭' + title + '吗？';
+		return true; // 没有修改时，直接关闭
 	}
 	
 	layer.confirm(tip, {
