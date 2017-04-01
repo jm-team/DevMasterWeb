@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.StringUtil;
 import com.jumore.devmaster.common.DevMasterConst;
+import com.jumore.devmaster.common.enums.BaseExceptionEnum;
 import com.jumore.devmaster.common.model.vo.TemplateSettingVO;
 import com.jumore.devmaster.common.util.PathUtils;
 import com.jumore.devmaster.common.util.SessionHelper;
@@ -55,10 +56,10 @@ public class TemplateController extends BaseController {
     @RequestMapping(value = "doAddTemplate")
     public ResponseVo<String> doAddTemplate(ProjectTemplate tpl) throws Exception {
         if (StringUtils.isEmpty(tpl.getTitle())) {
-            throw new BusinessException("标题不能为空");
+            throw new BusinessException(BaseExceptionEnum.TITLE_NOT_BE_NULL.getMsg());
         }
         if (StringUtils.isEmpty(tpl.getExts())) {
-            throw new BusinessException("模板文件的扩展名不能为空");
+            throw new BusinessException(BaseExceptionEnum.TEMPLATE_EXT_NOT_BE_NULL.getMsg());
         }
         tpl.setCreateTime(new Date());
         tpl.setUid(SessionHelper.getUser().getId());
@@ -83,11 +84,11 @@ public class TemplateController extends BaseController {
     @RequestMapping(value = "doUpdateTemplate")
     public ResponseVo<String> doUpdateTemplate(ProjectTemplate tpl) throws Exception {
         if (StringUtils.isEmpty(tpl.getTitle())) {
-            throw new BusinessException("标题不能为空");
+            throw new BusinessException(BaseExceptionEnum.TITLE_NOT_BE_NULL.getMsg());
         }
         ProjectTemplate tplPo = baseService.get(ProjectTemplate.class, tpl.getId());
         if (tplPo == null) {
-            throw new BusinessException("模板不存在或已经删除");
+            throw new BusinessException(BaseExceptionEnum.TEMPLATE_NOT_EXIST_OR_DELETED.getMsg());
         }
         tplPo.setTitle(tpl.getTitle());
         tplPo.setRemark(tpl.getRemark());
@@ -125,7 +126,7 @@ public class TemplateController extends BaseController {
     public ResponseVo<String> setScope(Long tplId, Integer scope) throws Exception {
         ProjectTemplate tplPo = baseService.get(ProjectTemplate.class, tplId);
         if (scope == null) {
-            throw new BusinessException("无效的状态设置");
+            throw new BusinessException(BaseExceptionEnum.STATUS_NO_EFFECT.getMsg());
         }
         tplPo.setScope(scope);
         baseService.update(tplPo);

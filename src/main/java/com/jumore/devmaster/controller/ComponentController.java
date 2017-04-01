@@ -1,7 +1,15 @@
 package com.jumore.devmaster.controller;
 
-import java.util.Date;
-
+import com.jumore.devmaster.common.enums.BaseExceptionEnum;
+import com.jumore.devmaster.common.util.SessionHelper;
+import com.jumore.devmaster.entity.Project;
+import com.jumore.devmaster.entity.ProjectTemplate;
+import com.jumore.dove.common.BusinessException;
+import com.jumore.dove.plugin.Page;
+import com.jumore.dove.service.BaseService;
+import com.jumore.dove.util.ParamMap;
+import com.jumore.dove.web.model.Const;
+import com.jumore.dove.web.model.ResponseVo;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -9,16 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.jumore.devmaster.common.util.SessionHelper;
-import com.jumore.devmaster.entity.Project;
-import com.jumore.devmaster.entity.ProjectTemplate;
-import com.jumore.dove.aop.annotation.PublicMethod;
-import com.jumore.dove.common.BusinessException;
-import com.jumore.dove.plugin.Page;
-import com.jumore.dove.service.BaseService;
-import com.jumore.dove.util.ParamMap;
-import com.jumore.dove.web.model.Const;
-import com.jumore.dove.web.model.ResponseVo;
+import java.util.Date;
 
 @Controller
 @RequestMapping(value = "/component")
@@ -37,7 +36,7 @@ public class ComponentController {
     @RequestMapping(value = "doAddComponent")
     public ResponseVo<Page<Project>> doAddTemplate(ProjectTemplate tpl) throws Exception {
         if (StringUtils.isEmpty(tpl.getTitle())) {
-            throw new BusinessException("标题不能为空");
+            throw new BusinessException(BaseExceptionEnum.TITLE_NOT_BE_NULL.getMsg());
         }
         tpl.setCreateTime(new Date());
         tpl.setUid(SessionHelper.getUser().getId());
@@ -72,7 +71,7 @@ public class ComponentController {
     public ResponseVo<String> setScope(Long tplId, Integer scope) throws Exception {
         ProjectTemplate tplPo = baseService.get(ProjectTemplate.class, tplId);
         if (scope == null) {
-            throw new BusinessException("无效的状态设置");
+            throw new BusinessException(BaseExceptionEnum.STATUS_NO_EFFECT.getMsg());
         }
         tplPo.setScope(scope);
         baseService.update(tplPo);

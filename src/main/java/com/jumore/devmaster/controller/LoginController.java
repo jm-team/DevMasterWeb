@@ -1,12 +1,12 @@
 package com.jumore.devmaster.controller;
 
-import java.security.interfaces.RSAPrivateKey;
-import java.security.interfaces.RSAPublicKey;
-import java.util.HashMap;
-
-import javax.servlet.http.HttpServletRequest;
-
+import com.jumore.devmaster.common.enums.BaseExceptionEnum;
 import com.jumore.devmaster.common.util.RSAKeyUtil;
+import com.jumore.dove.aop.annotation.PublicMethod;
+import com.jumore.dove.util.MD5;
+import com.jumore.dove.util.RSAUtils;
+import com.jumore.dove.web.model.Const;
+import com.jumore.dove.web.model.ResponseVo;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.UsernamePasswordToken;
@@ -16,11 +16,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.jumore.dove.aop.annotation.PublicMethod;
-import com.jumore.dove.util.MD5;
-import com.jumore.dove.util.RSAUtils;
-import com.jumore.dove.web.model.Const;
-import com.jumore.dove.web.model.ResponseVo;
+import javax.servlet.http.HttpServletRequest;
+import java.security.interfaces.RSAPrivateKey;
 
 @Controller
 @RequestMapping(value = "")
@@ -55,9 +52,9 @@ public class LoginController {
             request.getSession().removeAttribute(RSAUtils.RAS_Key_Private);
             return ResponseVo.<String> BUILDER().setCode(Const.BUSINESS_CODE.SUCCESS);
         } catch (AuthenticationException ex) {
-            return ResponseVo.<String> BUILDER().setDesc("用户密码错误").setCode(Const.BUSINESS_CODE.FAILED);
+            return ResponseVo.<String> BUILDER().setDesc(BaseExceptionEnum.PASSWD_FAIL.getMsg()).setCode(Const.BUSINESS_CODE.FAILED);
         } catch (Exception ex) {
-            return ResponseVo.<String> BUILDER().setDesc("登录失败").setCode(Const.BUSINESS_CODE.FAILED);
+            return ResponseVo.<String> BUILDER().setDesc(BaseExceptionEnum.LOGIN_FAIL.getMsg()).setCode(Const.BUSINESS_CODE.FAILED);
         }
     }
 
