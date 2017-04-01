@@ -12,6 +12,7 @@ import com.jumore.devmaster.entity.Project;
 import com.jumore.devmaster.entity.ProjectTemplate;
 import com.jumore.devmaster.entity.TemplateSetting;
 import com.jumore.devmaster.service.ProjectGenerateService;
+import com.jumore.devmaster.service.TemplateService;
 import com.jumore.dove.common.BusinessException;
 import com.jumore.dove.controller.base.BaseController;
 import com.jumore.dove.plugin.Page;
@@ -39,6 +40,9 @@ public class TemplateController extends BaseController {
 
     @Autowired
     private BaseService            baseService;
+    
+    @Autowired
+    private TemplateService templateService;
 
     @Autowired
     private ProjectGenerateService codeGenerateService;
@@ -102,7 +106,8 @@ public class TemplateController extends BaseController {
         return mv;
     }
 
-    @ResponseBody
+    @SuppressWarnings("rawtypes")
+	@ResponseBody
     @RequestMapping(value = "listTemplateData")
     public ResponseVo<Page<Map>> listTemplateData(Page<Map> page, Long scope, String title) throws Exception {
         ParamMap pm = new ParamMap();
@@ -240,32 +245,8 @@ public class TemplateController extends BaseController {
 
     @ResponseBody
     @RequestMapping(value = "doCloneTemplate")
-    public ResponseVo<String> doChooseTemplate(Long tplId, String newTplTitle) throws Exception {
-        if (StringUtils.isEmpty(newTplTitle)) {
-            throw new BusinessException("模板名称不能为空");
-        }
-        ProjectTemplate original = baseService.get(ProjectTemplate.class, tplId);
-        ProjectTemplate tpl = new ProjectTemplate();
-        tpl.setTitle(newTplTitle);
-        tpl.setUid(SessionHelper.getUser().getId());
-        ProjectTemplate po = (ProjectTemplate) baseService.getByExample(tpl);
-        if (po != null) {
-            throw new BusinessException("模板名称重复，你先修改模板名称");
-        }
-
-        tpl.setCreateTime(new Date());
-        tpl.setDeleteFlag(DevMasterConst.Flag.NotDelete);
-
-        tpl.setRemark(original.getRemark());
-        tpl.setScope(DevMasterConst.Scope.Private);
-        tpl.setUpdateTime(new Date());
-        tpl.setExts(original.getExts());
-        baseService.save(tpl);
-
-        // 拷贝文件
-        String newTplDir = PathUtils.getTplDir(tpl.getId());
-        String oldTplDir = PathUtils.getTplDir(tplId);
-        FileUtils.copyDirectory(new File(oldTplDir), new File(newTplDir));
+    public ResponseVo<String> doCloneTemplate(Long tplId, String newTplTitle) throws Exception {
+        templateService.cloneTemplate(tplId, newTplTitle);
         return ResponseVo.<String> BUILDER().setCode(Const.BUSINESS_CODE.SUCCESS);
     }
 
