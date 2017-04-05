@@ -1,15 +1,7 @@
 package com.jumore.devmaster.controller;
 
-import com.jumore.devmaster.common.enums.BaseExceptionEnum;
-import com.jumore.devmaster.common.util.SessionHelper;
-import com.jumore.devmaster.entity.Project;
-import com.jumore.devmaster.entity.ProjectTemplate;
-import com.jumore.dove.common.BusinessException;
-import com.jumore.dove.plugin.Page;
-import com.jumore.dove.service.BaseService;
-import com.jumore.dove.util.ParamMap;
-import com.jumore.dove.web.model.Const;
-import com.jumore.dove.web.model.ResponseVo;
+import java.util.Date;
+
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -17,7 +9,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import java.util.Date;
+import com.jumore.devmaster.common.enums.BaseExceptionEnum;
+import com.jumore.devmaster.common.util.SessionHelper;
+import com.jumore.devmaster.entity.FrontComponent;
+import com.jumore.dove.common.BusinessException;
+import com.jumore.dove.plugin.Page;
+import com.jumore.dove.service.BaseService;
+import com.jumore.dove.util.ParamMap;
+import com.jumore.dove.web.model.Const;
+import com.jumore.dove.web.model.ResponseVo;
 
 @Controller
 @RequestMapping(value = "/component")
@@ -34,16 +34,20 @@ public class ComponentController {
 
     @ResponseBody
     @RequestMapping(value = "doAddComponent")
-    public ResponseVo<Page<Project>> doAddTemplate(ProjectTemplate tpl) throws Exception {
-        if (StringUtils.isEmpty(tpl.getTitle())) {
+    public ResponseVo<String> doAddTemplate(FrontComponent comp) throws Exception {
+        if (StringUtils.isEmpty(comp.getName())) {
             throw new BusinessException(BaseExceptionEnum.TITLE_NOT_BE_NULL.getMsg());
         }
-        tpl.setCreateTime(new Date());
-        tpl.setUid(SessionHelper.getUser().getId());
-        tpl.setDeleteFlag(0);
-        tpl.setScope(1);
-        baseService.save(tpl);
-        return ResponseVo.<Page<Project>> BUILDER().setCode(Const.BUSINESS_CODE.SUCCESS);
+        if (StringUtils.isEmpty(comp.getGroupId())) {
+            throw new BusinessException(BaseExceptionEnum.COMP_GROUPID_NOT_BE_NULL.getMsg());
+        }
+        if (StringUtils.isEmpty(comp.getVersion())) {
+            throw new BusinessException(BaseExceptionEnum.COMP_VERSION_NOT_BE_NULL.getMsg());
+        }
+        comp.setCreateTime(new Date());
+        comp.setUid(SessionHelper.getUser().getId());
+        baseService.save(comp);
+        return ResponseVo.<String> BUILDER().setCode(Const.BUSINESS_CODE.SUCCESS);
     }
 
     @RequestMapping(value = "/componentList")
@@ -55,26 +59,16 @@ public class ComponentController {
 
     @ResponseBody
     @RequestMapping(value = "listComponentData")
-    public ResponseVo<Page<ProjectTemplate>> listComponentData(Page<ProjectTemplate> page, Long scope) throws Exception {
+    public ResponseVo<Page<FrontComponent>> listComponentData(Page<FrontComponent> page, Long scope) throws Exception {
         ParamMap pm = new ParamMap();
-        if (1==scope) {
-            pm.put("uid", "12");
-        } else {
-            pm.put("scope", 2);
-        }
-        page = baseService.findPageByParams(ProjectTemplate.class, page, "Component.listPrivateComponent", pm);
-        return ResponseVo.<Page<ProjectTemplate>> BUILDER().setData(page).setCode(Const.BUSINESS_CODE.SUCCESS);
+        pm.put("uid", SessionHelper.getUser().getId());
+        page = baseService.findPageByParams(FrontComponent.class, page, "Component.listPrivateComponent", pm);
+        return ResponseVo.<Page<FrontComponent>> BUILDER().setData(page).setCode(Const.BUSINESS_CODE.SUCCESS);
     }
 
     @ResponseBody
-    @RequestMapping(value = "setScope")
-    public ResponseVo<String> setScope(Long tplId, Integer scope) throws Exception {
-        ProjectTemplate tplPo = baseService.get(ProjectTemplate.class, tplId);
-        if (scope == null) {
-            throw new BusinessException(BaseExceptionEnum.STATUS_NO_EFFECT.getMsg());
-        }
-        tplPo.setScope(scope);
-        baseService.update(tplPo);
+    @RequestMapping(value = "publish")
+    public ResponseVo<String> publish(Long tplId, Integer scope) throws Exception {
         return ResponseVo.<String> BUILDER().setCode(Const.BUSINESS_CODE.SUCCESS);
     }
 

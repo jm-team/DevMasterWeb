@@ -27,10 +27,13 @@ public enum BaseExceptionEnum {
      * 模块提醒
      */
     TEMPLATE_EXT_NOT_BE_NULL("30000","模板文件的扩展名不能为空"),
-    TEMPLATE_NOT_EXIST_OR_DELETED("30001","模板不存在或已经删除")
+    TEMPLATE_NOT_EXIST_OR_DELETED("30001","模板不存在或已经删除"),
 
+    COMP_VERSION_NOT_BE_NULL("40001","组件版本不能为空"),
+    COMP_GROUPID_NOT_BE_NULL("40002","组件groupId不能为空")
     ;
 
+    
 
     BaseExceptionEnum(String code, String msg) {
         this.code = code;
