@@ -18,8 +18,8 @@
 			<div class="search">
     			<div class="form-group">
     				<div class="col-sm-3">
-						<span class="control-label search-label">组件名称：</span>
-    					<input type="text" id="title" placeholder="请输入组件名称" class="col-xs-6 col-sm-6" />
+						<span class="control-label search-label">模板名称：</span>
+    					<input type="text" id="title" placeholder="请输入模板名称" class="col-xs-6 col-sm-6" />
     				</div>
     			</div>
     			<button class="btn btn-xs btn-info" onclick="doSearch()">搜索</button>
@@ -30,22 +30,23 @@
 					<table id="sample-table-1" class="table table-striped table-bordered table-hover">
 							<thead>
 								<tr>
-									<th>groupId</th>
-									<th>组件名称</th>
+									<th>模板名称</th>
 									<th>说明</th>
 									<th>创建时间</th>
+									<th>创建人</th>
+									<th>状态</th>
 								    <th></th>
 								</tr>
 							</thead>
 
 							<tbody>
 								<tr style="display:none;" class="node_row">
-									<td >$[groupId]</td>
-								    <td ><a href="${ServiceName}/project/index?compId=$[id]">$[name]</a></td>
+								    <td ><a href="${ServiceName}/project/index?tplId=$[id]">$[title]</a></td>
 								    <td >$[remark]</td>
 									<td >$[createTime]</td>
+									<td >$[createUser]</td>
+                                    <td ><a href="javascript:void(0)" onclick="setScope($[id],$[scope])" script="true">getScopeText($[scope])</a></td>
 								    <td>
-											<a href="javascript:void(0)" onclick="publishComponent($[id])">发布</a>
 											<a href="javascript:void(0)" onclick="deleteTemplate($[id])">删除</a>
 								    </td>
 								</tr>
@@ -109,16 +110,17 @@ function listData(currentResult){
 function openAddComponent(){
 	layer.open({
 	  type: 2,
-	  title: '添加组件',
+	  title: '添加项目',
 	  shade: 0.5,
 	  area: ['50%', '450px'],
 	  content: '${ServiceName}/component/addComponent',
 	  cancel:function(index){
+		  listData(curResult);
 	  }
 	});
 }
 
-function publishComponent(id){
+function setPublish(id){
 	$.ajax({
         type: "POST",
         url: '${ServiceName}' + "/component/publish",

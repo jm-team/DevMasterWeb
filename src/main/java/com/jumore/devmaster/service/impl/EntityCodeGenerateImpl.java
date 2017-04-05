@@ -146,7 +146,7 @@ public class EntityCodeGenerateImpl extends BaseServiceImpl implements CodeGener
         }
     }
 
-    private static class NameConverter {
+    static class NameConverter {
         private static String FIELD_SEPERATOR = "_";
         private static String GETTER_PREFIX   = "get";
         private static String SETTER_PREFIX   = "set";

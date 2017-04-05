@@ -35,4 +35,17 @@ public class Configuration {
 	public String getDockerHost() {
 		return dockerHost;
 	}
+    @Value(value = "${sys.frontComponent.repoPath}")
+    private String frontComponentRepoPath;
+    
+    @Value(value = "${sys.frontComponent.repoDomain}")
+    private String frontComponentRepoDomain;
+
+    public String getFrontComponentRepoPath() {
+        return frontComponentRepoPath;
+    }
+
+    public String getFrontComponentRepoDomain() {
+        return frontComponentRepoDomain;
+    }
 }
