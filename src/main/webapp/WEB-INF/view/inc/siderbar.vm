@@ -61,10 +61,10 @@ $(function(){
 				</a>
 		        <ul class="submenu">
 					<li>
-						<a  class="menu" href="${ServiceName}/component/componentList?scope=1"> <i class="icon-double-angle-right"></i>我的组件</a>
+						<a  class="menu" href="${ServiceName}/component/componentList"> <i class="icon-double-angle-right"></i>我的组件</a>
 					</li>
 					<li>
-						<a  class="menu" href="${ServiceName}/component/componentList?scope=2"> <i class="icon-double-angle-right"></i>共享组件</a>
+						<a  class="menu" href="${ServiceName}/component/componentReleaseList"> <i class="icon-double-angle-right"></i>组件仓库</a>
 					</li>
 				</ul> 
 			</li>

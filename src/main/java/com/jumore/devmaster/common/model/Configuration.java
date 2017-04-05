@@ -28,4 +28,19 @@ public class Configuration {
     public String getJltUrl() {
         return jltUrl;
     }
+    
+    @Value(value = "${sys.frontComponent.repoPath}")
+    private String frontComponentRepoPath;
+    
+    @Value(value = "${sys.frontComponent.repoDomain}")
+    private String frontComponentRepoDomain;
+
+    public String getFrontComponentRepoPath() {
+        return frontComponentRepoPath;
+    }
+
+    public String getFrontComponentRepoDomain() {
+        return frontComponentRepoDomain;
+    }
+    
 }

@@ -10,14 +10,13 @@ import com.jumore.dove.aop.Table;
 
 @Entity
 @Table(name = "dm_front_component")
-public class FrontComponent {
+public class FrontComponentRelease {
 
     @Id
     @AutoIncrease
     private Long id;
     
-    @Column(name="group_id")
-    private String groupId;
+    private String group;
     
     private String name;
     
@@ -25,17 +24,17 @@ public class FrontComponent {
     
     private String remark;
     
-    private String version;
+    private String vesion;
     
     @Column(name="preview_image")
     private String previewImage;
     
-    public String getVersion() {
-        return version;
+    public String getGroup() {
+        return group;
     }
 
-    public void setVersion(String version) {
-        this.version = version;
+    public void setGroup(String group) {
+        this.group = group;
     }
 
     public String getName() {
@@ -44,6 +43,14 @@ public class FrontComponent {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getVesion() {
+        return vesion;
+    }
+
+    public void setVesion(String vesion) {
+        this.vesion = vesion;
     }
 
     @Column(name="create_time")
@@ -99,13 +106,5 @@ public class FrontComponent {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public String getGroupId() {
-        return groupId;
-    }
-
-    public void setGroupId(String groupId) {
-        this.groupId = groupId;
     }
 }
