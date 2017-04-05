@@ -3,8 +3,11 @@ package com.jumore.devmaster.service.impl;
 import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import org.apache.commons.io.FileUtils;
@@ -79,6 +82,7 @@ public class ProjectGenerateServiceImpl implements ProjectGenerateService {
         //生成实体类
         Object code = generateEntityClass(entityPo , null);
         params.put("entityCode", code);
+        params.put("tableName", entityPo.getName());
         
         // get all tpl files
         Collection<File> files = FileUtils.listFiles(new File(tplPath), null, true);
@@ -140,7 +144,19 @@ public class ProjectGenerateServiceImpl implements ProjectGenerateService {
             vo.setDbentityId(dbEntityId);
             vo.setShowInput(DevMasterConst.ShowInput.Yes);
             List<EntityField> fieldList = baseService.listByExample(vo);
-            ctx.put("fieldList", fieldList);
+            // ctx.put("fieldList", fieldList); 
+            
+            // 替代上一句代码，因为上一句代码name，不是实体字段的名字
+            List<Map<String, String>> fields= new ArrayList<Map<String, String>>();
+            
+            for (EntityField field : fieldList) {
+                Map<String, String> map = new HashMap<String, String>();
+                map.put("name", EntityCodeGenerateImpl.NameConverter.convertToFieldName(field.getName()));
+                fields.add(map);
+            }
+            
+            ctx.put("fieldList", fields); 
+            
             StringWriter sw = new StringWriter();
             tpl.merge(ctx, sw);
             return sw.toString();
