@@ -36,4 +36,14 @@ public class SessionHelper {
 
         return cfg.getJltUrl();
     }
+    
+    public static String getDockerHost(){
+        if(cfg==null){
+            cfg = SpringContextHelper.getBean(Configuration.class);
+        }
+
+        return cfg.getDockerHost();
+    }
 }
+
+

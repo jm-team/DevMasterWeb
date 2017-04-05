@@ -28,4 +28,11 @@ public class Configuration {
     public String getJltUrl() {
         return jltUrl;
     }
+    
+    @Value(value = "${docker.host}")
+    private String dockerHost;
+
+	public String getDockerHost() {
+		return dockerHost;
+	}
 }
