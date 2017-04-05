@@ -173,7 +173,13 @@ public class ProjectGenerateServiceImpl implements ProjectGenerateService {
     
     private String replacePlaceHolder(String text, JSONObject params) {
         for (String key : params.keySet()) {
-            text = text.replace("${"+key+"}", params.getString(key));
+            String replacement = params.getString(key);
+            
+            if(replacement == null){
+                continue;
+            }
+            
+            text = text.replace("${"+key+"}", replacement);
         }
         return text;
     }
