@@ -1,5 +1,6 @@
 package com.jumore.devmaster.controller;
 
+import java.io.File;
 import java.util.Date;
 
 import org.apache.commons.lang.StringUtils;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.jumore.devmaster.common.enums.BaseExceptionEnum;
+import com.jumore.devmaster.common.util.PathUtils;
 import com.jumore.devmaster.common.util.SessionHelper;
 import com.jumore.devmaster.entity.FrontComponent;
 import com.jumore.dove.common.BusinessException;
@@ -34,7 +36,7 @@ public class ComponentController {
 
     @ResponseBody
     @RequestMapping(value = "doAddComponent")
-    public ResponseVo<String> doAddTemplate(FrontComponent comp) throws Exception {
+    public ResponseVo<String> doAddComponent(FrontComponent comp) throws Exception {
         if (StringUtils.isEmpty(comp.getName())) {
             throw new BusinessException(BaseExceptionEnum.TITLE_NOT_BE_NULL.getMsg());
         }
@@ -72,4 +74,59 @@ public class ComponentController {
         return ResponseVo.<String> BUILDER().setCode(Const.BUSINESS_CODE.SUCCESS);
     }
 
+    @RequestMapping(value = "/editComponent")
+    public ModelAndView editComponent(Long id) throws Exception {
+        ModelAndView mv = new ModelAndView();
+        FrontComponent compPo = baseService.get(FrontComponent.class, id);
+        mv.addObject("comp", compPo);
+        return mv;
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "doUpdateComponent")
+    public ResponseVo<String> doUpdateComponent(FrontComponent comp) throws Exception {
+        validateComponent(comp);
+        // TODO 判断重名
+        FrontComponent vo = new FrontComponent();
+        vo.setGroupId(comp.getGroupId());
+        vo.setName(comp.getName());
+        vo.setVersion(comp.getVersion());
+        FrontComponent compPo = (FrontComponent) baseService.getByExample(vo);
+        if (compPo!=null && compPo.getId() != comp.getId()) {
+            throw new BusinessException(BaseExceptionEnum.COMP_EXIST_WITH_SAME_NAME.getMsg());
+        }
+
+        compPo = baseService.get(FrontComponent.class, comp.getId());
+        String oldRoot = getRootName(compPo);
+
+        compPo.setGroupId(comp.getGroupId());
+        compPo.setName(comp.getName());
+        compPo.setRemark(comp.getRemark());
+        compPo.setVersion(comp.getVersion());
+        compPo.setUpdateTime(comp.getUpdateTime());
+        baseService.update(compPo);
+
+        // 修改文件夹名称
+        String newRoot = getRootName(comp);
+        File oldRootFile = new File(PathUtils.getComponentsDir() + oldRoot);
+        File newRootFile = new File(PathUtils.getComponentsDir() + newRoot);
+        oldRootFile.renameTo(newRootFile);
+        return ResponseVo.<String> BUILDER().setCode(Const.BUSINESS_CODE.SUCCESS);
+    }
+
+    private void validateComponent(FrontComponent comp) {
+        if (StringUtils.isEmpty(comp.getName())) {
+            throw new BusinessException(BaseExceptionEnum.TITLE_NOT_BE_NULL.getMsg());
+        }
+        if (StringUtils.isEmpty(comp.getGroupId())) {
+            throw new BusinessException(BaseExceptionEnum.COMP_GROUPID_NOT_BE_NULL.getMsg());
+        }
+        if (StringUtils.isEmpty(comp.getVersion())) {
+            throw new BusinessException(BaseExceptionEnum.COMP_VERSION_NOT_BE_NULL.getMsg());
+        }
+    }
+
+    private String getRootName(FrontComponent comp) {
+        return comp.getGroupId() + "." + comp.getName() + "." + comp.getVersion();
+    }
 }

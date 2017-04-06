@@ -47,7 +47,8 @@
 								    <td >$[remark]</td>
 									<td >$[createTime]</td>
 								    <td>
-											<a href="javascript:void(0)" onclick="previewComponent($[id])">发布</a>
+											<a href="javascript:void(0)" onclick="openEditComponent($[id])">编辑</a>
+											<a href="javascript:void(0)" onclick="previewComponent($[id])">预览</a>
 											<a href="javascript:void(0)" onclick="publishComponent($[id])">发布</a>
 											<a href="javascript:void(0)" onclick="deleteTemplate($[id])">删除</a>
 								    </td>
@@ -116,6 +117,18 @@ function openAddComponent(){
 	  shade: 0.5,
 	  area: ['50%', '450px'],
 	  content: '${ServiceName}/component/addComponent',
+	  cancel:function(index){
+	  }
+	});
+}
+
+function openEditComponent(id){
+	layer.open({
+	  type: 2,
+	  title: '修改组件',
+	  shade: 0.5,
+	  area: ['50%', '450px'],
+	  content: '${ServiceName}/component/editComponent?id='+id,
 	  cancel:function(index){
 	  }
 	});

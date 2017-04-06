@@ -45,7 +45,7 @@ function openPage(url){
 }
 
 function closeWindowAndRefreshParent(){
-	window.parent.listData(0); //刷新父页面
+	window.parent.doSearch(); //刷新父页面
 	var index = parent.layer.getFrameIndex(window.name); //获取窗口索引
 	parent.layer.close(index);  // 关闭layer
 }

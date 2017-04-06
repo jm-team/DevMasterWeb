@@ -1,0 +1,58 @@
+#parse("./inc/head.vm")
+      <div class="modal-content">
+         <div class="modal-body">
+            <form id="form" class="form-horizontal" >
+				<input type="hidden" name="id" value="${comp.id}"/>
+				<div class="form-group">
+					<span class="col-sm-3 control-label no-padding-right">group名：</span> 
+					<div class="col-sm-9">
+						<input type="text"  name="groupId" value="${comp.groupId}" class="col-xs-10 col-sm-5" />
+					</div>
+				</div>
+				<div class="form-group">
+					<span class="col-sm-3 control-label no-padding-right">组件名：</span> 
+					<div class="col-sm-9">
+						<input type="text"  name="name" value="${comp.name}" class="col-xs-10 col-sm-5" />
+					</div>
+				</div>
+				<div class="form-group">
+					<span class="col-sm-3 control-label no-padding-right">版本号：</span> 
+					<div class="col-sm-9">
+						<input type="text"  name="version" value="${comp.version}" class="col-xs-10 col-sm-5" />
+					</div>
+				</div>
+				<div class="form-group">
+					<span class="col-sm-3 control-label no-padding-right">描述说明：</span> 
+					<div class="col-sm-9">
+						<textarea rows="5" cols="" name="remark"  class="col-xs-10 col-sm-5" >${comp.remark}</textarea>
+					</div>
+				</div>
+			</form>
+         </div>
+         <div class="modal-footer">
+            <button type="button" id="item_submit" class="btn btn-primary">
+               	保存
+            </button>
+         </div>
+      </div>
+
+<script type="text/javascript">
+//提交
+$("#item_submit").on("click", function (e) {
+    //check form data
+    var data = $('#form').serialize();
+    $.ajax({
+        type: "POST",
+        url: '${ServiceName}' + "/component/doUpdateComponent",
+        data: data,
+        dataType:'json'
+    }).done(function (data) {
+        if (data.code == -1) {
+            layer.msg(data.desc);
+        } else {
+        	layer.msg('保存成功');
+        	closeWindowAndRefreshParent();
+        }
+    });
+});
+</script>

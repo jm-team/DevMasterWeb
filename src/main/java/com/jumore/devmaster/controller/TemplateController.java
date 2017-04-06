@@ -1,5 +1,18 @@
 package com.jumore.devmaster.controller;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
+
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.StringUtil;
@@ -14,6 +27,7 @@ import com.jumore.devmaster.entity.ProjectTemplate;
 import com.jumore.devmaster.entity.TemplateSetting;
 import com.jumore.devmaster.service.ProjectGenerateService;
 import com.jumore.devmaster.service.TemplateService;
+import com.jumore.devmaster.validator.CommonValidator;
 import com.jumore.dove.common.BusinessException;
 import com.jumore.dove.controller.base.BaseController;
 import com.jumore.dove.plugin.Page;
@@ -21,17 +35,6 @@ import com.jumore.dove.service.BaseService;
 import com.jumore.dove.util.ParamMap;
 import com.jumore.dove.web.model.Const;
 import com.jumore.dove.web.model.ResponseVo;
-import org.apache.commons.lang.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.ModelAndView;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
 
 @Controller
 @RequestMapping(value = "/template")
@@ -39,9 +42,9 @@ public class TemplateController extends BaseController {
 
     @Autowired
     private BaseService            baseService;
-    
+
     @Autowired
-    private TemplateService templateService;
+    private TemplateService        templateService;
 
     @Autowired
     private ProjectGenerateService codeGenerateService;
@@ -64,8 +67,8 @@ public class TemplateController extends BaseController {
         tpl.setCreateTime(new Date());
         tpl.setUid(SessionHelper.getUser().getId());
         tpl.setDeleteFlag(0);
-        //默认私有
-        if(tpl.getScope() == null){
+        // 默认私有
+        if (tpl.getScope() == null) {
             tpl.setScope(DevMasterConst.Scope.Private);
         }
         baseService.save(tpl);
@@ -90,11 +93,26 @@ public class TemplateController extends BaseController {
         if (tplPo == null) {
             throw new BusinessException(BaseExceptionEnum.TEMPLATE_NOT_EXIST_OR_DELETED.getMsg());
         }
+        // TODO 判断重名
+        ProjectTemplate vo = new ProjectTemplate();
+        vo.setUid(tpl.getUid());
+        vo.setTitle(tpl.getTitle());
+        ProjectTemplate po = (ProjectTemplate) baseService.getByExample(vo);
+        if (po != null && po.getId() != tpl.getId()) {
+            throw new BusinessException(BaseExceptionEnum.TEMPLATE_EXIST_WITH_SAME_TITLE.getMsg());
+        }
+        String oldRoot = tplPo.getTitle();
         tplPo.setTitle(tpl.getTitle());
+
         tplPo.setRemark(tpl.getRemark());
         tplPo.setExts(tpl.getExts());
         tplPo.setEntityNameFunction(tpl.getEntityNameFunction());
         baseService.update(tplPo);
+        // 修改文件夹名称
+        String newRoot = tpl.getTitle();
+        File oldRootFile = new File(PathUtils.getTplDir() + oldRoot);
+        File newRootFile = new File(PathUtils.getTplDir() + newRoot);
+        oldRootFile.renameTo(newRootFile);
         return ResponseVo.<String> BUILDER().setCode(Const.BUSINESS_CODE.SUCCESS);
     }
 
@@ -106,7 +124,7 @@ public class TemplateController extends BaseController {
     }
 
     @SuppressWarnings("rawtypes")
-	@ResponseBody
+    @ResponseBody
     @RequestMapping(value = "listTemplateData")
     public ResponseVo<Page<Map>> listTemplateData(Page<Map> page, Long scope, String title) throws Exception {
         ParamMap pm = new ParamMap();
@@ -251,6 +269,7 @@ public class TemplateController extends BaseController {
 
     /**
      * 删除模板
+     * 
      * @param tplId
      * @return
      * @throws Exception
@@ -259,7 +278,6 @@ public class TemplateController extends BaseController {
     @RequestMapping(value = "deleteTemplate")
     public ResponseVo<String> deleteTemplate(Long tplId) throws Exception {
         templateService.deleteTemplate(tplId);
-
 
         return ResponseVo.<String> BUILDER().setCode(Const.BUSINESS_CODE.SUCCESS);
     }

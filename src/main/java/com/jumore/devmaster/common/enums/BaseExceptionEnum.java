@@ -28,9 +28,14 @@ public enum BaseExceptionEnum {
      */
     TEMPLATE_EXT_NOT_BE_NULL("30000","模板文件的扩展名不能为空"),
     TEMPLATE_NOT_EXIST_OR_DELETED("30001","模板不存在或已经删除"),
+    TEMPLATE_EXIST_WITH_SAME_TITLE("30002","存在相同名称从模板"),
 
+    /**
+     * 组件提醒
+     */
     COMP_VERSION_NOT_BE_NULL("40001","组件版本不能为空"),
-    COMP_GROUPID_NOT_BE_NULL("40002","组件groupId不能为空")
+    COMP_GROUPID_NOT_BE_NULL("40002","组件groupId不能为空"),
+    COMP_EXIST_WITH_SAME_NAME("40003","存在相同groupId+名称+版本号的组件")
     ;
 
     
