@@ -3,6 +3,8 @@ package com.jumore.devmaster.controller;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,6 +28,8 @@ import com.jumore.dove.web.model.ResponseVo;
 @Controller
 @RequestMapping(value = "/container")
 public class ContainerController {
+	
+	private final Logger LOGGER = LoggerFactory.getLogger(this.getClass().getName());
 
 	@Autowired
 	private BaseService baseService;
@@ -57,7 +61,14 @@ public class ContainerController {
 		cmd.withShowAll(true);
 		cmd.getFilters().put("name", nameFilter);
 		
-		List<Container> queryResult = cmd.exec();
+		List<Container> queryResult;
+		try {
+			queryResult = cmd.exec();
+		} catch (Exception e) {
+			LOGGER.error("Docker命令执行失败：", e);
+			throw new RuntimeException("生成容器失败。");
+		}
+		
 		if (queryResult != null && queryResult.size() > 0) {
 			throw new RuntimeException("容器已创建。不能重复创建。");
 		}
