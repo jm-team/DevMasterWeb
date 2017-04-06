@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>index</title>
+<link rel="stylesheet" type="text/css" href="${ServiceName}/assets/easyui/themes/metro/easyui.css">
+<link rel="stylesheet" type="text/css" href="${ServiceName}/assets/easyui/themes/icon.css">
+<link rel="stylesheet" type="text/css" href="${ServiceName}/assets/uploadify/uploadify.css">
+<link rel="stylesheet" type="text/css" href="${ServiceName}/page/css/console.css">
+<script type="text/javascript" src="${ServiceName}/assets/easyui/jquery.min.js"></script>
+<script src='${ServiceName}/assets/js/layer/layer.js' ></script>
+<script type="text/javascript" src="${ServiceName}/assets/easyui/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="${ServiceName}/assets/uploadify/jquery.uploadify.min.js"></script>
+
+<style>
+	.upload_center{
+		margin-left:230px; 
+		margin-top:40px;
+	}
+</style>
+</head>
+<body class="easyui-layout">
+	<!-- header start -->
+	<!-- header end -->
+	
+	<!-- left start -->
+	<div data-options="region:'west',split:true,title:''" style="width:15%;padding:10px;background: transparent;">
+		<ul id="tree" class="easyui-tree" url="${ServiceName}/file/getFiles?type=${type}&root=${root}" data-options="
+                method: 'get',
+                animate: true,
+                onContextMenu: onContextMenu,
+				onAfterEdit : onRename,
+				onDblClick : onNodeDblClick
+            ">
+		    
+		</ul>
+	</div>
+	<!-- context menu-->
+	<div id="mm" class="easyui-menu" style="width:120px;">
+		<div id="appendDir" onclick="append(false)" data-options="iconCls:'icon-add'">添加目录</div>
+        <div id="appendFile" onclick="append(true)" data-options="iconCls:'icon-add'">添加文件</div>
+		<div id="rename" onclick="rename()" data-options="iconCls:'icon-remove'">重命名</div>
+        <div id="remove" onclick="remove()" data-options="iconCls:'icon-remove'">删除</div>
+		<div id="uploadFile" onclick="upload()" data-options="iconCls:'icon-add'">上传文件</div>
+    </div>
+	
+	<div id="uploadWindow" class="easyui-window" title="上传文件" style="width:600px;height:400px" 
+		data-options="modal:true, minimizable:false, maximizable:false, collapsible:false, closed:true, resizable:false">
+        <div>
+			<input type="file" name="uploadFile" id="file_upload"/>
+		</div>
+	</div>
+	
+	
+	<!-- left end -->
+	
+	<!-- right start -->
+	<!--
+	<div data-options="region:'east',split:true,title:''" style="width:15%;padding:10px;background: transparent;">
+	</div>
+	-->
+	<!-- right end -->
+	
+	<!-- center start -->
+	<div data-options="region:'center',border:false,title:''">
+		<div class="easyui-layout" data-options="fit:true">
+			<!-- center top start -->
+			<div data-options="region:'center',split:true" style="background:#fbfbfb;">
+				<div id="contentTabs" class="easyui-tabs" style="width:100%;height:100%;" data-options="onBeforeClose:beforeTabClose"></div>
+			</div>
+			<!-- center top end -->
+			
+			<!-- center bottom start -->
+			<div data-options="region:'south',split:true" style="height:20%;background:#fbfbfb;">
+				<div id="bottomTab" class="easyui-tabs" style="width:100%;height:100%;">
+				    <div title="root@localhost" style="padding:20px;display:none;">
+				        root@localhost
+				    </div>
+				    <div title="immediate(java)" data-options="closable:true" style="overflow:auto;padding:20px;display:none;">
+				        immediate(java)
+				    </div>
+				</div>
+			</div>
+			<!-- center bottom end -->
+		</div>
+	</div>
+	<!-- center end -->
+<script type="text/javascript">
+var imgExtends;
+var extensionClassMapper = {};
+/** 关闭tab时，是否需要提示信息 */
+var tabCloseRemind = true; 
+
+$(function() {
+	imgExtends = ['jpg', 'jpeg', 'png', 'bmp', 'gif', 'psd', 'pcx', 'tiff', 'tga', 'exif', 'fpx', 'svg', 
+		'cdr', 'pcd', 'dxf', 'ufo', 'eps', 'hdri', 'ai', 'raw', 'wmf', 'emf', 'lic'];
+	
+	extensionClassMapper['folder']  = 'my-tree-folder-icon';
+	extensionClassMapper['html']    = 'my-tree-html-icon';
+	extensionClassMapper['js']      = 'my-tree-js-icon';
+	extensionClassMapper['css']     = 'my-tree-css-icon';
+	extensionClassMapper['xml']     = 'my-tree-xml-icon';
+	extensionClassMapper['sql']     = 'my-tree-sql-icon';
+	extensionClassMapper['default'] = 'my-tree-default-icon';
+	$.each(imgExtends, function(index, value, array) {
+	    extensionClassMapper[value] = 'my-tree-picture-icon';
+	});
+	
+	
+	// 初始化上传控件
+    $('#file_upload').uploadify({
+		height     : 30,
+		width      : 120,
+		buttonText : '点击上传',
+		buttonClass:'upload_center',
+	    fileObjName: 'uploadFile',
+        swf        : '${ServiceName}/assets/uploadify/uploadify.swf',
+        uploader   : '',
+		onUploadStart : function(file) {
+			var t = $('#tree');
+    		var selected = t.tree('getSelected');
+			
+			$('#file_upload').uploadify('settings','uploader','${ServiceName}/file/upload?parent=' + selected.id);
+		},
+		onUploadSuccess : function(file, data, response){
+    		var selected = getSelectedTreeNode();
+		
+			var node = {
+    			id : selected.id + '/' + file.name,
+                text : file.name,
+    			folder : false,
+				iconCls : getIconClass(file.name, true)
+            };
+			
+			$('#tree').tree('append', {
+                parent: (selected.target),
+                data: [node]
+            });
+			
+		},
+		onQueueComplete : function(queueData) {
+			$('#file_upload').uploadify('settings','uploader','');
+		}
+    });
+	
+	// 修改上传控件按钮位置和进度条位置
+	var style = $('#file_upload .swfupload').attr('style');
+	$('#file_upload .swfupload').attr('style', 'left:230px;' + style);
+	$('#file_upload-queue').attr('style', 'margin-left:120px;');
+});
+
+/**
+ * 添加目录/文件操作
+ */
+function append(isFile) {
+	var selectedTreeNode = getSelectedTreeNode();
+	
+	layer.prompt({
+		title : '新文件名',
+		formType : 0 // prompt风格，支持0-2
+	}, function(fileName, index) {
+		layer.close(index);
+		addNewFile(selectedTreeNode, fileName, isFile);
+	});
+}
+
+/**
+ * 重命名目录/文件操作
+ */
+function rename() {
+    var selected = getSelectedTreeNode();
+	
+	if(selected.id.toString().indexOf('/') == -1){
+		layer.msg('根目录不允许重命名');
+		return;
+	}
+	
+	layer.prompt({
+        title: '新文件名',
+        formType: 0 //prompt风格，支持0-2
+    }, function(fileName , index){
+		layer.close(index);
+		renameFile(selected, fileName, $('#tree'));
+    });
+}
+
+function onRename(node){
+}
+
+/**
+ * 删除目录/文件操作
+ */
+function remove() {
+    var selected = getSelectedTreeNode();
+	
+	if(selected.id.toString().indexOf('/') == -1){
+		layer.msg('根目录不允许删除');
+		return;
+	}
+	
+	layer.confirm('您确定要删除' + selected.text + '吗', {
+        btn: ['删除','取消']
+    }, function(){
+    	$.ajax({
+            type: 'POST',
+            url: '${ServiceName}/file/deleteFile',
+            data: {
+    			root : '${root}',
+				type : '${type}',
+    			fileName : selected.id
+            }
+        }).done(function (data) {
+			layer.closeAll();
+			
+        	if(data.code == 0){
+    			var node = treeRemoveSelectedNode();
+    			closeTab(node.id);
+        	}else{
+        		layer.msg(data.desc);
+        	}
+        }).fail(function(){
+			layer.closeAll();
+		});
+    }, function(){
+        // 取消操作
+    });
+}
+
+/**
+ * 上传文件操作
+ */
+function upload() {
+	expand();
+	$('#uploadWindow').window('open');
+}
+
+/**
+ * 右键菜单
+ */
+function onContextMenu(e,node){
+    e.preventDefault();
+    
+	if(node.folder){
+		$('#appendDir').show();
+		$('#appendFile').show();
+		$('#uploadFile').show();
+	}else{
+		$('#appendDir').hide();
+		$('#appendFile').hide();
+		$('#uploadFile').hide();
+	}
+	
+    $(this).tree('select',node.target);
+    
+    $('#mm').menu('show',{
+        left: e.pageX,
+        top: e.pageY
+    });
+}
+
+/**
+ * 双击文件后，打开tab
+ * 如果已经打开，则选中
+ */
+function onNodeDblClick(node){
+	if(!node.folder){
+		openCodeFrame(node.id, node.text);
+	}
+}
+
+/**
+ * tab关闭之前要提示
+ */
+function beforeTabClose(title,index){
+	if(!tabCloseRemind){
+		tabCloseRemind = true;
+		layer.closeAll();
+		return true;
+	}
+	
+	var tip = '';
+	
+	if($('#contentTabs .tabs-title').eq(index).find('.changed-title').length > 0){ 
+		tip = title + '已修改，您确认要关闭吗？';
+	} else{
+		//tip = '您确认要关闭' + title + '吗？';
+		return true; // 没有修改时，直接关闭
+	}
+	
+	layer.confirm(tip, {
+        btn: ['关闭','取消']
+    }, function(){
+		tabCloseRemind = false;
+        $('#contentTabs').tabs('close', index);
+    }, function(){
+        // 取消操作
+    });
+	
+	return false;
+}
+
+/*function tabContextMenu(e, title,index){
+	e.preventDefault();
+    
+    $('#mm').menu('show',{
+        left: e.pageX,
+        top: e.pageY
+    });
+}*/
+
+/**
+ * 获取左侧目录树，当前选中的节点 
+ */
+function getSelectedTreeNode(){
+	return $('#tree').tree('getSelected');
+}
+
+/**
+ * 展开选中树节点 
+ */
+function expand(){
+	var selectedTreeNode = getSelectedTreeNode();
+    $('#tree').tree('expand',selectedTreeNode.target);
+}
+
+/**
+ * 目录树添加节点
+ */
+function treeAppendNode(parent, node){
+	$('#tree').tree('append', {
+        parent: parent.target,
+        data: [node]
+    });
+}
+/**
+ * 删除选中节点，并返回节点对象
+ */
+function treeRemoveSelectedNode(){
+	var node = getSelectedTreeNode();
+	$('#tree').tree('remove', node.target);
+	
+	return node;
+}
+
+/**
+ * 删除节点时，关闭打开的节点tab，并让最大的tab选中
+ */
+function closeTab(id){
+	var tabs = $('#contentTabs').tabs('tabs');
+	
+	for(var i = 0; i < tabs.length; i++){
+		if(tabs[i][0].id == id){
+			tabCloseRemind = false;
+			$('#contentTabs').tabs('close', i);
+			break;
+		}
+	}
+}
+
+/**
+ * 根据文件名，获取icon
+ */
+function getIconClass(fileName, isFile){
+	if(!isFile){
+		return extensionClassMapper['folder'];
+	}
+	
+	if(fileName == null || fileName == undefined || fileName == '' || fileName.lastIndexOf('.') == -1){
+		return extensionClassMapper['default'];
+	}
+	
+	var extension = fileName.substring(fileName.lastIndexOf('.') + 1).toLowerCase();
+	var iconClass = extensionClassMapper[extension];
+	
+	if(iconClass == null || iconClass == undefined || iconClass == ''){
+		iconClass = extensionClassMapper['default'];
+	}
+	
+	return iconClass;
+}
+
+/**
+ * 请求服务器添加目录/文件
+ */
+function addNewFile(selectedTreeNode , newFileName, isFile){
+	$.ajax({
+        type: 'POST',
+        url: '${ServiceName}/file/addFile',
+        data: {
+			root : '${root}',
+			parent : selectedTreeNode.id,
+			type : '${type}',
+			newFileName: newFileName,
+			isFile : isFile
+        }
+    }).done(function (data) {
+		expand();
+		
+    	if(data.code == 0){
+    		var node = {
+    			id : selectedTreeNode.id + '/' + newFileName,
+                text : newFileName,
+    			folder : (!isFile),
+				iconCls : getIconClass(newFileName, isFile)
+            };
+			
+			if(!isFile){
+				node['state'] = 'closed';
+			}
+			
+			treeAppendNode(selectedTreeNode, node);
+    	}else{
+    		layer.msg(data.desc);
+    	}
+    });
+}
+
+/**
+ * 双击文件后，打开tab
+ * 如果已经打开，则选中
+ */
+function openCodeFrame(path, name){
+	var ele = $('#contentTabs');
+	var tabs = ele.tabs('tabs');
+	
+	// 如果tab已打开，则选中
+	for(var i = 0; i < tabs.length; i++){
+		if(tabs[i][0].id == path){
+			var index = ele.tabs('getTabIndex', tabs[i]);
+			ele.tabs('select', index);
+			return;
+		}
+	}
+	
+	// tab未打开，新增tab
+	var content = '';
+	var extend = name.substring(name.lastIndexOf('.') + 1).toLowerCase();
+	
+	if(jQuery.inArray(extend, imgExtends) >= 0){
+		content = '<div><img src="${ServiceName}/file/picture?type=${type}&path=' + path + '"></div>';
+	} else{
+		content = '<iframe src="${ServiceName}/file/codemirror?type=${type}&path='+path+'" width="100%" height="98%"></iframe>'
+	}
+	
+	ele.tabs('add', {
+		id : path,
+		title : name,
+		selected : true,
+		closable : true,
+		content : content
+	});
+}
+
+/**
+ * 重命名成功后，页面上tree和tab节点操作
+ * 修改id和text
+ * tab update会刷新iframe页面
+ */
+function renameFile(selected, fileName, t){
+	$.ajax({
+        type: 'POST',
+        url: '${ServiceName}/file/rename',
+        data: {
+			oldNameId : selected.id,
+			newName : fileName
+        }
+    }).done(function (data) {
+		if(!selected.folder){
+			expand();
+		}
+		
+    	if(data.code == 0){
+			// reset tabs node options
+			if(!selected.folder){
+    			var ele = $('#contentTabs');
+            	var tabs = ele.tabs('tabs');
+            	
+            	for(var i = 0; i < tabs.length; i++){
+            		if(tabs[i][0].id == selected.id){
+            			ele.tabs('update', {
+    						tab: tabs[i],
+                        	options: {
+                        		id : data.data,
+                        		title : fileName,
+    							selected : true,
+    							content : '<iframe src="${ServiceName}/file/codemirror?path='+data.data+'" width="100%" height="98%"></iframe>'
+                        	}
+    					});
+    					
+            			break;
+            		}
+            	}
+			}
+			// reset tree node options
+			t.tree('update', {
+        		target: selected.target,
+        		text: fileName,
+				id : data.data,
+				iconCls : getIconClass(fileName, !selected.folder)
+    		});
+			
+			layer.msg('rename success');
+    	}else{
+    		layer.msg('rename failed');
+    	}
+    });
+}
+
+/**
+ * 修改tab title
+ * 如果内容变化，添加*
+ * 保存操作后，去除*
+ */
+function updateTabTitle(path, fileName, isSave){
+	if(fileName === '' || path === ''){
+		return;
+	}
+	
+	var ele = $('#contentTabs');
+	var tabs = ele.tabs('tabs');
+	
+	if(tabs == null || tabs == undefined || tabs.length == 0){
+		return;
+	}
+	
+	for(var i = 0; i < tabs.length; i++){
+		if(tabs[i][0].id == path){
+			var index = i;
+			
+			if(isSave){
+				$('#contentTabs .tabs-title').eq(index).text(fileName);
+			} else {
+				$('#contentTabs .tabs-title').eq(index).html(fileName + '<span class="changed-title" style="color:red;"> *</span>')
+			}
+			
+			break;
+		}
+	}
+}
+
+/**
+ * 判断tab title是否有*，以此来判断内容是否发生变化
+ */
+function isTitleChaned(path, fileName){
+	if(fileName === '' || path === ''){
+		return false;
+	}
+	
+	var ele = $('#contentTabs');
+	var tabs = ele.tabs('tabs');
+	
+	if(tabs == null || tabs == undefined || tabs.length == 0){
+		return false;
+	}
+	
+	for(var i = 0; i < tabs.length; i++){
+		if(tabs[i][0].id == path){
+			var index = i;
+			
+			if($('#contentTabs .tabs-title').eq(index).find('.changed-title').length > 0){ 
+				return true;
+			}
+		}
+	}
+	
+	return false;
+}
+</script>
+</body>
+</html>

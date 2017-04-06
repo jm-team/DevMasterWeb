@@ -41,7 +41,7 @@
 
 							<tbody>
 								<tr style="display:none;" class="node_row">
-								    <td ><a target="_blank" href="${ServiceName}/project/index?tplId=$[id]">$[title]</a></td>
+								    <td ><a target="_blank" href="${ServiceName}/file/fileEdit?type=tpls&root=$[title]">$[title]</a></td>
 								    <td >$[remark]</td>
 									<td >$[createTime]</td>
 									<td >$[createUser]</td>

@@ -32,6 +32,7 @@
 								<tr>
 									<th>groupId</th>
 									<th>组件名称</th>
+									<th>版本号</th>
 									<th>说明</th>
 									<th>创建时间</th>
 								    <th></th>
@@ -41,10 +42,12 @@
 							<tbody>
 								<tr style="display:none;" class="node_row">
 									<td >$[groupId]</td>
-								    <td ><a href="${ServiceName}/project/index?compId=$[id]">$[name]</a></td>
+								    <td ><a target="_blank" href="${ServiceName}/file/fileEdit?type=comps&root=$[groupId].$[name].$[version]">$[name]</a></td>
+									<td >$[version]</td>
 								    <td >$[remark]</td>
 									<td >$[createTime]</td>
 								    <td>
+											<a href="javascript:void(0)" onclick="previewComponent($[id])">发布</a>
 											<a href="javascript:void(0)" onclick="publishComponent($[id])">发布</a>
 											<a href="javascript:void(0)" onclick="deleteTemplate($[id])">删除</a>
 								    </td>

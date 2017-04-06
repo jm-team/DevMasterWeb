@@ -15,6 +15,10 @@ public class PathUtils {
 
     public static final String Template_Dir_Name = "tpls";
     
+    public static final String Components_Dir = "comps";
+    
+    public static final String Code_Generate_Dir = "codeGenerate";
+    
     public static String trimPathEnd(String path){
         if(StringUtils.isEmpty(path)){
             return path;
@@ -43,7 +47,15 @@ public class PathUtils {
     }
     
     public static String getCodeGenerateDir(String projectName){
-        return SessionHelper.getUserWorkDir()+"codeGenerate" + File.separator + projectName + File.separator;
+        return SessionHelper.getUserWorkDir()+Code_Generate_Dir + File.separator + projectName + File.separator;
+    }
+    
+    public static String getComponentsDir(){
+        return SessionHelper.getUserWorkDir()+Components_Dir + File.separator;
+    }
+    
+    public static String getTplDir(){
+        return SessionHelper.getUserWorkDir()+Template_Dir_Name + File.separator;
     }
     
     public static String getTplDir(Long tplId){

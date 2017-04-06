@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>index</title>
+
+<script src="${ServiceName}/assets/easyui/jquery.min.js"></script>
+<script src='${ServiceName}/assets/js/layer/layer.js' ></script>
+<script src="${ServiceName}/assets/easyui/jquery.easyui.min.js"></script>
+
+<script src="${ServiceName}/assets/js/codemirror-5.24.2/lib/codemirror.js"></script>
+<script src="${ServiceName}/assets/js/codemirror-5.24.2/addon/hint/show-hint.js"></script>
+<script src="${ServiceName}/assets/js/codemirror-5.24.2/addon/edit/closetag.js"></script>
+<script src="${ServiceName}/assets/js/codemirror-5.24.2/addon/display/placeholder.js"></script>
+<!-- 折叠 -->
+<script src="${ServiceName}/assets/js/codemirror-5.24.2/addon/fold/foldcode.js"></script>
+<script src="${ServiceName}/assets/js/codemirror-5.24.2/addon/fold/foldgutter.js"></script>
+<script src="${ServiceName}/assets/js/codemirror-5.24.2/addon/fold/brace-fold.js"></script>
+<script src="${ServiceName}/assets/js/codemirror-5.24.2/addon/fold/xml-fold.js"></script>
+<script src="${ServiceName}/assets/js/codemirror-5.24.2/addon/fold/indent-fold.js"></script>
+<script src="${ServiceName}/assets/js/codemirror-5.24.2/addon/fold/markdown-fold.js"></script>
+<script src="${ServiceName}/assets/js/codemirror-5.24.2/addon/fold/comment-fold.js"></script>
+
+<!-- 标签匹配 -->
+<script src="${ServiceName}/assets/js/codemirror-5.24.2/addon/edit/matchtags.js"></script>
+
+<!-- mode -->
+#foreach($script in $mode.references)
+<script src="${ServiceName}/$script"></script>
+#end
+
+<link rel="stylesheet" href="${ServiceName}/assets/js/codemirror-5.24.2/lib/codemirror.css">
+<link rel="stylesheet" href="${ServiceName}/assets/js/codemirror-5.24.2/theme/blackboard.css">
+<link rel="stylesheet" href="${ServiceName}/assets/js/codemirror-5.24.2/doc/docs.css">
+<link rel="stylesheet" href="${ServiceName}/assets/js/codemirror-5.24.2/addon/hint/show-hint.css">
+<link rel="stylesheet" href="${ServiceName}/assets/js/codemirror-5.24.2/addon/fold/foldgutter.css">
+<style type="text/css">
+    html,body{height:100%;overflow:hidden;margin:0px;}
+    .fullHeight{height:100%;}
+	
+    .cm-matchhighlight {background-color: lightgreen}
+</style>	
+</head>
+<body>
+    <form class="fullHeight">
+        <textarea id="editor" placeholder="Code goes here...">$!{content}</textarea>
+	</form>
+<script>
+	var editor = document.getElementById('editor');
+	
+	// 自定义保存事件
+	CodeMirror.commands.save = function (cm) {
+		if(isContentChanged()){
+        	save();
+		}
+	};
+	
+	CodeMirror.commands.completeAfter = function (cm, pred) {
+        var cur = cm.getCursor();
+		
+        if (!pred || pred()) setTimeout(function() {
+          if (!cm.state.completionActive)
+            cm.showHint({completeSingle: false});
+        }, 100);
+		
+        return CodeMirror.Pass;
+    }
+	
+	CodeMirror.commands.completeXX = function (cm) {
+        return '}';
+    }
+	
+	var extraKeys = {};
+	extraKeys['Ctrl-S'] = 'save';
+	extraKeys['Alt-/'] = 'autocomplete';
+	extraKeys['Ctrl-J'] = 'toMatchingTag';
+	extraKeys["'<'"] = 'completeAfter';
+	
+	var codeMirror = CodeMirror.fromTextArea(editor,{
+			theme:'blackboard',
+        	lineNumbers: true,
+			lineWrapping:true,
+			styleActiveLine: true,
+			smartIndent:true,
+			autoCloseTags: true,
+			foldGutter: true,
+			mode: '${mode.name}',
+			indentUnit:4,
+			tabSize:4,
+			scrollbarStyle:'native',
+			extraKeys : extraKeys,
+			matchTags: {bothTags: true},
+			gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"],
+			highlightSelectionMatches: {showToken: /\w/, annotateScrollbar: true}
+        });
+		
+	codeMirror.setSize('100%', '100%');
+	
+	// 内容变化触发
+	codeMirror.on('change', function(cm, changeObj){
+		parent.updateTabTitle('$!{path}', '$!{fileName}');
+		//cm.showHint(); // 自动补全
+	});
+	
+	/**
+	 * 保存功能
+	 */
+	function save(){
+		var path = '$!{path}';
+		
+		if(path === ''){
+			return;
+		}
+		
+		$.ajax({
+            type: "POST",
+            url: '${ServiceName}/file/save',
+            data: {
+    			path : path,
+				type : '${type}',
+                content : codeMirror.getValue()
+            }
+        }).done(function (data) {
+        	if(data.code == 0){
+				layer.msg('save success');
+				parent.updateTabTitle('$!{path}', '$!{fileName}', true);
+        	}else{
+        		layer.msg('save fail');
+        	}
+        }).fail(function( jqXHR, textStatus, errorThrown ) {
+			layer.msg('save fail');
+		});
+	}
+	
+	function isContentChanged(){
+		var path = '$!{path}';
+		var fileName = '$!{fileName}';
+		return parent.isTitleChaned(path, fileName);
+	}
+</script>
+</body>
+</html>

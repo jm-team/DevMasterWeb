@@ -9,6 +9,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.jumore.devmaster.common.util.SessionHelper;
 import com.jumore.devmaster.entity.DevMasterUser;
+import com.jumore.dove.aop.annotation.PublicMethod;
 import com.jumore.dove.plugin.Page;
 import com.jumore.dove.web.model.Const;
 import com.jumore.dove.web.model.ResponseVo;
@@ -28,6 +29,14 @@ public class IndexController {
         return mv;
     }
 
+    @PublicMethod
+    @RequestMapping(value = "layout")
+    public ModelAndView layout() throws Exception {
+        ModelAndView mv = new ModelAndView();
+        // 获取组件列表
+        return mv;
+    }
+    
     @SuppressWarnings("rawtypes")
     @ResponseBody
     @RequestMapping(value = "listAppData")

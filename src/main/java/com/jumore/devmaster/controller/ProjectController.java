@@ -321,7 +321,7 @@ public class ProjectController {
         path = PathUtils.getAbsolutePath(path);
         File file = new File(path);
         
-        response.setHeader("Content-Type","image/jped");
+        response.setHeader("Content-Type","image/jpeg");
         response.getOutputStream().write(FileUtils.readFileToByteArray(file));
         response.flushBuffer();
     }
