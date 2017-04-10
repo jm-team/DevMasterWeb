@@ -27,6 +27,12 @@ public class FrontComponent {
     
     private String version;
     
+    /**
+     * html,js,css
+     * 三选一
+     */
+    private String type;
+    
     @Column(name="preview_image")
     private String previewImage;
     
@@ -108,4 +114,13 @@ public class FrontComponent {
     public void setGroupId(String groupId) {
         this.groupId = groupId;
     }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+    
 }

@@ -11,6 +11,8 @@ import java.util.zip.ZipOutputStream;
 import org.apache.commons.compress.utils.IOUtils;
 import org.springframework.util.StringUtils;
 
+import com.jumore.devmaster.entity.FrontComponent;
+
 public class PathUtils {
 
     public static final String Template_Dir_Name = "tpls";
@@ -97,5 +99,9 @@ public class PathUtils {
 	            }
 	        }
     	}
+    }
+    
+    public static String getRootName(FrontComponent comp) {
+        return comp.getGroupId() + "." + comp.getName() + "." + comp.getVersion();
     }
 }

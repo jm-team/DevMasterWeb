@@ -33,6 +33,7 @@
 									<th>groupId</th>
 									<th>组件名称</th>
 									<th>版本号</th>
+									<th>类别</th>
 									<th>说明</th>
 									<th>创建时间</th>
 								    <th></th>
@@ -44,11 +45,13 @@
 									<td >$[groupId]</td>
 								    <td ><a target="_blank" href="${ServiceName}/file/fileEdit?type=comps&root=$[groupId].$[name].$[version]">$[name]</a></td>
 									<td >$[version]</td>
+									<td >$[type]</td>
 								    <td >$[remark]</td>
 									<td >$[createTime]</td>
 								    <td>
 											<a href="javascript:void(0)" onclick="openEditComponent($[id])">编辑</a>
-											<a href="javascript:void(0)" onclick="previewComponent($[id])">预览</a>
+											<a href="javascript:void(0)" onclick="openSettings($[id])">参数配置</a>
+											<a href="${ServiceName}/preview/show?id=$[id]" target="_blank">预览</a>
 											<a href="javascript:void(0)" onclick="publishComponent($[id])">发布</a>
 											<a href="javascript:void(0)" onclick="deleteTemplate($[id])">删除</a>
 								    </td>
@@ -129,6 +132,18 @@ function openEditComponent(id){
 	  shade: 0.5,
 	  area: ['50%', '450px'],
 	  content: '${ServiceName}/component/editComponent?id='+id,
+	  cancel:function(index){
+	  }
+	});
+}
+
+function openSettings(id){
+	layer.open({
+	  type: 2,
+	  title: '修改组件',
+	  shade: 0.5,
+	  area: ['60%', '80%'],
+	  content: '${ServiceName}/component/setting/componentSettingList?compId='+id,
 	  cancel:function(index){
 	  }
 	});

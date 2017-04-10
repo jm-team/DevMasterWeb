@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Basic Tabs Sample</title>
+
+	<link rel="stylesheet" type="text/css" href="${ServiceName}/assets/layout/css/jquery-ui.css">
+	<link rel="stylesheet" type="text/css" href="${ServiceName}/assets/layout/css/layout-default.css">
+		<link rel="stylesheet" href="http://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+	<link rel="stylesheet" href="http://jqueryui.com/resources/demos/style.css">
+	<style type="text/css">
+
+	.ui-layout-north,
+	.ui-layout-center {
+		/* remove default pane scrolling in north & center panes */
+		overflow:	hidden;
+	}
+
+	.ui-layout-north {
+		/* center themeswitcher buttons in north-pane */
+		text-align:	center;
+	}
+
+	.ui-layout-center {
+		/* remove default padding on center-pane so tabs widget fills it */
+		padding:	0;
+	}
+
+	</style>
+
+	<!--<script src="js/jquery-2.js"></script>-->
+	<script src="${ServiceName}/assets/layout/js/jquery.js"></script>
+	<script src="${ServiceName}/assets/layout/js/jquery-ui.js"></script>
+	<script src="${ServiceName}/assets/layout/js/jquery.layout.js"></script>
+
+
+	<script type="text/javascript">
+	// create global var for layout so we can call myLayout.resize() after changing a theme
+	var myLayout;
+
+	$(document).ready(function(){
+
+		// create tabs FIRST so elems are correct size BEFORE Layout measures them
+		$(".ui-layout-east").tabs();
+
+		// create a layout with default settings
+		myLayout = $('body').layout();
+
+		$( function() {
+            $( ".draggable" ).draggable();
+            $( ".droppable" ).droppable({
+              drop: function( event, ui ) {
+                console.log(ui);
+              }
+            });
+        });
+  
+	});
+	</script>
+
+</head>
+<body>
+
+<div class="ui-layout-north">
+	<!-- add extra utility buttons for the Themeswitcher tool -->
+	<button onClick="removeUITheme()">编辑</button> &nbsp; &nbsp;
+	<button onClick="myLayout.resizeAll(); myLayout.sizeContent('west');">预览</button>
+</div>
+
+<div class="ui-layout-west">
+	<!--基础组件列表-->
+        <div class="draggable">输入框</div>
+		<div class="draggable">多行文本框</div>
+		<div class="draggable">checkbox</div>
+		<div class="draggable">radio</div>
+		<div class="draggable">text</div>
+		<div class="draggable">link</div>
+</div>
+
+<div class="ui-layout-east">
+	  <ul>
+        <li><a href="#tabs-1">属性</a></li>
+        <li><a href="#tabs-2">事件</a></li>
+      </ul>
+      <div id="tabs-1">
+        <p>Proin elit arcu, rutrum commodo, vehicula tempus, commodo a, risus. Curabitur nec arcu. Donec sollicitudin mi sit amet mauris. Nam elementum quam ullamcorper ante. Etiam aliquet massa et lorem. Mauris dapibus lacus auctor risus. Aenean tempor ullamcorper leo. Vivamus sed magna quis ligula eleifend adipiscing. Duis orci. Aliquam sodales tortor vitae ipsum. Aliquam nulla. Duis aliquam molestie erat. Ut et mauris vel pede varius sollicitudin. Sed ut dolor nec orci tincidunt interdum. Phasellus ipsum. Nunc tristique tempus lectus.</p>
+      </div>
+      <div id="tabs-2">
+        <p>Morbi tincidunt, dui sit amet facilisis feugiat, odio metus gravida ante, ut pharetra massa metus id nunc. Duis scelerisque molestie turpis. Sed fringilla, massa eget luctus malesuada, metus eros molestie lectus, ut tempus eros massa ut dolor. Aenean aliquet fringilla sem. Suspendisse sed ligula in ligula suscipit aliquam. Praesent in eros vestibulum mi adipiscing adipiscing. Morbi facilisis. Curabitur ornare consequat nunc. Aenean vel metus. Ut posuere viverra nulla. Aliquam erat volutpat. Pellentesque convallis. Maecenas feugiat, tellus pellentesque pretium posuere, felis lorem euismod felis, eu ornare leo nisi vel felis. Mauris consectetur tortor et purus.</p>
+      </div>
+</div>
+
+<div class="ui-layout-center droppable">
+	
+</div>
+
+</body>
+</html>

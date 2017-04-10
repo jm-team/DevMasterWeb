@@ -461,7 +461,8 @@ function renameFile(selected, fileName, t){
         type: 'POST',
         url: '${ServiceName}/file/rename',
         data: {
-			oldNameId : selected.id,
+			type : '${type}',
+			oldXPath : selected.id,
 			newName : fileName
         }
     }).done(function (data) {

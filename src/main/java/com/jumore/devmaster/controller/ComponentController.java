@@ -3,14 +3,24 @@ package com.jumore.devmaster.controller;
 import java.io.File;
 import java.util.Date;
 
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.jumore.devmaster.common.DevMasterConst;
 import com.jumore.devmaster.common.enums.BaseExceptionEnum;
+import com.jumore.devmaster.common.model.Configuration;
 import com.jumore.devmaster.common.util.PathUtils;
 import com.jumore.devmaster.common.util.SessionHelper;
 import com.jumore.devmaster.entity.FrontComponent;
@@ -28,6 +38,9 @@ public class ComponentController {
     @Autowired
     private BaseService baseService;
 
+    @Autowired
+    private Configuration cfg;
+    
     @RequestMapping(value = "/addComponent")
     public ModelAndView addComponent() throws Exception {
         ModelAndView mv = new ModelAndView();
@@ -86,7 +99,6 @@ public class ComponentController {
     @RequestMapping(value = "doUpdateComponent")
     public ResponseVo<String> doUpdateComponent(FrontComponent comp) throws Exception {
         validateComponent(comp);
-        // TODO 判断重名
         FrontComponent vo = new FrontComponent();
         vo.setGroupId(comp.getGroupId());
         vo.setName(comp.getName());
@@ -97,7 +109,7 @@ public class ComponentController {
         }
 
         compPo = baseService.get(FrontComponent.class, comp.getId());
-        String oldRoot = getRootName(compPo);
+        String oldRoot = PathUtils.getRootName(compPo);
 
         compPo.setGroupId(comp.getGroupId());
         compPo.setName(comp.getName());
@@ -107,7 +119,7 @@ public class ComponentController {
         baseService.update(compPo);
 
         // 修改文件夹名称
-        String newRoot = getRootName(comp);
+        String newRoot = PathUtils.getRootName(comp);
         File oldRootFile = new File(PathUtils.getComponentsDir() + oldRoot);
         File newRootFile = new File(PathUtils.getComponentsDir() + newRoot);
         oldRootFile.renameTo(newRootFile);
@@ -126,7 +138,4 @@ public class ComponentController {
         }
     }
 
-    private String getRootName(FrontComponent comp) {
-        return comp.getGroupId() + "." + comp.getName() + "." + comp.getVersion();
-    }
 }

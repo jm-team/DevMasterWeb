@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>index</title>
+<link rel="stylesheet" type="text/css" href="${ServiceName}/assets/easyui/themes/metro/easyui.css">
+<link rel="stylesheet" type="text/css" href="${ServiceName}/assets/easyui/themes/icon.css">
+<script type="text/javascript" src="${ServiceName}/assets/easyui/jquery.min.js"></script>
+<script src='${ServiceName}/assets/js/layer/layer.js' ></script>
+<script type="text/javascript" src="${ServiceName}/assets/easyui/jquery.easyui.min.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<style>
+</style>
+</head>
+<body class="easyui-layout">
+	<!-- header start -->
+	<div data-options="region:'north',border:true" style="height:40px;background: #f1f1f1;">
+		<a href="javascript:void(0)" id="header-button-cloud9" class="easyui-menubutton" style="height:40px;">
+			编辑
+		</a>
+		<a href="javascript:void(0)" id="header-button-cloud9" class="easyui-menubutton" style="height:40px;">
+			预览
+		</a>
+	</div>
+	<!-- header end -->
+	
+	<!-- left start -->
+	<div data-options="region:'west',split:true,title:''" style="width:15%;padding:10px;background: transparent;">
+		<!--基础组件列表-->
+        <div class="draggable">输入框</div>
+		<div class="draggable">多行文本框</div>
+		<div class="draggable">checkbox</div>
+		<div class="draggable">radio</div>
+		<div class="draggable">text</div>
+		<div class="draggable">link</div>
+	</div>
+	
+	<!-- left end -->
+	
+	<!-- right start -->
+	<div data-options="region:'east',split:true,title:''" style="width:15%;padding:10px;background: transparent;">
+		<!--放一个tab属性和事件-->
+	</div>
+	<!-- right end -->
+	
+	<!-- center start -->
+	<div data-options="region:'center',border:false,title:''">
+		<div class="easyui-layout droppable" data-options="fit:true">
+			
+		</div>
+	</div>
+	<!-- center end -->
+<script type="text/javascript">
+$( function() {
+    $( ".draggable" ).draggable();
+    $( ".droppable" ).droppable({
+      drop: function( event, ui ) {
+        console.log(ui);
+      }
+    });
+  } );
+</script>
+</body>
+</html>

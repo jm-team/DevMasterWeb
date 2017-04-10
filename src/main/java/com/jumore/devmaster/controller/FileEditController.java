@@ -123,10 +123,8 @@ public class FileEditController {
 
     @ResponseBody
     @RequestMapping(value = "deleteFile")
-    public ResponseVo<String> deleteFile(String fileName) throws Exception {
-        String workDir = SessionHelper.getUserWorkDir();
-        String tplDir = workDir + "tpls" + File.separator;
-        File file = new File(tplDir + fileName);
+    public ResponseVo<String> deleteFile(String fileName , String type) throws Exception {
+        File file = new File(getRootDir(type) + fileName);
         FileUtils.deleteQuietly(file);
         return ResponseVo.<String> BUILDER().setCode(Const.BUSINESS_CODE.SUCCESS);
     }

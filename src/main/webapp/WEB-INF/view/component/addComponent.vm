@@ -21,6 +21,14 @@
 					</div>
 				</div>
 				<div class="form-group">
+					<span class="col-sm-3 control-label no-padding-right">类别：</span> 
+					<select name="type">
+                        <option value="html">html</option>
+						<option value="js">js</option>
+						<option value="css">css</option>
+                    </select>
+				</div>
+				<div class="form-group">
 					<span class="col-sm-3 control-label no-padding-right">描述说明：</span> 
 					<div class="col-sm-9">
 						<textarea rows="5" cols="" name="remark"  class="col-xs-10 col-sm-5" ></textarea>

@@ -77,7 +77,8 @@
 	</bean>
 	
 	<mvc:default-servlet-handler/>
-	<mvc:view-controller path="/" view-name="index"/> 
+<!-- 	<mvc:view-controller path="/" view-name="index"/>  -->
+<!-- 	<mvc:resources mapping="/preview/**" location="file:${comp.preview.host}/"></mvc:resources>  -->
 	<!-- 拦截器配置 -->
 
 

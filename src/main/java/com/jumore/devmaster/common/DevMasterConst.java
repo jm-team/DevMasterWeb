@@ -55,4 +55,10 @@ public interface DevMasterConst {
         final Integer Yes = 1;
         final Integer No = 0;
     }
+    
+    interface Component {
+        final String PreviewFileName = "preview.html";
+        final String MainFileName = "main.html";
+        final String ImportTagName = "import";
+    }
 }

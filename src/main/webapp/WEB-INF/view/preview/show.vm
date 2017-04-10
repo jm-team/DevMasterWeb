@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8"></meta>
+<script src='${ServiceName}/assets/js/jquery-2.0.3.min.js' ></script>
+</head>
+<body>
+    <iframe id="compFrame" src="${ServiceName}/preview/${comp}"></iframe>
+	<div>
+		#foreach( $setting in $settingList)
+            <div class="form-group">
+				<span class="col-sm-3 control-label no-padding-right">$setting.name：</span> 
+				<div class="col-sm-9">
+					#if($!setting.type=='input')
+						<textarea onblur="apply(this)" class="attr" rows="3" cols="" name="$setting.name"  class="col-xs-10 col-sm-5" >$!setting.defaultValue</textarea>
+					#end
+					#if($!setting.type=='enum')
+                        <select name="$setting.name" class="attr" onchange="apply(this)">
+							#foreach( $item in $setting.enumList.split(','))
+							<option value="$!item">$!item</option>
+							#end
+						</select>
+					#end
+				</div>
+			</div>
+        #end
+	</div>
+<script type="text/javascript">
+function apply(attr){
+	var frameDoc = $('#compFrame')[0].contentDocument;
+	var frameWin = $('#compFrame')[0].contentWindow;
+	var dataoption = $(frameDoc).find('#dataoption');
+	var key = $(attr).attr('name');
+	var value = $(attr).val();
+	dataoption.attr(key,value);
+	frameWin.init();
+}
+</script>
+</body>
+</html>

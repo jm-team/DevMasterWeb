@@ -19,6 +19,9 @@ public class Configuration {
         return dataPath;
     }
 
+    @Value(value = "${comp.preview.host}")
+    private String compPreviewHost;
+    
     /**
      *聚灵通短信服务地址
      */
@@ -47,5 +50,9 @@ public class Configuration {
 
     public String getFrontComponentRepoDomain() {
         return frontComponentRepoDomain;
+    }
+
+    public String getCompPreviewHost() {
+        return compPreviewHost;
     }
 }

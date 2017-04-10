@@ -9,4 +9,8 @@
 	<select id="listPublicComponent" parameterType="paramMap" resultType="Map">
 		select * from dm_front_public_component
 	</select>
+	
+	<select id="listComponentSetting" parameterType="paramMap" resultType="Map">
+		select * from dm_front_component_setting where comp_id = ${compId}
+	</select>
 </mapper>

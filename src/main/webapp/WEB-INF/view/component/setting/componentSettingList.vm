@@ -1,0 +1,137 @@
+#parse("./inc/head.vm")
+<body>
+<div class="main-container" id="main-container">
+	<div class="main-container-inner">
+		<div class="ace-settings-container" id="ace-settings-container">
+			<div class="btn btn-app btn-xs btn-warning ace-settings-btn" id="ace-settings-btn">
+				<i class="icon-cog bigger-150"></i>
+			</div>
+			<div class="ace-settings-box" id="ace-settings-box">
+				<div>
+					<span><a href="javascript:void(0)" onclick="openAddSetting();">添加参数</a></span>
+				</div>
+			</div>
+		</div>
+		<div class="page-content">
+			<br/>
+			<div class="row col-xs-12">
+				<table id="sample-table-1" class="table table-striped table-bordered table-hover">
+						<thead>
+							<tr>
+								<th>名称</th>
+								<th>输入类型</th>
+								<th>占位符号</th>
+								<th>默认值</th>
+								<th>枚举列表</th>
+							    <th></th>
+							</tr>
+						</thead>
+
+						<tbody>
+							<tr style="display:none;" class="node_row">
+							    <td >$[name]</td>
+								<td >$[type]</td>
+								<td >$[placeholder]</td>
+								<td >$[defaultValue]</td>
+								<td >$[enumList]</td>
+							    <td>
+										<a href="javascript:void(0)" onclick="deleteSetting($[id])">删除</a>
+							    </td>
+							</tr>
+						</tbody>
+					</table>
+			</div><!-- /row -->
+			<div class="row">
+				<div class="col-xs-12">
+					<div>
+						<ul class="pagination" id="pagination"></ul>
+					</div>
+				</div><!-- /.col -->
+			</div><!-- /.row -->
+		</div><!-- /.page-content -->
+	</div><!-- /.main-container-inner -->
+
+</div><!-- /.main-container -->
+
+#parse("./inc/footer.vm")
+
+<script type="text/javascript">
+var pager;
+var curResult;
+$(function(){
+	listData(0);
+});
+
+function doSearch(){
+	pager=null;
+	listData(0);
+}
+
+function listData(currentResult){
+	curResult = currentResult;
+	var title = $('#title').val();
+	var devUsername = $('#devUsername').val();
+	$.ajax({
+        type: "POST",
+        url: '${ServiceName}/component/setting/listComponentSettingData',
+        data: {currentResult:currentResult , title:title , compId:${compId}},
+        dataType:'json'
+    }).done(function (result) {
+        if(result.code!=0){
+			layer.msg(result.desc);
+			return;
+		}
+		buildHtmlWithJsonArray('node_row' , result.data.result , false , false);
+		var totalPages = result.data.totalPage;
+		if(totalPages==0){
+			totalPages=1;
+		}
+		if(pager==null){
+			pager = createPager('#pagination', totalPages ,function(num, type){
+				listData((num-1)*result.data.pageSize);	
+			});
+		}
+    });
+}
+
+
+function openAddSetting(){
+	layer.open({
+	  type: 2,
+	  title: '添加配置',
+	  shade: 0.5,
+	  area: ['800px', '400px'],
+	  content: '${ServiceName}/component/setting/addComponentSetting?compId=${compId}',
+	  cancel:function(index){
+		  listData(curResult);
+	  }
+	});
+}
+
+function deleteComponentSetting(id){
+	layer.confirm('确定要删除该条数据吗？', {
+		  btn: ['是','否'] //按钮
+		}, function(){
+		  //yes
+			$.ajax({
+		        type: "POST",
+		        url: '${ServiceName}' + "/component/setting/delete",
+		        data: {
+		            "settingId": id
+		        }
+		    }).done(function (data) {
+		    	if(data.code == 0){
+			    	listData(curResult);
+			    	layer.msg('删除成功');
+		    	}else{
+		    		layer.msg(data.desc);
+		    	}
+		    });
+		}, function(){
+		  //no
+		});
+}
+</script>
+</body>
+</html>
+
