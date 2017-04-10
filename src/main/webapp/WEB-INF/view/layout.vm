@@ -54,25 +54,39 @@
 
 		$( function() {
             $( ".draggable" ).draggable({
-				//helper:"clone"
+				helper:"clone"
 			});
             $( ".droppable" ).droppable({
 			  accept: ".draggable",
               drop: function( event, ui ) {
-			  	var type = ui.draggable.attr('stype');
-				if(type=='input'){
-					$(this).append('<input type="text" value="input something here" />');	
-				}else if(type=='textarea'){
-					$(this).append('<textarea >input something here</textarea>');	
-				}else if(type=='checkbox'){
-					$(this).append('<input type="checkbox" />');
-				}else if(type=='radio'){
-					$(this).append('<input type="radio" />');
-				}else if(type=='text'){
-					$(this).append('<label>输入内容</label>');
-				}else if(type=='link'){
-					$(this).append('<a href="">链接标题</a>');
+			  	var type = ui.draggable.attr('type');
+				if(!type){
+					return;
 				}
+				var clone;
+				if(type=='input'){
+					clone = $('<span>&nbsp;<span><input type="text" value="input something here" />');	
+				}else if(type=='textarea'){
+					clone = $('<span>&nbsp;<span><textarea >input something here</textarea>');	
+				}else if(type=='checkbox'){
+					clone = $('<span><span><input type="checkbox"/>');
+				}else if(type=='radio'){
+					clone = $('<span><span><input type="radio" />');
+				}else if(type=='text'){
+					clone = $('<label>输入内容</label>');
+				}else if(type=='link'){
+					clone = $('<a href="">链接标题</a>');
+				}else if(type=='container'){
+					clone = $('<div style="height:50px;width:200px;border:1px dashed #aaa" class="droppable"></div>');
+					clone.resizable();
+				}
+				
+                clone.css("position", "absolute");
+          		clone.css("top", ui.position.top);
+                clone.css("left", ui.position.left);
+				clone.addClass('draggable');
+                $(this).append(clone);
+				clone.draggable({ containment: 'parent' ,cursor: 'move'});
               }
             });
         });
@@ -100,6 +114,7 @@
         		<div class="draggable" type="radio">radio</div>
         		<div class="draggable" type="text">text</div>
         		<div class="draggable" type="link">link</div>
+				<div class="draggable" type="container">容器</div>
         </div>
 	</td>
 	<td class="column" style="width:80%">
