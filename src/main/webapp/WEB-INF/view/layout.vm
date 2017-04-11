@@ -30,7 +30,13 @@
 		border: 1px solid #aaa;
 	}
 	.draggable{
-		cursor:move;margin-top:5px;
+		cursor:move;
+	}
+	.comp{
+		margin-top:5px;
+	}
+	.dragOver{
+		background:#eee;
 	}
 	</style>
 
@@ -43,9 +49,11 @@
 	<script type="text/javascript">
 	// create global var for layout so we can call myLayout.resize() after changing a theme
 	var myLayout;
-
+	var dropContainer;
+	var topOffset,leftOffet;
 	$(document).ready(function(){
-
+		topOffset = $('#top').height();
+		leftOffset = $('#west').width();
 		// create tabs FIRST so elems are correct size BEFORE Layout measures them
 		$(".ui-layout-east").tabs();
 
@@ -56,73 +64,110 @@
             $( ".draggable" ).draggable({
 				helper:"clone"
 			});
-            $( ".droppable" ).droppable({
+            $( "#root" ).droppable({
 			  accept: ".draggable",
-              drop: function( event, ui ) {
-			  	var type = ui.draggable.attr('type');
-				if(!type){
-					return;
-				}
-				var clone;
-				if(type=='input'){
-					clone = $('<span>&nbsp;<span><input type="text" value="input something here" />');	
-				}else if(type=='textarea'){
-					clone = $('<span>&nbsp;<span><textarea >input something here</textarea>');	
-				}else if(type=='checkbox'){
-					clone = $('<span><span><input type="checkbox"/>');
-				}else if(type=='radio'){
-					clone = $('<span><span><input type="radio" />');
-				}else if(type=='text'){
-					clone = $('<label>输入内容</label>');
-				}else if(type=='link'){
-					clone = $('<a href="">链接标题</a>');
-				}else if(type=='container'){
-					clone = $('<div style="height:50px;width:200px;border:1px dashed #aaa" class="droppable"></div>');
-					clone.resizable();
-				}
-				
-                clone.css("position", "absolute");
-          		clone.css("top", ui.position.top);
-                clone.css("left", ui.position.left);
-				clone.addClass('draggable');
-                $(this).append(clone);
-				clone.draggable({ containment: 'parent' ,cursor: 'move'});
-              }
+              drop: onElementDrop,
+			  out : onDragOut
             });
+			$( "#root").css('top',topOffset);
+			$( "#root").css('left',leftOffset);
         });
   
 	});
+	
+	function onElementDrop(event , ui){
+		var type = ui.draggable.attr('type');
+		if(!type){
+			$('.droppable').removeClass('dragOver');
+			$(this).droppable( "enable" );
+			return;
+		}
+		
+		var clone;
+		if(type=='input'){
+			clone = $('<span>&nbsp;<span><input type="text"  class="target" value="input something here" />');	
+		}else if(type=='textarea'){
+			clone = $('<span>&nbsp;<span><textarea class="target">input something here</textarea>');	
+		}else if(type=='checkbox'){
+			clone = $('<span><span><input  class="target" type="checkbox"/>');
+		}else if(type=='radio'){
+			clone = $('<span><span><input  class="target" type="radio" />');
+		}else if(type=='text'){
+			clone = $('<label  class="target">输入内容</label>');
+		}else if(type=='link'){
+			clone = $('<a href="#"  class="target">链接标题</a>');
+		}else if(type=='container'){
+			clone = $('<div  class="target" type="container" style="height:100px;width:200px;border:1px dashed #aaa;display:inline-block" class="droppable"></div>');
+			clone.resizable();
+			clone.droppable({
+			  accept: ".draggable",
+              drop: onElementDrop,
+			  over: onDragOver,
+			  out : onDragOut
+            });
+		}
+		
+		var top = $(this).css('top').replace('px','');
+		var left = $(this).css('left').replace('px','');
+        clone.css("position", "relative");
+		if($(this).attr('id')=='root'){
+    		clone.css("top", ui.position.top-top);
+            clone.css("left", ui.position.left-left);
+		}else{
+			clone.css("top", ui.position.top-top-topOffset);
+        	clone.css("left", ui.position.left-left-leftOffset);
+		}
+  		
+		clone.addClass('draggable');
+        $(this).append(clone);
+		clone.draggable({ cursor: 'move'});
+		$('.droppable').removeClass('dragOver');
+		$(this).droppable( "enable" );
+	}
+	
+	function onDragOver(event, ui){
+		$('.droppable').removeClass('dragOver');
+		$(this).addClass('dragOver');
+		
+		$('.droppable').droppable( "disable" );
+		$(this).droppable( "enable" );
+	}
+	
+	function onDragOut(event, ui){
+		$(this).removeClass('dragOver');
+		console.log("leave "+ui);
+	}
 	</script>
 
 </head>
 <body>
 
-<div class="ui-layout-north" >
+<div class="ui-layout-north" id="top">
 	<!-- add extra utility buttons for the Themeswitcher tool -->
 	<button onClick="removeUITheme()">编辑</button> &nbsp; &nbsp;
 	<button onClick="myLayout.resizeAll(); myLayout.sizeContent('west');">预览</button>
 </div>
 
-<table style="height:800px;width:100%;" cellpadding="0px;" cellspacing="0px">
+<table style="height:800px;width:100%;" cellpadding="0px;" cellspacing="0px" border-spacing="2px">
 <tr>
-    <td class="column" style="width:10%">
+    <td id="west" class="column" style="width:10%">
 		<div class="" >
         	<!--基础组件列表-->
-                <div class="draggable" type="input">输入框</div>
-        		<div class="draggable" type="textarea">多行文本框</div>
-        		<div class="draggable" type="checkbox">checkbox</div>
-        		<div class="draggable" type="radio">radio</div>
-        		<div class="draggable" type="text">text</div>
-        		<div class="draggable" type="link">link</div>
-				<div class="draggable" type="container">容器</div>
+                <div class="draggable comp" type="input">输入框</div>
+        		<div class="draggable comp" type="textarea">多行文本框</div>
+        		<div class="draggable comp" type="checkbox">checkbox</div>
+        		<div class="draggable comp" type="radio">radio</div>
+        		<div class="draggable comp" type="text">text</div>
+        		<div class="draggable comp" type="link">link</div>
+				<div class="draggable comp" type="container">容器</div>
         </div>
 	</td>
 	<td class="column" style="width:80%">
-		<div class="droppable" style="height:800px;">
+		<div id="root" class="droppable" style="height:800px;">
     	</div>
 	</td>
 	<td style="width:10%;" class="column">
-		<div class="ui-layout-center droppable" style="height:100%;">
+		<div class="ui-layout-center" style="height:100%;">
         	<div class="ui-layout-east" style="height:100%">
         	  <ul>
                 <li><a href="#tabs-1">属性</a></li>
