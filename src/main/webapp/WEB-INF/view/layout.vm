@@ -62,6 +62,7 @@
 
 		$( function() {
             $( ".draggable" ).draggable({
+				connectToSortable: "#root",
 				helper:"clone"
 			});
             $( "#root" ).droppable({
@@ -71,6 +72,8 @@
             });
 			$( "#root").css('top',topOffset);
 			$( "#root").css('left',leftOffset);
+			$( "#root" ).sortable({
+            });
         });
   
 	});
@@ -97,7 +100,7 @@
 		}else if(type=='link'){
 			clone = $('<a href="#"  class="target">链接标题</a>');
 		}else if(type=='container'){
-			clone = $('<div  class="target" type="container" style="height:100px;width:200px;border:1px dashed #aaa;display:inline-block" class="droppable"></div>');
+			clone = $('<div  class="target" type="container" style="height:100px;width:100%;border:1px dashed #aaa;display:inline-block" class="droppable"></div>');
 			clone.resizable();
 			clone.droppable({
 			  accept: ".draggable",

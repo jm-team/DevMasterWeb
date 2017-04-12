@@ -37,6 +37,14 @@ public class IndexController {
         return mv;
     }
     
+    @PublicMethod
+    @RequestMapping(value = "layout2")
+    public ModelAndView layout2() throws Exception {
+        ModelAndView mv = new ModelAndView();
+        // 获取组件列表
+        return mv;
+    }
+    
     @SuppressWarnings("rawtypes")
     @ResponseBody
     @RequestMapping(value = "listAppData")
