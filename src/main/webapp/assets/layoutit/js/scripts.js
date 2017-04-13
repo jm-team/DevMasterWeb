@@ -68,7 +68,7 @@ $(document).ready(function() {
 		}
 	});
 
-	$(".sidebar-nav .box").draggable({
+	/*$(".sidebar-nav .box").draggable({
 		connectToSortable : ".column",
 		helper : "clone",
 		handle : ".drag",
@@ -77,7 +77,7 @@ $(document).ready(function() {
 		},
 		stop : function(e, t) {
 		}
-	});
+	});*/
 
 	removeElm();
 	gridSystemGenerator();
