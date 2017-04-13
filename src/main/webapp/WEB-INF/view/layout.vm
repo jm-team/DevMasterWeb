@@ -44,6 +44,13 @@
 	<script src="${ServiceName}/assets/layout/js/jquery.js"></script>
 	<script src="${ServiceName}/assets/layout/js/jquery-ui.js"></script>
 	<script src="${ServiceName}/assets/layout/js/jquery.layout.js"></script>
+	<script src="/page/js/widget/widgetutil.js"></script>
+	<script src="/page/js/widget/input.js"></script>
+	
+    <script>
+		var jmWidgets = {};
+		jmWidgets['jmInput'] = jmInput;
+	</script>
 
 
 	<script type="text/javascript">
@@ -88,7 +95,7 @@
 		
 		var clone;
 		if(type=='input'){
-			clone = $('<span>&nbsp;<span><input type="text"  class="target" value="input something here" />');	
+			clone = $('<span>&nbsp;<span>' + jmInput.initHtml());	
 		}else if(type=='textarea'){
 			clone = $('<span>&nbsp;<span><textarea class="target">input something here</textarea>');	
 		}else if(type=='checkbox'){
@@ -109,6 +116,10 @@
 			  out : onDragOut
             });
 		}
+		
+		clone.bind('click',function(){
+			onfocus(clone.find('.target'));
+		});
 		
 		var top = $(this).css('top').replace('px','');
 		var left = $(this).css('left').replace('px','');
@@ -140,6 +151,89 @@
 		$(this).removeClass('dragOver');
 		console.log("leave "+ui);
 	}
+	
+	/**
+	 * 当组元素中时处理代码
+	 */
+	function onfocus(ele){
+		// 如果是同一个元素，不做任何操作
+		/*if(selectedElement == ele){
+			return;
+		}
+		
+		selectedElement = ele;
+		clearAttrs();
+		clearEvents();
+		listAttrs();
+		listEvents();*/
+		
+		var widgetId = ele.attr('data-widget-id');
+		var widgetType = ele.attr('data-widget-type');
+		
+		var widget = jmWidgets[widgetType];
+		var attr = widget.getAttr(widgetId);
+		
+		console.log(attr);
+		
+		$('#tabs-1').html('');
+		$.each(widget.attributes, function(index, value){
+			$('#tabs-1').append(value.name + ' : <input type="text" name="'+value.value+'" value="'+attr[value.value]+'" />');
+		});
+		
+		$('#tabs-1 input').bind('keyup', function(){
+			bindAttrs(this, widgetId, widgetType);
+		});
+	}
+	
+	/**
+	 * 清除元素的属性
+	 */
+	function clearAttrs(){
+		$('.attr-editor').val('');
+	}
+	
+	/**
+	 * 列出元素的属性
+	 */
+	function listAttrs(){
+		
+	}
+	
+	/**
+	 * 清除元素的事件
+	 */
+	function clearEvents(){
+		
+	}
+	
+	/**
+	 * 列出元素的事件
+	 */
+	function listEvents(){
+		
+	}
+	
+	/**
+	 * 将属性值绑定到元素上
+	 */
+	function bindAttrs(ele, widgetId, widgetType){
+		var widget = jmWidgets[widgetType];
+		
+		var attrEle = $(ele);
+		var attrValue = attrEle.val();
+		var attrName = attrEle.attr('name');
+		
+		var attr = {widgetId : widgetId};
+		attr[attrName] = attrValue;
+		
+		widget.setAttr(attr);
+	}
+	
+	/**
+	 * 将事件绑定到元素上
+	 */
+	function bindEvents(){
+	}
 	</script>
 
 </head>
@@ -163,6 +257,7 @@
         		<div class="draggable comp" type="text">text</div>
         		<div class="draggable comp" type="link">link</div>
 				<div class="draggable comp" type="container">容器</div>
+				<div>===========================================</div>
         </div>
 	</td>
 	<td class="column" style="width:80%">
@@ -180,7 +275,7 @@
 				sfd
               </div>
               <div id="tabs-2">
-				fe
+                fe
               </div>
 			</div>
         </div>
@@ -188,6 +283,13 @@
 </tr>
 </table>
 
+<script>
+	$(function(){
+		for(var key in jmWidgets){
+			$('#west>div').append('<div class="draggable comp" type="'+jmWidgets[key].type+'">'+jmWidgets[key].name+'</div>');
+		}
+	});
+</script>
 
 </body>
 </html>
