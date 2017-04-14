@@ -2,7 +2,7 @@ var jmInput = (function() {
     var input = {
         name : '输入框',
         type : 'input',
-        htmlSnippet : '<input id="${id}" type="${type}" class="${clazz}" name="${name}" value="${value}" data-widget-id="${widgetId}" data-widget-type="jmInput"/>',
+        htmlSnippet : '<input id="${id}" type="${type}" class="${clazz}" name="${name}" placeholder="${placeholder}" value="${value}" data-widget-id="${widgetId}" data-widget-type="jmInput"/>',
         attributes : [ {
             name : 'id',
             value : 'id',
@@ -19,13 +19,19 @@ var jmInput = (function() {
             name : 'value',
             value : 'value',
             description : 'the value of the input'
-        } ],
+        }, {
+            name: 'placeholder',
+            value: 'placeholder',
+            description : 'the placeholder of the input'
+        }
+        ],
         initHtml : function(attrs) {
             var defaultAttrs = {
                 id : '',
                 type : 'text',
                 name : '',
                 value : '',
+                placeholder : '',
                 clazz : 'target',
                 widgetId : widgetUtils.randomNumber()
             };
@@ -87,6 +93,7 @@ var jmInput = (function() {
                 type : target.attr('type'),
                 name : target.attr('name'),
                 value : target.val(),
+                placeholder : target.attr('placeholder'),
                 widgetId : widgetId,
                 widgetType : 'jmInput'
             };

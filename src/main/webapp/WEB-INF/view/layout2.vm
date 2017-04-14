@@ -90,7 +90,10 @@
 		
 		$('#tabs-1').html('');
 		$.each(widget.attributes, function(index, value){
-			$('#tabs-1').append(value.name + ' : <input type="text" name="'+value.value+'" value="'+attr[value.value]+'" />');
+			$('#tabs-1').append('<div class="form-group row">' +
+					'<label class="control-label">' + value.name + ' : </label>' +
+					'<input type="text" class="form-control" name="'+value.value+'" value="'+attr[value.value]+'" />' +
+					'</div>');
 		});
 		
 		$('#tabs-1 input').bind('keyup', function(){
