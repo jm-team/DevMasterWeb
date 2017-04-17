@@ -3,8 +3,6 @@ package com.jumore.devmaster.controller;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,60 +19,58 @@ import com.github.dockerjava.core.DockerClientConfig;
 import com.github.dockerjava.jaxrs.JerseyDockerCmdExecFactory;
 import com.jumore.devmaster.common.util.SessionHelper;
 import com.jumore.devmaster.entity.Project;
+import com.jumore.dove.controller.base.BaseController;
 import com.jumore.dove.service.BaseService;
 import com.jumore.dove.web.model.Const;
 import com.jumore.dove.web.model.ResponseVo;
 
 @Controller
 @RequestMapping(value = "/container")
-public class ContainerController {
-	
-	private final Logger LOGGER = LoggerFactory.getLogger(this.getClass().getName());
+public class ContainerController extends BaseController {
 
-	@Autowired
-	private BaseService baseService;
-	
-	private DockerClient dockerClient;
-	
-	{
-		DockerClientConfig config = DefaultDockerClientConfig.createDefaultConfigBuilder()
-				.withDockerHost(SessionHelper.getDockerHost()).build();
+    @Autowired
+    private BaseService  baseService;
 
-		DockerCmdExecFactory dockerCmdExecFactory = new JerseyDockerCmdExecFactory().withReadTimeout(1000)
-				.withConnectTimeout(1000).withMaxTotalConnections(100).withMaxPerRouteConnections(10);
+    private DockerClient dockerClient;
 
-		dockerClient = DockerClientBuilder.getInstance(config)
-				.withDockerCmdExecFactory(dockerCmdExecFactory).build();
-	}
+    {
+        DockerClientConfig config = DefaultDockerClientConfig.createDefaultConfigBuilder().withDockerHost(SessionHelper.getDockerHost())
+                .build();
 
-	@ResponseBody
-	@RequestMapping(value = "/generateContainer")
-	public ResponseVo<String> generateContainer(Long projectId) throws Exception {
-		Project projectPo = baseService.get(Project.class, projectId);
-		if (projectPo == null) {
-			throw new RuntimeException("工程不存在");
-		}
+        DockerCmdExecFactory dockerCmdExecFactory = new JerseyDockerCmdExecFactory().withReadTimeout(1000).withConnectTimeout(1000)
+                .withMaxTotalConnections(100).withMaxPerRouteConnections(10);
 
-		List<String> nameFilter = new ArrayList<>();
-		nameFilter.add(projectPo.getName());
-		ListContainersCmd cmd = dockerClient.listContainersCmd();
-		cmd.withShowAll(true);
-		cmd.getFilters().put("name", nameFilter);
-		
-		List<Container> queryResult;
-		try {
-			queryResult = cmd.exec();
-		} catch (Exception e) {
-			LOGGER.error("Docker命令执行失败：", e);
-			throw new RuntimeException("生成容器失败。");
-		}
-		
-		if (queryResult != null && queryResult.size() > 0) {
-			throw new RuntimeException("容器已创建。不能重复创建。");
-		}
-		
-		CreateContainerResponse newContainer = dockerClient.createContainerCmd("tomcat").withName(projectPo.getName()).exec();
-		
-		return ResponseVo.<String>BUILDER().setDesc("容器已创建。ID：" + newContainer.getId()).setCode(Const.BUSINESS_CODE.SUCCESS);
-	}
+        dockerClient = DockerClientBuilder.getInstance(config).withDockerCmdExecFactory(dockerCmdExecFactory).build();
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/generateContainer")
+    public ResponseVo<String> generateContainer(Long projectId) throws Exception {
+        Project projectPo = baseService.get(Project.class, projectId);
+        if (projectPo == null) {
+            throw new RuntimeException("工程不存在");
+        }
+
+        List<String> nameFilter = new ArrayList<>();
+        nameFilter.add(projectPo.getName());
+        ListContainersCmd cmd = dockerClient.listContainersCmd();
+        cmd.withShowAll(true);
+        cmd.getFilters().put("name", nameFilter);
+
+        List<Container> queryResult;
+        try {
+            queryResult = cmd.exec();
+        } catch (Exception e) {
+            logHelper.getBuilder().error("Docker命令执行失败：", e);
+            throw new RuntimeException("生成容器失败。");
+        }
+
+        if (queryResult != null && queryResult.size() > 0) {
+            throw new RuntimeException("容器已创建。不能重复创建。");
+        }
+
+        CreateContainerResponse newContainer = dockerClient.createContainerCmd("tomcat").withName(projectPo.getName()).exec();
+
+        return ResponseVo.<String>BUILDER().setDesc("容器已创建。ID：" + newContainer.getId()).setCode(Const.BUSINESS_CODE.SUCCESS);
+    }
 }

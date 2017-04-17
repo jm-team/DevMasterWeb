@@ -21,14 +21,14 @@ import com.jumore.dove.common.log.LogHelper;
 import com.jumore.dove.service.BaseService;
 
 /**
- *
+ *.
  */
 public class DevMasterRealm extends AuthorizingRealm {
 
     protected final LogHelper logHelper = LogHelper.getLogger(this.getClass());
-    
+
     @Autowired
-    BaseService baseService;
+    BaseService               baseService;
 
     /**
      * 为当前登录的Subject授予角色和权限
@@ -36,15 +36,15 @@ public class DevMasterRealm extends AuthorizingRealm {
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
         SimpleAuthorizationInfo simpleAuthorInfo = new SimpleAuthorizationInfo();
-//        DevMasterUser user = SessionHelper.getUser();
-//        if(user.getType()==DevMasterConst.UserType.Admin){
-//            simpleAuthorInfo.addRole("admin");
-//        }
+        // DevMasterUser user = SessionHelper.getUser();
+        // if(user.getType()==DevMasterConst.UserType.Admin){
+        // simpleAuthorInfo.addRole("admin");
+        // }
         return simpleAuthorInfo;
     }
 
     /**
-     * 验证当前登录的Subject
+     * 验证当前登录的Subject.
      */
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authcToken) throws AuthenticationException {

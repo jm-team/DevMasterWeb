@@ -32,25 +32,25 @@ public class EntityController {
         mv.addObject("projectId", projectId);
         Project projectPo = baseService.get(Project.class, projectId);
         mv.addObject("entityIds", projectPo.getGenerateEntityIds());
-        if(projectPo.getTplId()!=null){
+        if (projectPo.getTplId() != null) {
             ProjectTemplate tplPo = baseService.get(ProjectTemplate.class, projectPo.getTplId());
-            if(tplPo!=null){
+            if (tplPo != null) {
                 mv.addObject("tplName", tplPo.getTitle());
             }
         }
-        
+
         return mv;
     }
 
     @ResponseBody
     @RequestMapping(value = "listEntityData")
-    public ResponseVo<Page<DBEntity>> listEntityData(Page<DBEntity> page,Long projectId, String name) throws Exception {
+    public ResponseVo<Page<DBEntity>> listEntityData(Page<DBEntity> page, Long projectId, String name) throws Exception {
         ParamMap pm = new ParamMap();
         page.setPageSize(200);
         pm.put("projectId", projectId);
         pm.put("name", name);
-        page = baseService.findPageByParams(DBEntity.class , page, "Entity.listEntity", pm);
-        return ResponseVo.<Page<DBEntity>> BUILDER().setData(page).setCode(Const.BUSINESS_CODE.SUCCESS);
+        page = baseService.findPageByParams(DBEntity.class, page, "Entity.listEntity", pm);
+        return ResponseVo.<Page<DBEntity>>BUILDER().setData(page).setCode(Const.BUSINESS_CODE.SUCCESS);
     }
 
     @RequestMapping(value = "/addEntity")
@@ -64,28 +64,28 @@ public class EntityController {
     @RequestMapping(value = "/doAddEntity")
     public ResponseVo<String> doAddEntity(DBEntity entity) throws Exception {
         validateEntity(entity);
-    	checkNameDuplicate(entity);
+        checkNameDuplicate(entity);
         baseService.save(entity);
-        return ResponseVo.<String> BUILDER().setData("").setCode(Const.BUSINESS_CODE.SUCCESS);
+        return ResponseVo.<String>BUILDER().setData("").setCode(Const.BUSINESS_CODE.SUCCESS);
     }
 
-	private void validateEntity(DBEntity entity) {
-		if (StringUtils.isEmpty(entity.getName())) {
+    private void validateEntity(DBEntity entity) {
+        if (StringUtils.isEmpty(entity.getName())) {
             throw new RuntimeException("表名不能为空");
         }
-	}
-    
-	// 检查名称重复
-	private void checkNameDuplicate(DBEntity entity) {
-		DBEntity example = new DBEntity();
-    	example.setName(entity.getName());
-    	example.setProjectId(entity.getProjectId());
-    	List<EntityField> list = baseService.listByExample(example);
-    	if (list != null && list.size() > 0) {
-    		throw new RuntimeException("表名已存在");
-    	}
-	}
-	
+    }
+
+    // 检查名称重复
+    private void checkNameDuplicate(DBEntity entity) {
+        DBEntity example = new DBEntity();
+        example.setName(entity.getName());
+        example.setProjectId(entity.getProjectId());
+        List<EntityField> list = baseService.listByExample(example);
+        if (list != null && list.size() > 0) {
+            throw new RuntimeException("表名已存在");
+        }
+    }
+
     @RequestMapping(value = "/editEntity")
     public ModelAndView editEntity(Long id) throws Exception {
         ModelAndView mv = new ModelAndView();
@@ -100,12 +100,12 @@ public class EntityController {
         validateEntity(entity);
         DBEntity po = baseService.get(DBEntity.class, entity.getId());
         if (!po.getName().equals(entity.getName())) { // 如果修改了名称，要检查名称重复
-        	checkNameDuplicate(entity);
+            checkNameDuplicate(entity);
         }
         po.setName(entity.getName());
         po.setRemark(entity.getRemark());
         baseService.update(po);
-        return ResponseVo.<String> BUILDER().setData("").setCode(Const.BUSINESS_CODE.SUCCESS);
+        return ResponseVo.<String>BUILDER().setData("").setCode(Const.BUSINESS_CODE.SUCCESS);
     }
 
     @ResponseBody
@@ -116,7 +116,7 @@ public class EntityController {
             throw new RuntimeException("表不存在或已删除");
         }
         baseService.delete(po);
-        return ResponseVo.<String> BUILDER().setCode(Const.BUSINESS_CODE.SUCCESS);
+        return ResponseVo.<String>BUILDER().setCode(Const.BUSINESS_CODE.SUCCESS);
     }
-    
+
 }

@@ -15,12 +15,12 @@
   <script src="${ServiceName}/assets/layoutit/js/jquery-ui.js"></script>
   <script src="${ServiceName}/assets/layoutit/lib/bootstrap/dist/js/bootstrap.min.js"></script>
   <script src="${ServiceName}/assets/layoutit/js/scripts.js"></script>
-  <script src="/page/js/widget/widgetutil.js"></script>
-  <script src="/page/js/widget/input.js"></script>
-  <script src="/page/js/widget/textarea.js"></script>
-  <script src="/page/js/widget/button.js"></script>
-  <script src="/page/js/widget/label.js"></script>
-  <script src="/page/js/widget/link.js"></script>
+  <script src="${ServiceName}/page/js/widget/widgetutil.js"></script>
+  <script src="${ServiceName}/page/js/widget/input.js"></script>
+  <script src="${ServiceName}/page/js/widget/textarea.js"></script>
+  <script src="${ServiceName}/page/js/widget/button.js"></script>
+  <script src="${ServiceName}/page/js/widget/label.js"></script>
+  <script src="${ServiceName}/page/js/widget/link.js"></script>
 
   <script>
 	  var jmWidgets = {};

@@ -3,22 +3,13 @@ package com.jumore.devmaster.controller;
 import java.io.File;
 import java.util.Date;
 
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.jumore.devmaster.common.DevMasterConst;
 import com.jumore.devmaster.common.enums.BaseExceptionEnum;
 import com.jumore.devmaster.common.model.Configuration;
 import com.jumore.devmaster.common.util.PathUtils;
@@ -36,11 +27,8 @@ import com.jumore.dove.web.model.ResponseVo;
 public class ComponentController {
 
     @Autowired
-    private BaseService baseService;
+    private BaseService   baseService;
 
-    @Autowired
-    private Configuration cfg;
-    
     @RequestMapping(value = "/addComponent")
     public ModelAndView addComponent() throws Exception {
         ModelAndView mv = new ModelAndView();
@@ -62,7 +50,7 @@ public class ComponentController {
         comp.setCreateTime(new Date());
         comp.setUid(SessionHelper.getUser().getId());
         baseService.save(comp);
-        return ResponseVo.<String> BUILDER().setCode(Const.BUSINESS_CODE.SUCCESS);
+        return ResponseVo.<String>BUILDER().setCode(Const.BUSINESS_CODE.SUCCESS);
     }
 
     @RequestMapping(value = "/componentList")
@@ -78,13 +66,13 @@ public class ComponentController {
         ParamMap pm = new ParamMap();
         pm.put("uid", SessionHelper.getUser().getId());
         page = baseService.findPageByParams(FrontComponent.class, page, "Component.listPrivateComponent", pm);
-        return ResponseVo.<Page<FrontComponent>> BUILDER().setData(page).setCode(Const.BUSINESS_CODE.SUCCESS);
+        return ResponseVo.<Page<FrontComponent>>BUILDER().setData(page).setCode(Const.BUSINESS_CODE.SUCCESS);
     }
 
     @ResponseBody
     @RequestMapping(value = "publish")
     public ResponseVo<String> publish(Long tplId, Integer scope) throws Exception {
-        return ResponseVo.<String> BUILDER().setCode(Const.BUSINESS_CODE.SUCCESS);
+        return ResponseVo.<String>BUILDER().setCode(Const.BUSINESS_CODE.SUCCESS);
     }
 
     @RequestMapping(value = "/editComponent")
@@ -104,7 +92,7 @@ public class ComponentController {
         vo.setName(comp.getName());
         vo.setVersion(comp.getVersion());
         FrontComponent compPo = (FrontComponent) baseService.getByExample(vo);
-        if (compPo!=null && compPo.getId() != comp.getId()) {
+        if (compPo != null && compPo.getId() != comp.getId()) {
             throw new BusinessException(BaseExceptionEnum.COMP_EXIST_WITH_SAME_NAME.getMsg());
         }
 
@@ -123,7 +111,7 @@ public class ComponentController {
         File oldRootFile = new File(PathUtils.getComponentsDir() + oldRoot);
         File newRootFile = new File(PathUtils.getComponentsDir() + newRoot);
         oldRootFile.renameTo(newRootFile);
-        return ResponseVo.<String> BUILDER().setCode(Const.BUSINESS_CODE.SUCCESS);
+        return ResponseVo.<String>BUILDER().setCode(Const.BUSINESS_CODE.SUCCESS);
     }
 
     private void validateComponent(FrontComponent comp) {
