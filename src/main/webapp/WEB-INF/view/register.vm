@@ -38,7 +38,7 @@
                                             </tr>
                                             <tr>
                                                 <td>邮箱：</td>
-                                                <td><input type="text" id="mail" name="mail" placeholder="请输入邮箱"/>
+                                                <td><input type="text" id="email" name="email" placeholder="请输入邮箱"/>
                                                 </td>
                                             </tr>
                                             <tr>
