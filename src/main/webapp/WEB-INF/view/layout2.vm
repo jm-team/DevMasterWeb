@@ -21,6 +21,10 @@
   <script src="${ServiceName}/page/js/widget/button.js"></script>
   <script src="${ServiceName}/page/js/widget/label.js"></script>
   <script src="${ServiceName}/page/js/widget/link.js"></script>
+  <script src="${ServiceName}/page/js/widget/radio.js"></script>
+  <script src="${ServiceName}/page/js/widget/checkbox.js"></script>
+  <script src="${ServiceName}/page/js/widget/select.js"></script>
+  <!-- <script src="${ServiceName}/page/js/widget/"></script> -->
 
   <script>
 	  var jmWidgets = {};
@@ -29,6 +33,9 @@
 	  jmWidgets['jmButton'] = jmButton;
 	  jmWidgets['jmLabel'] = jmLabel;
 	  jmWidgets['jmLink'] = jmLink;
+	  jmWidgets['jmRadio'] = jmRadio;
+	  jmWidgets['jmCheckbox'] = jmCheckbox;
+	  jmWidgets['jmSelect'] = jmSelect;
   </script>
   
   <script>
@@ -56,6 +63,10 @@
 				$('#west [data-widget-id='+widgetId+']').attr('data-widget-id', widgetUtils.randomNumber());
     		}
     	});
+		
+		$('#layout_save').on('click',function(){
+			alert('save');
+		});
    });
    
    function create(widget){
@@ -86,13 +97,11 @@
 		var widget = jmWidgets[widgetType];
 		var attr = widget.getAttr(widgetId);
 		
-		console.log(attr);
-		
 		$('#tabs-1').html('');
 		$.each(widget.attributes, function(index, value){
 			$('#tabs-1').append('<div class="form-group row">' +
 					'<label class="control-label">' + value.name + ' : </label>' +
-					'<input type="text" class="form-control" name="'+value.value+'" value="'+attr[value.value]+'" />' +
+					'<input type="text" class="form-control" name="'+value.value+'" value="'+attr[value.value]+'" placeholder="'+value.description+'" />' +
 					'</div>');
 		});
 		
@@ -159,6 +168,18 @@
 
 
 <div class="navbar-layoutit">
+	<button type="button" class="btn btn-primary active" id="layout_edit">
+		<i class="glyphicon glyphicon-edit"></i>
+		编辑
+	</button>
+	<button type="button" class="btn btn-primary" id="layout_preview">
+		<i class="glyphicon glyphicon-eye-open"></i>
+		预览
+	</button>
+    <button type="button" class="btn btn-primary" id="layout_save">
+		<i class="glyphicon glyphicon-share"></i>
+		保存
+	</button>
 </div>
 
 <table style="width:100%;" cellpadding="0px;" cellspacing="0px" border-spacing="2px">
@@ -215,11 +236,11 @@
                 </ul>
         </div>
 	</td>
-	<td class="column" style="width:80%">
+	<td class="column" style="width:75%">
 		<div style="min-height:800px;" class="container ui-sortable">
 		</div>
 	</td>
-	<td style="width:10%;" class="column">
+	<td style="width:15%;" class="column">
     	<div class="ui-layout-east" style="border:none;">
     	  <ul>
             <li><a href="#tabs-1">属性</a></li>
