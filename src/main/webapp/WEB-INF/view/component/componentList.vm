@@ -19,7 +19,7 @@
     			<div class="form-group">
     				<div class="col-sm-3">
 						<span class="control-label search-label">组件名称：</span>
-    					<input type="text" id="title" placeholder="请输入组件名称" class="col-xs-6 col-sm-6" />
+    					<input type="text" id="name" name="name" placeholder="请输入组件名称" class="col-xs-6 col-sm-6" />
     				</div>
     			</div>
     			<button class="btn btn-xs btn-info" onclick="doSearch()">搜索</button>
@@ -53,7 +53,7 @@
 											<a href="javascript:void(0)" onclick="openSettings($[id])">参数配置</a>
 											<a href="${ServiceName}/preview/show?id=$[id]" target="_blank">预览</a>
 											<a href="javascript:void(0)" onclick="publishComponent($[id])">发布</a>
-											<a href="javascript:void(0)" onclick="deleteTemplate($[id])">删除</a>
+											<a href="javascript:void(0)" onclick="deleteComponent($[id])">删除</a>
 								    </td>
 								</tr>
 							</tbody>
@@ -88,12 +88,12 @@ function doSearch(){
 
 function listData(currentResult){
 	curResult = currentResult;
-	var title = $('#title').val();
+	var name = $('#name').val();
 	var devUsername = $('#devUsername').val();
 	$.ajax({
         type: "POST",
         url: '${ServiceName}/component/listComponentData',
-        data: {currentResult:currentResult , title:title},
+        data: {currentResult:currentResult , name:name},
         dataType:'json'
     }).done(function (result) {
         if(result.code!=0){
@@ -173,7 +173,7 @@ function deleteComponent(id){
 		  //yes
 			$.ajax({
 		        type: "POST",
-		        url: '${ServiceName}' + "/component/deleteComponent?id="+id,
+		        url: '${ServiceName}' + "/component/deleteComponent",
 		        data: {
 		            "id": id
 		        }
