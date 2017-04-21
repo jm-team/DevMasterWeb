@@ -39,6 +39,68 @@ function doResize(){
 	$(".container").css("min-height", $(window).height() - 32);
 }
 
+function removeMenuClasses() {
+    $(".navbar-layoutit button").removeClass("active");
+}
+
+function changeStructure(e, t) {
+    $("#download-layout ." + e).removeClass(e).addClass(t)
+}
+
+function cleanHtml(e) {
+    $(e).parent().append($(e).children().html())
+}
+
+function downloadLayoutSrc() {
+    var e = "";
+    $("#download-layout").children().html($(".container").html());
+    var t = $("#download-layout").children();
+    t.find(".preview, .configuration, .drag, .remove").remove();
+    t.find(".lyrow").addClass("removeClean");
+    t.find(".box-element").addClass("removeClean");
+    t.find(".lyrow .lyrow .lyrow .lyrow .lyrow .removeClean").each(function() {
+        cleanHtml(this)
+    });
+    t.find(".lyrow .lyrow .lyrow .lyrow .removeClean").each(function() {
+        cleanHtml(this)
+    });
+    t.find(".lyrow .lyrow .lyrow .removeClean").each(function() {
+        cleanHtml(this)
+    });
+    t.find(".lyrow .lyrow .removeClean").each(function() {
+        cleanHtml(this)
+    });
+    t.find(".lyrow .removeClean").each(function() {
+        cleanHtml(this)
+    });
+    t.find(".removeClean").each(function() {
+        cleanHtml(this)
+    });
+    t.find(".removeClean").remove();
+    $("#download-layout .column").removeClass("ui-sortable");
+    $("#download-layout .row-fluid").removeClass("clearfix").children().removeClass("column");
+    if ($("#download-layout .container").length > 0) {
+        changeStructure("row-fluid", "row")
+    }
+    formatSrc = $.htmlClean($("#download-layout").html(), {
+        format: true,
+        allowedAttributes: [
+            ["id"],
+            ["class"],
+            ["data-toggle"],
+            ["data-target"],
+            ["data-parent"],
+            ["role"],
+            ["data-dismiss"],
+            ["aria-labelledby"],
+            ["aria-hidden"],
+            ["data-slide-to"],
+            ["data-slide"]
+        ]
+    });
+    $("#download-layout").html(formatSrc);
+}
+
 $(window).resize(function() {
 	doResize();
 });
@@ -78,6 +140,35 @@ $(document).ready(function() {
 		stop : function(e, t) {
 		}
 	});*/
+	
+	$("#layout_save").click(function(e) {
+        e.preventDefault();
+        downloadLayoutSrc();
+    });
+	
+	$("#layout_preview").click(function() {
+        removeMenuClasses();
+        $(this).addClass("active");
+        
+        $('#west').hide();
+        $('#east').hide();
+        $(".container").find(".configuration, .drag, .remove").hide();
+        $(".container").find(".view").attr("style", "padding-top: 10px;");
+        
+        return false;
+    });
+	
+	$("#layout_edit").click(function() {
+	    removeMenuClasses();
+        $(this).addClass("active");
+        
+        $('#west').show();
+        $('#east').show();
+        $(".container").find(".configuration, .drag, .remove").show();
+        $(".container").find(".view").removeAttr("style");
+        
+        return false;
+	});
 
 	removeElm();
 	gridSystemGenerator();

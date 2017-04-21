@@ -13,6 +13,7 @@
 
   <script src="${ServiceName}/assets/layoutit/lib/jquery/dist/jquery.min.js"></script>
   <script src="${ServiceName}/assets/layoutit/js/jquery-ui.js"></script>
+  <script src="${ServiceName}/assets/layoutit/js/jquery.htmlClean.js"></script>
   <script src="${ServiceName}/assets/layoutit/lib/bootstrap/dist/js/bootstrap.min.js"></script>
   <script src="${ServiceName}/assets/layoutit/js/scripts.js"></script>
   <script src="${ServiceName}/page/js/widget/widgetutil.js"></script>
@@ -25,7 +26,7 @@
   <script src="${ServiceName}/page/js/widget/checkbox.js"></script>
   <script src="${ServiceName}/page/js/widget/select.js"></script>
   <!-- <script src="${ServiceName}/page/js/widget/"></script> -->
-
+  
   <script>
 	  var jmWidgets = {};
 	  jmWidgets['jmInput'] = jmInput;
@@ -63,10 +64,6 @@
 				$('#west [data-widget-id='+widgetId+']').attr('data-widget-id', widgetUtils.randomNumber());
     		}
     	});
-		
-		$('#layout_save').on('click',function(){
-			alert('save');
-		});
    });
    
    function create(widget){
@@ -108,34 +105,6 @@
 		$('#tabs-1 input').bind('keyup', function(){
 			bindAttrs(this, widgetId, widgetType);
 		});
-	}
-	
-	/**
-	 * 清除元素的属性
-	 */
-	function clearAttrs(){
-		$('.attr-editor').val('');
-	}
-	
-	/**
-	 * 列出元素的属性
-	 */
-	function listAttrs(){
-		
-	}
-	
-	/**
-	 * 清除元素的事件
-	 */
-	function clearEvents(){
-		
-	}
-	
-	/**
-	 * 列出元素的事件
-	 */
-	function listEvents(){
-		
 	}
 	
 	/**
@@ -239,8 +208,12 @@
 	<td class="column" style="width:75%">
 		<div style="min-height:800px;" class="container ui-sortable">
 		</div>
+		
+		<div id="download-layout">
+          <div class="container-fluid"></div>
+        </div>
 	</td>
-	<td style="width:15%;" class="column">
+	<td id="east" style="width:15%;" class="column">
     	<div class="ui-layout-east" style="border:none;">
     	  <ul>
             <li><a href="#tabs-1">属性</a></li>
