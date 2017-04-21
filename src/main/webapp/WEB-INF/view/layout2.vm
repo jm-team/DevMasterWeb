@@ -108,34 +108,6 @@
 	}
 	
 	/**
-	 * 清除元素的属性
-	 */
-	function clearAttrs(){
-		$('.attr-editor').val('');
-	}
-	
-	/**
-	 * 列出元素的属性
-	 */
-	function listAttrs(){
-		
-	}
-	
-	/**
-	 * 清除元素的事件
-	 */
-	function clearEvents(){
-		
-	}
-	
-	/**
-	 * 列出元素的事件
-	 */
-	function listEvents(){
-		
-	}
-	
-	/**
 	 * 将属性值绑定到元素上
 	 */
 	function bindAttrs(ele, widgetId, widgetType){
@@ -155,23 +127,6 @@
 	 * 将事件绑定到元素上
 	 */
 	function bindEvents(){
-	}
-	
-	function save(){
-		/*var lyrow = $('.container .lyrow');
-		
-		var dom = $('<div class="clearfix"><div class="col-md-12 column"></div></div>');
-		
-		var boxElements = lyrow.children('.view').children('.clearfix').children('.column').children('.box-element');
-		$.each(boxElements, function(i, ele){
-			dom.children('.column').append($(ele).children('.view').html());
-		});
-		
-		console.log(dom[0].outerHTML);*/
-		
-		$('.container .remove').hide();
-		$('.container .drag').hide();
-		$('.container .preview').hide();
 	}
   </script>
 
