@@ -1,17 +1,6 @@
 package com.jumore.devmaster.controller;
 
-import java.io.File;
-import java.util.Date;
-
-import org.apache.commons.lang.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.ModelAndView;
-
 import com.jumore.devmaster.common.enums.BaseExceptionEnum;
-import com.jumore.devmaster.common.model.Configuration;
 import com.jumore.devmaster.common.util.PathUtils;
 import com.jumore.devmaster.common.util.SessionHelper;
 import com.jumore.devmaster.entity.FrontComponent;
@@ -21,6 +10,15 @@ import com.jumore.dove.service.BaseService;
 import com.jumore.dove.util.ParamMap;
 import com.jumore.dove.web.model.Const;
 import com.jumore.dove.web.model.ResponseVo;
+import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
+
+import java.io.File;
+import java.util.Date;
 
 @Controller
 @RequestMapping(value = "/component")
@@ -62,9 +60,10 @@ public class ComponentController {
 
     @ResponseBody
     @RequestMapping(value = "listComponentData")
-    public ResponseVo<Page<FrontComponent>> listComponentData(Page<FrontComponent> page, Long scope) throws Exception {
+    public ResponseVo<Page<FrontComponent>> listComponentData(Page<FrontComponent> page, Long scope,String name) throws Exception {
         ParamMap pm = new ParamMap();
         pm.put("uid", SessionHelper.getUser().getId());
+        pm.put("name",name);
         page = baseService.findPageByParams(FrontComponent.class, page, "Component.listPrivateComponent", pm);
         return ResponseVo.<Page<FrontComponent>>BUILDER().setData(page).setCode(Const.BUSINESS_CODE.SUCCESS);
     }
@@ -81,6 +80,21 @@ public class ComponentController {
         FrontComponent compPo = baseService.get(FrontComponent.class, id);
         mv.addObject("comp", compPo);
         return mv;
+    }
+
+    /**
+     * 删除组件
+     *
+     * @param id
+     * @return
+     * @throws Exception
+     */
+    @ResponseBody
+    @RequestMapping(value = "deleteComponent")
+    public ResponseVo<String> deleteComponent(Long id) throws Exception {
+        FrontComponent frontComponent = baseService.get(FrontComponent.class,id);
+        baseService.delete(frontComponent);
+        return ResponseVo.<String> BUILDER().setCode(Const.BUSINESS_CODE.SUCCESS);
     }
 
     @ResponseBody
