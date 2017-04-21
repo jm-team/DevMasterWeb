@@ -25,6 +25,7 @@
   <script src="${ServiceName}/page/js/widget/radio.js"></script>
   <script src="${ServiceName}/page/js/widget/checkbox.js"></script>
   <script src="${ServiceName}/page/js/widget/select.js"></script>
+  <script src="${ServiceName}/page/js/widget/image.js"></script>
   <!-- <script src="${ServiceName}/page/js/widget/"></script> -->
   
   <script>
@@ -37,6 +38,7 @@
 	  jmWidgets['jmRadio'] = jmRadio;
 	  jmWidgets['jmCheckbox'] = jmCheckbox;
 	  jmWidgets['jmSelect'] = jmSelect;
+	  jmWidgets['jmImage'] = jmImage;
   </script>
   
   <script>
