@@ -1,0 +1,147 @@
+#parse("./inc/head.vm")
+<div class="modal-content">
+    <div class="modal-body">
+        <form id="form" class="form-horizontal" >
+            <input type="hidden" value="$!{hostConfig.id}" name="id"/>
+            <div class="form-group">
+                <span class="col-sm-3 control-label no-padding-right">IP：<span style="color:red;">*</span></span>
+                <div class="col-sm-9">
+                    <input type="text"  name="ip" value="$!{hostConfig.ip}" class="col-xs-10 col-sm-5"
+                           data-null-msg="" maxlength="50"/>
+                </div>
+            </div>
+            <div class="form-group">
+                <span class="col-sm-3 control-label no-padding-right">别名：</span>
+                <div class="col-sm-9">
+                    <input type="text" maxlength="50" name="alias" value="$!{hostConfig.alias}" class="col-xs-10 col-sm-5" />
+                </div>
+            </div>
+##            <div class="form-group">
+##                <span class="col-sm-3 control-label no-padding-right">属主：</span>
+##                <div class="col-sm-9">
+##                    <select name="owner_name">
+##                        <option value="$!{hostConfig.id}_$!{hostConfig.name}">$!{hostConfig.name}</option>
+##                    </select>
+##                </div>
+##            </div>
+            <div class="form-group">
+                <span class="col-sm-3 control-label no-padding-right">主机组：</span>
+                <div class="col-sm-9">
+                    <input type="text" maxlength="50" name="hostGroup" value="$!{hostConfig.hostGroup}" class="col-xs-10 col-sm-5" />
+                </div>
+            </div>
+            <div class="form-group">
+                <span class="col-sm-3 control-label no-padding-right">用户名：</span>
+                <div class="col-sm-9">
+                    <input type="text" maxlength="50" name="userName" value="$!{hostConfig.userName}" class="col-xs-10 col-sm-5" />
+                </div>
+            </div>
+            <div class="form-group">
+                <span class="col-sm-3 control-label no-padding-right">登录方式：</span>
+                <div class="col-sm-9">
+                    <select name="loginType" id="loginType" onchange="changeLoginType()">
+                        #foreach($!loginType in $!loginTypeList)
+                            <option value="$!loginType" #if($!hostConfig.loginType == $!loginType) selected #end>$!loginType</option>
+                        #end
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <span class="col-sm-3 control-label no-padding-right">密码：</span>
+                <div class="col-sm-9">
+                    <input type="password" maxlength="50" name="password" value="$!{hostConfig.password}" class="col-xs-10 col-sm-5" />
+                </div>
+            </div>
+            <div id="divSecretKey">
+                <div class="form-group">
+                    <span class="col-sm-3 control-label no-padding-right">密钥：</span>
+                    <div class="col-sm-9">
+                        <input type="text" maxlength="50" name="secretKey" value="$!{hostConfig.secretKey}" class="col-xs-10 col-sm-5" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <span class="col-sm-3 control-label no-padding-right">密钥密码：</span>
+                    <div class="col-sm-9">
+                        <input type="text" maxlength="50" name="secretKeyPassword" value="$!{hostConfig.secretKeyPassword}" class="col-xs-10 col-sm-5" />
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <span class="col-sm-3 control-label no-padding-right">端口：</span>
+                <div class="col-sm-9">
+                    <input type="text" maxlength="50" name="port" value="$!{hostConfig.port}" class="col-xs-10 col-sm-5" />
+                </div>
+            </div>
+            <div class="form-group">
+                <span class="col-sm-3 control-label no-padding-right"><input type="checkbox" value="Y" name="sudo">sudo：</span>
+                <div class="col-sm-9">
+                    <input type="password" maxlength="50" name="sudoPassword" value="$!{hostConfig.sudoPassword}" class="col-xs-10 col-sm-5" />
+                </div>
+            </div>
+            <div class="form-group">
+                <span class="col-sm-3 control-label no-padding-right"><input type="checkbox" value="Y" name="su">su：</span>
+                <div class="col-sm-9">
+                    <input type="password" maxlength="50" name="suPassword" value="$!{hostConfig.suPassword}" class="col-xs-10 col-sm-5" />
+                </div>
+            </div>
+##            <div class="form-group">
+##                <span class="col-sm-3 control-label no-padding-right">链接节点：</span>
+##                <div class="col-sm-9">
+##                    <input type="checkbox" value="1" name="status">
+##                </div>
+##            </div>
+            <div class="form-group">
+                <span class="col-sm-3 control-label no-padding-right">备注：</span>
+                <div class="col-sm-9">
+                    <input type="text" maxlength="50" name="remark" value="$!{hostConfig.remark}" class="col-xs-10 col-sm-5" />
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" id="item_submit" class="btn btn-primary">
+            保存
+        </button>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(function () {
+        changeLoginType();
+    });
+    //提交
+    $("#item_submit").on("click", function (e) {
+        //check form data
+        if(!validateForm('form')){
+            return;
+        }
+
+        var data = $('#form').serialize();
+        $.ajax({
+            type: "POST",
+            url: '${ServiceName}' + "/hostConfig/save",
+            data: data,
+            dataType:'json'
+        }).done(function (data) {
+            if (data.code == -1) {
+                layer.alert(data.desc, {icon: 2, title: '提示'});
+            } else {
+                layer.msg(data.desc);
+                layer.closeAll();
+                closeWindowAndRefreshParent();
+            }
+        });
+    });
+
+    /**
+     * 登录方式变更
+     * @param obj
+     */
+    function changeLoginType() {
+        if($('#loginType').val()=='KEY'){
+            $('#divSecretKey').show();
+        } else{
+            $('#divSecretKey').hide();
+        }
+    }
+</script>

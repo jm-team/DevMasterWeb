@@ -9,6 +9,7 @@
         <setting name="defaultExecutorType" value="REUSE" /> 
         <setting name="callSettersOnNulls" value="true"/>
         <setting name="logPrefix" value="dao."/>
+        <setting name="mapUnderscoreToCamelCase" value="true"/><!--自动转驼峰命名-->
     </settings>
 	
 </configuration>

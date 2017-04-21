@@ -68,6 +68,11 @@ $(function(){
 					</li>
 				</ul> 
 			</li>
+			<li class="level_1">
+				<a href="${ServiceName}/hostConfig/list" class="dropdown-toggle"> <i class="icon-puzzle-piece"></i>
+					<span class="menu-text">主机配置</span>
+				</a>
+			</li>
 	</ul>
 	<!-- /.nav-list -->
 </div>
