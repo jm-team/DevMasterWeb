@@ -48,7 +48,7 @@
                             <th>sudo密码</th>
                             <th>su</th>
                             <th>su密码</th>
-                            <th>状态</th>
+##                            <th>状态</th>
                             <th>备注</th>
                             <th>操作</th>
                         </tr>
