@@ -33,10 +33,10 @@ public class HostConfigController {
 
     @ResponseBody
     @RequestMapping(value = "query")
-    public ResponseVo<List<HostConfig>> query(Page<HostConfig> page, HostConfig param) {
+    public ResponseVo<Page<HostConfig>> query(Page<HostConfig> page, HostConfig param) {
         ParamMap pm = new ParamMap(param);
-        Page<HostConfig> hostConfigList = baseService.findPageByParams(HostConfig.class, page, "HostConfig.queryHostConfig", pm);
-        return ResponseVo.<List<HostConfig>>BUILDER().setData(hostConfigList.result).setCode(Const.BUSINESS_CODE.SUCCESS);
+        page = baseService.findPageByParams(HostConfig.class, page, "HostConfig.queryHostConfig", pm);
+        return ResponseVo.<Page<HostConfig>>BUILDER().setData(page).setCode(Const.BUSINESS_CODE.SUCCESS);
     }
 
     @RequestMapping(value = "edit")
