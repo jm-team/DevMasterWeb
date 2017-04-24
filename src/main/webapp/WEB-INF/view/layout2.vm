@@ -26,6 +26,9 @@
   <script src="${ServiceName}/page/js/widget/checkbox.js"></script>
   <script src="${ServiceName}/page/js/widget/select.js"></script>
   <script src="${ServiceName}/page/js/widget/image.js"></script>
+  <script src="${ServiceName}/page/js/widget/pagination.js"></script>
+  <script src="${ServiceName}/page/js/widget/alerts.js"></script>
+  <script src="${ServiceName}/page/js/widget/progress.js"></script>
   <!-- <script src="${ServiceName}/page/js/widget/"></script> -->
   
   <script>
@@ -39,6 +42,9 @@
 	  jmWidgets['jmCheckbox'] = jmCheckbox;
 	  jmWidgets['jmSelect'] = jmSelect;
 	  jmWidgets['jmImage'] = jmImage;
+	  jmWidgets['jmPagination'] = jmPagination;
+	  jmWidgets['jmAlerts'] = jmAlerts;
+	  jmWidgets['jmProgress'] = jmProgress;
   </script>
   
   <script>
