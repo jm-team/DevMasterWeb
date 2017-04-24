@@ -123,7 +123,7 @@
                 layer.msg(result.desc);
                 return;
             }
-            buildHtmlWithJsonArray('node_row' , result.data , false , false);
+            buildHtmlWithJsonArray('node_row' , result.data.result , false , false);
             var totalPages = result.data.totalPage;
             if(totalPages==0){
                 totalPages=1;
