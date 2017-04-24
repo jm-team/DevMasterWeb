@@ -53,9 +53,13 @@
 		<constructor-arg ref="sqlSessionFactory" />
 	</bean>
 	<!-- Transaction config -->
+	
 	<bean id="transactionManager"
 		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
 		<property name="dataSource" ref="dataSource" />
 	</bean>
+	
+	<bean id="replacer" class="com.jumore.dove.tranction.dist.AnnotationTransactionAttributeSourceReplacer" />
+	
 	<tx:annotation-driven transaction-manager="transactionManager" />
 </beans>

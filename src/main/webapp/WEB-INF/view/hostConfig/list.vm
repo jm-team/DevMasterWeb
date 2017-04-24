@@ -76,6 +76,7 @@
                             <td >$[remark]</td>
 
                             <td>
+								<a href="javascript:void(0)" onclick="openWebTerminal($[id])">web控制台</a>
                                 <a href="javascript:void(0)" onclick="openEditHostConfig($[id])">修改</a>
                                 <a href="javascript:void(0)" onclick="delHostConfig($[id])">删除</a>
                             </td>
