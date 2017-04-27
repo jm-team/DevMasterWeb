@@ -98,6 +98,28 @@ function downloadLayoutSrc() {
             ["data-slide"]
         ]
     });
+    
+    $.ajax({
+        type: "POST",
+        //url: '${ServiceName}' + "/component/doAddComponent",
+        url: "/component/doAddComponent",
+        data: {
+            groupId:'test',
+            name:'test',
+            version:'1.0.0',
+            type:'html',
+            remark:formatSrc
+        },
+        dataType:'json'
+    }).done(function (data) {
+        if (data.code == -1) {
+            layer.msg(data.desc);
+        } else {
+            layer.msg('保存成功');
+            //closeWindowAndRefreshParent();
+        }
+    });
+    
     $("#download-layout").html(formatSrc);
 }
 
@@ -141,10 +163,10 @@ $(document).ready(function() {
 		}
 	});*/
 	
-	$("#layout_save").click(function(e) {
+	/*$("#layout_save").click(function(e) {
         e.preventDefault();
-        downloadLayoutSrc();
-    });
+        savePlugin();
+    });*/
 	
 	$("#layout_preview").click(function() {
         removeMenuClasses();

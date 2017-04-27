@@ -14,6 +14,7 @@
   <script src="${ServiceName}/assets/layoutit/lib/jquery/dist/jquery.min.js"></script>
   <script src="${ServiceName}/assets/layoutit/js/jquery-ui.js"></script>
   <script src="${ServiceName}/assets/layoutit/js/jquery.htmlClean.js"></script>
+  <script src='${ServiceName}/assets/js/layer/layer.js' ></script>
   <script src="${ServiceName}/assets/layoutit/lib/bootstrap/dist/js/bootstrap.min.js"></script>
   <script src="${ServiceName}/assets/layoutit/js/scripts.js"></script>
   <script src="${ServiceName}/page/js/widget/widgetutil.js"></script>
@@ -49,32 +50,65 @@
   
   <script>
    $(function(){
+       // 保存操作
+       $("#layout_save").click(function(e) {
+            e.preventDefault();
+			
+			layer.prompt({
+        		title : '组件名称',
+        		formType : 0 // prompt风格，支持0-2
+        	}, function(name, index) {
+        		layer.close(index);
+        		savePlugin(name);
+        	});
+        });
+		
+		// 从前端组件加载组件
        for(var key in jmWidgets){
 	       $('#west #estRows').append(create(jmWidgets[key]));
 	   }
-    
-    	$(".sidebar-nav .box").draggable({
-    		connectToSortable : ".column",
-    		helper : "clone",
-    		handle : ".drag",
-    		drag : function(e, t) {
-    			t.helper.width(400)
-    		},
-    		stop : function(e, t) {
-				var widgetId = t.helper.find('[data-widget-id]').attr('data-widget-id');
-				
-				// 绑定事件
-				$('.container [data-widget-id='+widgetId+']').bind('click', function(){
-					onfocus(this);
+	   
+	   // 从数据库加载组件
+	   $.ajax({
+            type: "GET",
+            url: '${ServiceName}' + "/widget/listAllWidgetData",
+            dataType:'json'
+        }).done(function (data) {
+            if (data.code == -1) {
+            } else {
+				$.each(data.data, function(i, w){
+                    $('#west #estRows').append(createDraggable(w.name, w.template));
 				});
-				
-				// 修改源 id
-				$('#west [data-widget-id='+widgetId+']').attr('data-widget-id', widgetUtils.randomNumber());
-    		}
-    	});
+            }
+        }).always(function(){
+        	$(".sidebar-nav .box").draggable({
+        		connectToSortable : ".column",
+        		helper : "clone",
+        		handle : ".drag",
+        		drag : function(e, t) {
+        			t.helper.width(400)
+        		},
+        		stop : function(e, t) {
+    				var widgetId = t.helper.find('[data-widget-id]').attr('data-widget-id');
+    				
+    				// 绑定事件
+    				$('.container [data-widget-id='+widgetId+']').bind('click', function(){
+    					onfocus(this);
+    				});
+    				
+    				// 修改源 id
+    				$('#west [data-widget-id='+widgetId+']').attr('data-widget-id', widgetUtils.randomNumber());
+        		}
+        	});
+		});
+    
    });
    
    function create(widget){
+       return createDraggable(widget.name, widget.initHtml());
+   }
+   
+   function createDraggable(name, template){
        var html = 
 	   '<div class="box box-element ui-draggable">' + 
     		'<a href="#close" class="remove label label-danger">' + 
@@ -82,9 +116,9 @@
     		'</a> <span class="drag label label-default">' + 
     			'<i class="glyphicon glyphicon-move"></i>' + 
     		'</span>' + 
-    		'<div class="preview">' + widget.name + '</div>' + 
+    		'<div class="preview">' + name + '</div>' + 
     		'<div class="view">' + 
-    			widget.initHtml()
+    			template
     		'</div>' + 
     	'</div>';
 		
@@ -135,6 +169,75 @@
 	 * 将事件绑定到元素上
 	 */
 	function bindEvents(){
+	}
+	
+	/**
+	 * 保存插件
+	 */
+	function savePlugin(name){
+        var e = "";
+        $("#download-layout").children().html($(".container").html());
+        var t = $("#download-layout").children();
+        t.find(".preview, .configuration, .drag, .remove").remove();
+        t.find(".lyrow").addClass("removeClean");
+        t.find(".box-element").addClass("removeClean");
+        t.find(".lyrow .lyrow .lyrow .lyrow .lyrow .removeClean").each(function() {
+            cleanHtml(this)
+        });
+        t.find(".lyrow .lyrow .lyrow .lyrow .removeClean").each(function() {
+            cleanHtml(this)
+        });
+        t.find(".lyrow .lyrow .lyrow .removeClean").each(function() {
+            cleanHtml(this)
+        });
+        t.find(".lyrow .lyrow .removeClean").each(function() {
+            cleanHtml(this)
+        });
+        t.find(".lyrow .removeClean").each(function() {
+            cleanHtml(this)
+        });
+        t.find(".removeClean").each(function() {
+            cleanHtml(this)
+        });
+        t.find(".removeClean").remove();
+        $("#download-layout .column").removeClass("ui-sortable");
+        $("#download-layout .row-fluid").removeClass("clearfix").children().removeClass("column");
+        if ($("#download-layout .container").length > 0) {
+            changeStructure("row-fluid", "row")
+        }
+        formatSrc = $.htmlClean($("#download-layout").html(), {
+            format: true,
+            allowedAttributes: [
+                ["id"],
+                ["class"],
+                ["data-toggle"],
+                ["data-target"],
+                ["data-parent"],
+                ["role"],
+                ["data-dismiss"],
+                ["aria-labelledby"],
+                ["aria-hidden"],
+                ["data-slide-to"],
+                ["data-slide"]
+            ]
+        });
+        
+        $.ajax({
+            type: "POST",
+            url: '${ServiceName}' + "/widget/doAddWidget",
+            data: {
+                name:name,
+                template:formatSrc
+            },
+            dataType:'json'
+        }).done(function (data) {
+            if (data.code == -1) {
+                layer.msg(data.desc);
+            } else {
+                layer.msg('保存成功');
+                //closeWindowAndRefreshParent();
+            }
+        });
 	}
   </script>
 
