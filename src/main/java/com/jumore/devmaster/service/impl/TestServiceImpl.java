@@ -30,9 +30,9 @@ public class TestServiceImpl extends BaseServiceImpl implements TestService{
         member.setProjectId(1000L);
         member.setMemberUid(222L);
         this.save(member);  
-//        if("".equals("")){
-//            // 抛出异常使事务回滚
-//            throw new RuntimeException();
-//        }
+        if("".equals("")){
+            // 抛出异常使事务回滚
+            throw new RuntimeException("测试异常");
+        }
     }
 }

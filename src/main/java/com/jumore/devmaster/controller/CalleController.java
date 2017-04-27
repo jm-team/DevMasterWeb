@@ -22,28 +22,14 @@ public class CalleController extends BaseController {
     @RequestMapping(value = "/addProject")
     public Object addProject() throws Exception {
         // 异步执行，本身这次http请求立即返回,addProject的返回结果实际由DisTransactionCalleManager通过redis共享给调用者
-        DisTransactionCalleManager.start(new Runnable(){
-
-            @Override
-            public void run() {
-                testService.addProject();
-            }
-            
-        });
+        testService.addProject();
         return "";
     }
 
     @ResponseBody
     @RequestMapping(value = "/addProjectMember")
     public Object addProjectMember() throws Exception {
-        DisTransactionCalleManager.start(new Runnable(){
-
-            @Override
-            public void run() {
-                testService.addProjectMember();
-            }
-            
-        });
+        testService.addProjectMember();
         return "";
     }
 }
