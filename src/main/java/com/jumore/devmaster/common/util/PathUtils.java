@@ -12,6 +12,9 @@ import org.apache.commons.compress.utils.IOUtils;
 import org.springframework.util.StringUtils;
 
 import com.jumore.devmaster.entity.FrontComponent;
+import com.jumore.devmaster.entity.ProjectTemplate;
+import com.jumore.dove.service.BaseService;
+import com.jumore.dove.system.SystemManager;
 
 public class PathUtils {
 
@@ -61,6 +64,7 @@ public class PathUtils {
     }
     
     public static String getTplDir(Long tplId){
+//        ProjectTemplate tpl = SystemManager.getBaseService().get(ProjectTemplate.class, tplId);
         return SessionHelper.getUserWorkDir()+"tpls" + File.separator + tplId + File.separator;
     }
     

@@ -23,6 +23,7 @@ import org.springframework.util.StringUtils;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.github.pagehelper.StringUtil;
 import com.jumore.devmaster.common.DevMasterConst;
 import com.jumore.devmaster.common.util.PathUtils;
 import com.jumore.devmaster.entity.DBEntity;
@@ -63,21 +64,24 @@ public class ProjectGenerateServiceImpl implements ProjectGenerateService {
                 continue;
             }
             DBEntity entityPo = baseService.get(DBEntity.class, Long.valueOf(entityId));
-            params.put("entityName", parseEngine.toEntityName(tempalte, entityPo.getName()));
+            String entityName =  parseEngine.toEntityName(tempalte, entityPo.getName());
+            params.put("entityName",entityName);
+            String entityNameLowCase = entityName.substring(0,1).toLowerCase() + entityName.substring(1,entityName.length());
+            params.put("entityNameLowCase",entityNameLowCase);
             // 先生成目录
             generateDirs(parseEngine, project, tempalte, tplPath, codePath, params, entityPo);
 
             // 生成文件
-            generateFiles(parseEngine, project, tempalte, tplPath, codePath, params, entityPo);
+            generateFiles(parseEngine, project, tempalte, tplPath, codePath, params, entityPo ,entityName);
         }
 
     }
 
     private void generateFiles(ParserEngine parseEngine, Project project, ProjectTemplate tempalte, String tplPath, String codePath,
-            JSONObject params, DBEntity entityPo) {
+            JSONObject params, DBEntity entityPo , String entityName) {
 
         // 生成实体类
-        Object code = generateEntityClass(entityPo, null);
+        Object code = generateEntityClass(entityPo , entityName);
         params.put("entityCode", code);
         params.put("tableName", entityPo.getName());
 
@@ -88,6 +92,11 @@ public class ProjectGenerateServiceImpl implements ProjectGenerateService {
         if (StringUtils.isEmpty(tpl.getExts())) {
             throw new BusinessException("没有设置模板支持的扩展名");
         }
+        EntityField vo = new EntityField();
+        vo.setDbentityId(entityPo.getId());
+        vo.setShowInput(DevMasterConst.ShowInput.Yes);
+        List<EntityField> fieldList = baseService.listByExample(vo);
+        
         for (File tplFile : files) {
             try {
                 String dest = codePath + PathUtils.getTplFileRelativePath(tplFile.getAbsolutePath(), project.getTplId());
@@ -105,7 +114,7 @@ public class ProjectGenerateServiceImpl implements ProjectGenerateService {
                 }
 
                 // 使用模板解析器解析模板文件
-                String text = resolveTemplate(tplFile, entityPo.getId(), params);
+                String text = resolveTemplate(tplFile, fieldList, params);
 
                 System.out.println("generate file : " + realDestFile.getAbsolutePath());
                 FileUtils.writeStringToFile(realDestFile, text, "utf8");
@@ -126,7 +135,7 @@ public class ProjectGenerateServiceImpl implements ProjectGenerateService {
      * @return
      * @throws IOException
      */
-    private String resolveTemplate(File tplFile, Long dbEntityId, JSONObject params) throws IOException {
+    private String resolveTemplate(File tplFile, List<EntityField> fieldList, JSONObject params) throws IOException {
         try {
             Properties p = new Properties();
             VelocityEngine ve = new VelocityEngine();
@@ -137,10 +146,7 @@ public class ProjectGenerateServiceImpl implements ProjectGenerateService {
             Template tpl = ve.getTemplate(tplFile.getName(), "utf8");
 
             VelocityContext ctx = new VelocityContext(params);
-            EntityField vo = new EntityField();
-            vo.setDbentityId(dbEntityId);
-            vo.setShowInput(DevMasterConst.ShowInput.Yes);
-            List<EntityField> fieldList = baseService.listByExample(vo);
+            
             // ctx.put("fieldList", fieldList);
 
             // 替代上一句代码，因为上一句代码name，不是实体字段的名字
@@ -180,8 +186,8 @@ public class ProjectGenerateServiceImpl implements ProjectGenerateService {
         }
     }
 
-    private String generateEntityClass(DBEntity entityPo, String entityPath) {
-        String code = codeGenerateService.generate(entityPo);
+    private String generateEntityClass(DBEntity entityPo, String className) {
+        String code = codeGenerateService.generate(entityPo , className);
         return code;
     }
 

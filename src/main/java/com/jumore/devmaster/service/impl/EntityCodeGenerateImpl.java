@@ -18,8 +18,9 @@ import com.jumore.dove.util.ParamMap;
 @Component
 public class EntityCodeGenerateImpl extends BaseServiceImpl implements CodeGenerateService {
 
+    
     @Override
-    public String generate(DBEntity table) {
+    public String generate(DBEntity table , String className) {
         ParamMap paramMap = new ParamMap();
         paramMap.put("entityId", table.getId());
         List<EntityField> fields = super.listByParams(EntityField.class, "Field.listField", paramMap);
@@ -28,7 +29,7 @@ public class EntityCodeGenerateImpl extends BaseServiceImpl implements CodeGener
             return null;
         }
 
-        EntityContentResolver resolver = new EntityContentResolver(table, fields);
+        EntityContentResolver resolver = new EntityContentResolver(table, fields , className);
         return resolver.resolve();
     }
 
@@ -43,14 +44,12 @@ public class EntityCodeGenerateImpl extends BaseServiceImpl implements CodeGener
         private List<EntityField> fields;
         private StringBuilder     contentBuilder;
 
-        public EntityContentResolver() {
+        private String className;
 
-        }
-
-        public EntityContentResolver(DBEntity table, List<EntityField> fields) {
-            this();
+        public EntityContentResolver(DBEntity table, List<EntityField> fields , String className) {
             this.table = table;
             this.fields = fields;
+            this.className = className;
         }
 
         private EntityContentResolver resolvePackage() {
@@ -79,7 +78,6 @@ public class EntityCodeGenerateImpl extends BaseServiceImpl implements CodeGener
         }
 
         private EntityContentResolver resolveClassHeader() {
-            String className = NameConverter.convertToClassName(table.getName());
             
             contentBuilder.append("@Entity").append(NEW_LINE)
                 .append("@Table(name=\"").append(table.getName()).append("\")").append(NEW_LINE)

@@ -41,7 +41,7 @@ public class ParserEngine {
                     nashorn.setBindings(bindings, ScriptContext.ENGINE_SCOPE);
                     String result = (String) nashorn.eval(parserText);
                     System.out.println(result);
-                    return toDefaultEntityName(tableName);
+                    return result;
                 } else {
                     return toDefaultEntityName(tableName);
                 }
