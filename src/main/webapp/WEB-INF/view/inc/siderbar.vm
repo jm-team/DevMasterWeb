@@ -55,6 +55,7 @@ $(function(){
 					</li>
 				</ul> 
 			</li>
+			<!--
 			<li  class="level_1">
 				<a href="#" class="dropdown-toggle"> <i class="icon-puzzle-piece"></i>
 				 	<span class="menu-text">组件管理</span>  <b class="arrow icon-angle-down"></b>
@@ -73,6 +74,7 @@ $(function(){
 					<span class="menu-text">主机配置</span>
 				</a>
 			</li>
+			-->
 	</ul>
 	<!-- /.nav-list -->
 </div>
