@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import javax.script.ScriptException;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.FalseFileFilter;
 import org.apache.commons.io.filefilter.TrueFileFilter;
@@ -23,14 +25,12 @@ import org.springframework.util.StringUtils;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.github.pagehelper.StringUtil;
-import com.jumore.devmaster.common.DevMasterConst;
+import com.jumore.devmaster.common.util.EntityGenerateHelper;
 import com.jumore.devmaster.common.util.PathUtils;
 import com.jumore.devmaster.entity.DBEntity;
 import com.jumore.devmaster.entity.EntityField;
 import com.jumore.devmaster.entity.Project;
 import com.jumore.devmaster.entity.ProjectTemplate;
-import com.jumore.devmaster.service.CodeGenerateService;
 import com.jumore.devmaster.service.ProjectGenerateService;
 import com.jumore.devmaster.service.nashorn.ParserEngine;
 import com.jumore.dove.common.BusinessException;
@@ -42,14 +42,14 @@ public class ProjectGenerateServiceImpl implements ProjectGenerateService {
     @Autowired
     private BaseService         baseService;
 
-    @Autowired
-    private CodeGenerateService codeGenerateService;
+//    @Autowired
+//    private CodeGenerateService codeGenerateService;
 
     @Override
     public void generateCode(Project project, String tplPath, String codePath) {
 
         ParserEngine parseEngine = new ParserEngine();
-        ProjectTemplate tempalte = baseService.get(ProjectTemplate.class, project.getTplId());
+        ProjectTemplate template = baseService.get(ProjectTemplate.class, project.getTplId());
 
         if (StringUtils.isEmpty(project.getGenerateEntityIds())) {
             return;
@@ -64,26 +64,33 @@ public class ProjectGenerateServiceImpl implements ProjectGenerateService {
                 continue;
             }
             DBEntity entityPo = baseService.get(DBEntity.class, Long.valueOf(entityId));
-            String entityName =  parseEngine.toEntityName(tempalte, entityPo.getName());
-            params.put("entityName",entityName);
-            String entityNameLowCase = entityName.substring(0,1).toLowerCase() + entityName.substring(1,entityName.length());
-            params.put("entityNameLowCase",entityNameLowCase);
+            
+//            String entityName =  parseEngine.toEntityName(tempalte, entityPo.getName());
+//            params.put("entityName",entityName);
+//            String entityNameLowCase = entityName.substring(0,1).toLowerCase() + entityName.substring(1,entityName.length());
+//            params.put("entityNameLowCase",entityNameLowCase);
+            try {
+                // 使用js设置上下文
+                params = parseEngine.initVelicityContext(template , entityPo.getName(), params);
+            } catch (ScriptException e) {
+                throw new BusinessException("初始化上下文失败" , e);
+            }
             // 先生成目录
-            generateDirs(parseEngine, project, tempalte, tplPath, codePath, params, entityPo);
+            generateDirs(parseEngine, project, template, tplPath, codePath, params, entityPo);
 
             // 生成文件
-            generateFiles(parseEngine, project, tempalte, tplPath, codePath, params, entityPo ,entityName);
+            generateFiles(parseEngine, project, template, tplPath, codePath, params, entityPo);
         }
 
     }
 
     private void generateFiles(ParserEngine parseEngine, Project project, ProjectTemplate tempalte, String tplPath, String codePath,
-            JSONObject params, DBEntity entityPo , String entityName) {
+            JSONObject params, DBEntity entityPo) {
 
         // 生成实体类
-        Object code = generateEntityClass(entityPo , entityName);
-        params.put("entityCode", code);
-        params.put("tableName", entityPo.getName());
+//        Object code = generateEntityClass(entityPo , entityName);
+//        params.put("entityCode", code);
+//        params.put("tableName", entityPo.getName());
 
         // get all tpl files
         Collection<File> files = FileUtils.listFiles(new File(tplPath), null, true);
@@ -94,7 +101,6 @@ public class ProjectGenerateServiceImpl implements ProjectGenerateService {
         }
         EntityField vo = new EntityField();
         vo.setDbentityId(entityPo.getId());
-        vo.setShowInput(DevMasterConst.ShowInput.Yes);
         List<EntityField> fieldList = baseService.listByExample(vo);
         
         for (File tplFile : files) {
@@ -150,11 +156,27 @@ public class ProjectGenerateServiceImpl implements ProjectGenerateService {
             // ctx.put("fieldList", fieldList);
 
             // 替代上一句代码，因为上一句代码name，不是实体字段的名字
-            List<Map<String, String>> fields = new ArrayList<Map<String, String>>();
+            List<Map<String, Object>> fields = new ArrayList<Map<String, Object>>();
 
             for (EntityField field : fieldList) {
-                Map<String, String> map = new HashMap<String, String>();
+                Map<String, Object> map = new HashMap<String, Object>();
+                map.put("dbName", field.getName());
                 map.put("name", EntityCodeGenerateImpl.NameConverter.convertToFieldName(field.getName()));
+                map.put("nameUpFirstChar", EntityGenerateHelper.firstCharToUpperCase(map.get("name").toString()));
+                map.put("type", EntityGenerateHelper.convertToJavaTypeSafety(field.getType()));
+                map.put("docs", field.getDocs());
+                if(field.getShowInput()!=null && field.getShowInput()==1){
+                    map.put("showInput", true);
+                }
+                if("NO".equals(field.getAllowNull())){
+                    map.put("allowNull", false);
+                }
+                if(field.getPrimaryKey()!=null && field.getPrimaryKey()==1){
+                    map.put("primaryKey", true);
+                }
+                if(field.getLength()!=null && field.getLength()>0){
+                    map.put("maxLength", field.getLength());
+                }
                 fields.add(map);
             }
 
@@ -186,10 +208,10 @@ public class ProjectGenerateServiceImpl implements ProjectGenerateService {
         }
     }
 
-    private String generateEntityClass(DBEntity entityPo, String className) {
-        String code = codeGenerateService.generate(entityPo , className);
-        return code;
-    }
+    // private String generateEntityClass(DBEntity entityPo, String className) {
+    // String code = codeGenerateService.generate(entityPo , className);
+    // return code;
+    // }
 
     private String replacePlaceHolder(String text, JSONObject params) {
         for (String key : params.keySet()) {

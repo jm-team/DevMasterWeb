@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 
 import javax.script.Bindings;
-import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
@@ -12,6 +11,7 @@ import javax.script.ScriptException;
 import org.apache.commons.io.FileUtils;
 import org.springframework.util.StringUtils;
 
+import com.alibaba.fastjson.JSONObject;
 import com.jumore.devmaster.common.util.PathUtils;
 import com.jumore.devmaster.entity.ProjectTemplate;
 import com.jumore.dove.common.BusinessException;
@@ -28,43 +28,70 @@ public class ParserEngine {
         }
     }
 
-    public String toEntityName(ProjectTemplate template, String tableName) {
+    public JSONObject initVelicityContext(ProjectTemplate template, String tableName , JSONObject params) throws ScriptException{
+        Bindings bindings = nashorn.createBindings();
+        bindings.put("tableName", tableName);
+        params.put("tableName", tableName);
+        bindings.put("ctx", params);
+//        nashorn.eval(", bindings);
         String parseFile = PathUtils.getTplDir(template.getId()) + template.getEntityNameFunction();
         File parse = new File(parseFile);
         if (parse.exists()) {
+            String parserText;
             try {
-                String parserText = FileUtils.readFileToString(parse, "utf8");
+                parserText = FileUtils.readFileToString(parse, "utf8");
                 if (!StringUtils.isEmpty(parserText)) {
-
-                    Bindings bindings = nashorn.createBindings();
-                    bindings.put("tableName", tableName);
-                    nashorn.setBindings(bindings, ScriptContext.ENGINE_SCOPE);
-                    String result = (String) nashorn.eval(parserText);
-                    System.out.println(result);
-                    return result;
-                } else {
-                    return toDefaultEntityName(tableName);
+                    nashorn.eval(parserText , bindings);
                 }
-            } catch (IOException ex) {
-                return toDefaultEntityName(tableName);
-            } catch (ScriptException ex) {
-                throw new BusinessException("解析器执行错误", ex);
+            } catch (IOException e) {
+                throw new BusinessException("读取失败context初始化脚本失败" , e);
             }
-        } else {
-            return toDefaultEntityName(tableName);
+            
         }
+        return params;
     }
-
-    private String toDefaultEntityName(String tableName) {
-        // 去掉表前缀
-        String[] arr = tableName.split("_");
-        StringBuilder result = new StringBuilder();
-        // 首字母大写
-        for (String str : arr) {
-            StringBuilder sb = new StringBuilder(str);
-            sb.setCharAt(0, Character.toUpperCase(sb.charAt(0)));
-            result.append(sb);
-        }
-        return result.toString();
+    
+    public static void main(String[] args) throws ScriptException{
+        ParserEngine engine = new ParserEngine();
+        engine.initVelicityContext(null,"xxx" , new JSONObject());
     }
+    
+//    public String toEntityName(ProjectTemplate template, String tableName) {
+//        String parseFile = PathUtils.getTplDir(template.getId()) + template.getEntityNameFunction();
+//        File parse = new File(parseFile);
+//        if (parse.exists()) {
+//            try {
+//                String parserText = FileUtils.readFileToString(parse, "utf8");
+//                if (!StringUtils.isEmpty(parserText)) {
+//
+//                    Bindings bindings = nashorn.createBindings();
+//                    bindings.put("tableName", tableName);
+//                    String result = (String) nashorn.eval(parserText , bindings);
+//                    System.out.println(result);
+//                    return result;
+//                } else {
+//                    return toDefaultEntityName(tableName);
+//                }
+//            } catch (IOException ex) {
+//                return toDefaultEntityName(tableName);
+//            } catch (ScriptException ex) {
+//                throw new BusinessException("解析器执行错误", ex);
+//            }
+//        } else {
+//            return toDefaultEntityName(tableName);
+//        }
+//    }
+//
+//    private String toDefaultEntityName(String tableName) {
+//        // 去掉表前缀
+//        String[] arr = tableName.split("_");
+//        StringBuilder result = new StringBuilder();
+//        // 首字母大写
+//        for (String str : arr) {
+//            StringBuilder sb = new StringBuilder(str);
+//            sb.setCharAt(0, Character.toUpperCase(sb.charAt(0)));
+//            result.append(sb);
+//        }
+//        return result.toString();
+//    }
 }
