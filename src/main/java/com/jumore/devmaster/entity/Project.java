@@ -19,7 +19,7 @@ public class Project {
     private String  name;
 
     @Column(name="owner_id")
-    private Integer ownerId;
+    private Long ownerId;
 
     @Column(name="create_time")
     private Date    createTime;
@@ -76,11 +76,11 @@ public class Project {
         this.name = name;
     }
 
-    public Integer getOwnerId() {
+    public Long getOwnerId() {
         return ownerId;
     }
 
-    public void setOwnerId(Integer ownerId) {
+    public void setOwnerId(Long ownerId) {
         this.ownerId = ownerId;
     }
 

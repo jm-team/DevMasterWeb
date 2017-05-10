@@ -60,6 +60,7 @@ public class ProjectController {
         if(StringUtil.isNotEmpty(name)){
             pm.put("name",name);
         }
+        pm.put("ownerId", SessionHelper.getUser().getId());
         page = baseService.findPageByParams(Project.class, page, "Project.listProject", pm);
         return ResponseVo.<Page<Project>> BUILDER().setData(page).setCode(Const.BUSINESS_CODE.SUCCESS);
     }
@@ -85,6 +86,7 @@ public class ProjectController {
         if (StringUtils.isEmpty(project.getDbPassword())) {
             throw new RuntimeException("数据库密码不能为空");
         }
+        project.setOwnerId(SessionHelper.getUser().getId());
         project.setCreateTime(new Date());
         if(CommonValidator.isEntityExsit(Project.class, new String[]{"name","ownerId"}, new Object[]{project.getName() , project.getOwnerId()})){
             throw new RuntimeException("工程名称不能重复");

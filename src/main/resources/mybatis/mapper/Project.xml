@@ -9,6 +9,9 @@
 				<if test="name != null and name != ''">
 					name LIKE CONCAT('%',#{name},'%' )
 				</if>
+				<if test="ownerId != null">
+					owner_id = #{ownerId}
+				</if>
 			</where>
 		</trim>
 	</select>

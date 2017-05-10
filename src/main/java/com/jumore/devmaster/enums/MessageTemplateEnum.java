@@ -4,14 +4,14 @@ import org.apache.commons.lang.StringUtils;
 
 /**
  * 消息模板
- * @author: liuming
+ * @author: longqiong
  * @since: 2016年10月27日
  * @history:
  */
 public enum MessageTemplateEnum {
-    REGISTER_USER("新用户注册", "JMT-000001", "JMT-000001"),
+    REGISTER_USER("新用户注册", "dm-user-register", "dm-user-register"),
 
-    RESET_PWD("修改密码", "JMT-000003", "JMT-000003");
+    RESET_PWD("修改密码", "dm-reset-pwd", "dm-reset-pwd");
 
     String operation; //操作
     String code;     // 编号

@@ -35,7 +35,6 @@
 									<th>创建时间</th>
 									<th>数据库连接</th>
 									<th>数据库账号</th>
-									<th>数据库密码</th>
 								    <th></th>
 								</tr>
 							</thead>
@@ -47,7 +46,6 @@
 									<td >$[createTime]</td>
 									<td >$[dbUrl]</td>
 									<td >$[dbUserName]</td>
-									<td >$[dbPassword]</td>
 								    <td>
 								    		<a href="javascript:void(0)" onclick="syncDatabase($[id])">同步库表</a>
 											<a href="javascript:void(0)" onclick="openEditProject($[id])">修改</a>

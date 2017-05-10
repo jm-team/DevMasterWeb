@@ -15,12 +15,12 @@
         }
 
         $.ajax({
-            url: "/sendVerifyCodeMsg",
+            url: "${ServiceName}/sendVerifyCodeMsg",
             type: 'post',
             data: {"mobile": mobile, sentSmsType: sentSmsType},
             dataType: 'json',
             error: function (data) {
-                showError(data);
+                layer.msg(data);
             },
             success: function (data) {
                 if (data.code == 0) {
