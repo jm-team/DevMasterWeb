@@ -20,6 +20,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.jumore.devmaster.common.CodeMirrorModeContainer;
 import com.jumore.devmaster.common.TreeIconClassContainer;
 import com.jumore.devmaster.common.util.PathUtils;
+import com.jumore.devmaster.common.util.ZipUtil;
 import com.jumore.dove.common.BusinessException;
 import com.jumore.dove.service.BaseService;
 import com.jumore.dove.web.model.Const;
@@ -126,6 +127,14 @@ public class FileEditController {
         return ResponseVo.<String>BUILDER().setCode(Const.BUSINESS_CODE.SUCCESS);
     }
 
+    @ResponseBody
+    @RequestMapping(value = "unzip")
+    public ResponseVo<String> unzip(String fileName, String type) throws Exception {
+        File file = new File(getRootDir(type) + fileName);
+        ZipUtil.unzip(getRootDir(type) + fileName, file.getParent());
+        return ResponseVo.<String>BUILDER().setCode(Const.BUSINESS_CODE.SUCCESS);
+    }
+    
     @ResponseBody
     @RequestMapping("/rename")
     public ResponseVo<String> rename(String oldXPath, String newName, String type) {

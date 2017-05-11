@@ -39,6 +39,7 @@
 	<div id="mm" class="easyui-menu" style="width:120px;">
 		<div id="appendDir" onclick="append(false)" data-options="iconCls:'icon-add'">添加目录</div>
         <div id="appendFile" onclick="append(true)" data-options="iconCls:'icon-add'">添加文件</div>
+		<div id="unzip" onclick="unzip()" data-options="iconCls:'icon-add'">解压</div>
 		<div id="rename" onclick="rename()" data-options="iconCls:'icon-remove'">重命名</div>
         <div id="remove" onclick="remove()" data-options="iconCls:'icon-remove'">删除</div>
 		<div id="uploadFile" onclick="upload()" data-options="iconCls:'icon-add'">上传文件</div>
@@ -71,6 +72,7 @@
 			<!-- center top end -->
 			
 			<!-- center bottom start -->
+			<!--
 			<div data-options="region:'south',split:true" style="height:20%;background:#fbfbfb;">
 				<div id="bottomTab" class="easyui-tabs" style="width:100%;height:100%;">
 				    <div title="root@localhost" style="padding:20px;display:none;">
@@ -81,6 +83,7 @@
 				    </div>
 				</div>
 			</div>
+			-->
 			<!-- center bottom end -->
 		</div>
 	</div>
@@ -120,7 +123,7 @@ $(function() {
 			var t = $('#tree');
     		var selected = t.tree('getSelected');
 			
-			$('#file_upload').uploadify('settings','uploader','${ServiceName}/file/upload?parent=' + selected.id);
+			$('#file_upload').uploadify('settings','uploader','${ServiceName}/file/upload?type=${type}&parent=' + selected.id);
 		},
 		onUploadSuccess : function(file, data, response){
     		var selected = getSelectedTreeNode();
@@ -177,6 +180,7 @@ function rename() {
 	
 	layer.prompt({
         title: '新文件名',
+		value: selected.text,
         formType: 0 //prompt风格，支持0-2
     }, function(fileName , index){
 		layer.close(index);
@@ -226,6 +230,33 @@ function remove() {
     });
 }
 
+function unzip() {
+    var selected = getSelectedTreeNode();
+	
+	if(selected.id.toString().indexOf('/') == -1){
+		layer.msg('根目录不允许删除');
+		return;
+	}
+	
+	$.ajax({
+        type: 'POST',
+        url: '${ServiceName}/file/unzip',
+        data: {
+			root : '${root}',
+			type : '${type}',
+			fileName : selected.id
+        }
+    }).done(function (data) {
+		layer.closeAll();
+    	if(data.code == 0){
+			//刷新
+			expand();
+    	}else{
+    		layer.msg(data.desc);
+    	}
+    });
+}
+
 /**
  * 上传文件操作
  */
@@ -239,7 +270,13 @@ function upload() {
  */
 function onContextMenu(e,node){
     e.preventDefault();
-    
+    var arr = node.text.split('.');
+	var ext = arr[arr.length-1];
+	if('rar'==ext || 'zip'==ext){
+		$('#unzip').show();
+	}else{
+		$('#unzip').hide();
+	}
 	if(node.folder){
 		$('#appendDir').show();
 		$('#appendFile').show();

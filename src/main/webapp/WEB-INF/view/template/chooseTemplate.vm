@@ -103,7 +103,7 @@ function doChooseTemplate(id){
         }
     }).done(function (data) {
     	if(data.code == 0){
-			closeWindowAndRefreshParent();
+			window.top.location.reload();
     	}else{
     		layer.msg(data.desc);
     	}

@@ -40,57 +40,63 @@ import com.jumore.dove.service.BaseService;
 public class ProjectGenerateServiceImpl implements ProjectGenerateService {
 
     @Autowired
-    private BaseService         baseService;
+    private BaseService baseService;
 
-//    @Autowired
-//    private CodeGenerateService codeGenerateService;
+    // @Autowired
+    // private CodeGenerateService codeGenerateService;
 
     @Override
     public void generateCode(Project project, String tplPath, String codePath) {
 
         ParserEngine parseEngine = new ParserEngine();
         ProjectTemplate template = baseService.get(ProjectTemplate.class, project.getTplId());
-
+        tplPath = PathUtils.trimPathEnd(tplPath);
+        JSONObject params = JSON.parseObject(project.getTplSettingData());
+        // 删除原来文件
+        FileUtils.deleteQuietly(new File(codePath));
+        
         if (StringUtils.isEmpty(project.getGenerateEntityIds())) {
+            generateByDBEntity(project , template, parseEngine,tplPath,codePath , params,null);
             return;
         }
         String[] entityList = project.getGenerateEntityIds().split(",");
-        JSONObject params = JSON.parseObject(project.getTplSettingData());
-        tplPath = PathUtils.trimPathEnd(tplPath);
-        // 删除原来文件
-        FileUtils.deleteQuietly(new File(codePath));
+        
         for (String entityId : entityList) {
             if (StringUtils.isEmpty(entityId)) {
                 continue;
             }
             DBEntity entityPo = baseService.get(DBEntity.class, Long.valueOf(entityId));
-            
-//            String entityName =  parseEngine.toEntityName(tempalte, entityPo.getName());
-//            params.put("entityName",entityName);
-//            String entityNameLowCase = entityName.substring(0,1).toLowerCase() + entityName.substring(1,entityName.length());
-//            params.put("entityNameLowCase",entityNameLowCase);
-            try {
-                // 使用js设置上下文
-                params = parseEngine.initVelicityContext(template , entityPo.getName(), params);
-            } catch (ScriptException e) {
-                throw new BusinessException("初始化上下文失败" , e);
-            }
-            // 先生成目录
-            generateDirs(parseEngine, project, template, tplPath, codePath, params, entityPo);
-
-            // 生成文件
-            generateFiles(parseEngine, project, template, tplPath, codePath, params, entityPo);
+            generateByDBEntity(project , template, parseEngine,tplPath,codePath , params,entityPo);
         }
 
+    }
+
+    private void generateByDBEntity(Project project, ProjectTemplate template, ParserEngine parseEngine, String tplPath, String codePath,
+            JSONObject projectParams, DBEntity entityPo) {
+        String tableName="";
+        if(entityPo!=null){
+            tableName = entityPo.getName();
+        }
+        try {
+            // 使用js设置上下文
+            projectParams = parseEngine.initVelicityContext(template, tableName, projectParams);
+        } catch (ScriptException e) {
+            throw new BusinessException("初始化上下文失败", e);
+        }
+        // 先生成目录
+        generateDirs(parseEngine, project, template, tplPath, codePath, projectParams);
+
+        // 生成文件
+        generateFiles(parseEngine, project, template, tplPath, codePath, projectParams, entityPo);
     }
 
     private void generateFiles(ParserEngine parseEngine, Project project, ProjectTemplate tempalte, String tplPath, String codePath,
             JSONObject params, DBEntity entityPo) {
 
         // 生成实体类
-//        Object code = generateEntityClass(entityPo , entityName);
-//        params.put("entityCode", code);
-//        params.put("tableName", entityPo.getName());
+        // Object code = generateEntityClass(entityPo , entityName);
+        // params.put("entityCode", code);
+        // params.put("tableName", entityPo.getName());
 
         // get all tpl files
         Collection<File> files = FileUtils.listFiles(new File(tplPath), null, true);
@@ -99,10 +105,13 @@ public class ProjectGenerateServiceImpl implements ProjectGenerateService {
         if (StringUtils.isEmpty(tpl.getExts())) {
             throw new BusinessException("没有设置模板支持的扩展名");
         }
-        EntityField vo = new EntityField();
-        vo.setDbentityId(entityPo.getId());
-        List<EntityField> fieldList = baseService.listByExample(vo);
-        
+        List<EntityField> fieldList = new ArrayList<EntityField>();
+        if (entityPo != null) {
+            EntityField vo = new EntityField();
+            vo.setDbentityId(entityPo.getId());
+            fieldList = baseService.listByExample(vo);
+        }
+
         for (File tplFile : files) {
             try {
                 String dest = codePath + PathUtils.getTplFileRelativePath(tplFile.getAbsolutePath(), project.getTplId());
@@ -152,7 +161,7 @@ public class ProjectGenerateServiceImpl implements ProjectGenerateService {
             Template tpl = ve.getTemplate(tplFile.getName(), "utf8");
 
             VelocityContext ctx = new VelocityContext(params);
-            
+
             // ctx.put("fieldList", fieldList);
 
             // 替代上一句代码，因为上一句代码name，不是实体字段的名字
@@ -165,16 +174,16 @@ public class ProjectGenerateServiceImpl implements ProjectGenerateService {
                 map.put("nameUpFirstChar", EntityGenerateHelper.firstCharToUpperCase(map.get("name").toString()));
                 map.put("type", EntityGenerateHelper.convertToJavaTypeSafety(field.getType()));
                 map.put("docs", field.getDocs());
-                if(field.getShowInput()!=null && field.getShowInput()==1){
+                if (field.getShowInput() != null && field.getShowInput() == 1) {
                     map.put("showInput", true);
                 }
-                if("NO".equals(field.getAllowNull())){
+                if ("NO".equals(field.getAllowNull())) {
                     map.put("allowNull", false);
                 }
-                if(field.getPrimaryKey()!=null && field.getPrimaryKey()==1){
+                if (field.getPrimaryKey() != null && field.getPrimaryKey() == 1) {
                     map.put("primaryKey", true);
                 }
-                if(field.getLength()!=null && field.getLength()>0){
+                if (field.getLength() != null && field.getLength() > 0) {
                     map.put("maxLength", field.getLength());
                 }
                 fields.add(map);
@@ -192,7 +201,7 @@ public class ProjectGenerateServiceImpl implements ProjectGenerateService {
     }
 
     private void generateDirs(ParserEngine parseEngine, Project project, ProjectTemplate tempalte, String tplPath, String codePath,
-            JSONObject params, DBEntity entityPo) {
+            JSONObject params) {
         Collection<File> dirs = FileUtils.listFilesAndDirs(new File(tplPath), FalseFileFilter.INSTANCE, TrueFileFilter.INSTANCE);
         for (File dir : dirs) {
             if (dir.getAbsolutePath().equals(tplPath)) {

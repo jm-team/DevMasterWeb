@@ -131,10 +131,10 @@ function listData(currentResult){
 function generateCode(){
 //checkbox
 	var items = $('.checkbox:checked');
-	if(items.length==0){
-		layer.msg('请先选择表');
-		return;
-	}
+	//if(items.length==0){
+	//	layer.msg('请先选择表');
+	//	return;
+	//}
 	var entityIds = '';
 	for(var i=0;i<items.length;i++){
 		entityIds += items[i].value+',';

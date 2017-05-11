@@ -18,11 +18,12 @@
 					</div>
 				</div>
 				<div class="form-group">
-					<span class="col-sm-3 control-label no-padding-right">实体类名解析器：</span> 
+					<span class="col-sm-3 control-label no-padding-right">模板上下文初始化脚本：</span> 
 					<div class="col-sm-9">
 						<input type="text"  name="entityNameFunction" value="$!{tpl.entityNameFunction}" 
 							placeholder="模板跟目录的相对路径(parse.js)" class="col-xs-10 col-sm-5" 
 							data-null-msg="" maxlength="100"/>
+						<span>一个js文件名可以被rhino执行，用于初始化velocity模板的上下文，这个文件应该在你的模板里</span>
 					</div>
 				</div>
 				<div class="form-group">
