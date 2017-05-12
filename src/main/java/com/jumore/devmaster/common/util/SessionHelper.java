@@ -25,6 +25,13 @@ public class SessionHelper {
         return cfg.getDataPath()+File.separator+getUser().getAccount()+File.separator;
     }
     
+    public static String getUserWorkDir(DevMasterUser user){
+        if(cfg==null){
+            cfg = SpringContextHelper.getBean(Configuration.class);
+        }
+        return cfg.getDataPath()+File.separator+user.getAccount()+File.separator;
+    }
+    
     /**
      * 聚灵通url
      * @return

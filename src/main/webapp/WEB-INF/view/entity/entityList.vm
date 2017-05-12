@@ -24,7 +24,7 @@
 						<button onclick="generateContainer()" style="float:right;margin-right:30px;" class="btn btn-primary">生成容器</button>
 						<button onclick="downloadCode()" style="float:right;margin-right:30px;" class="btn btn-primary">下载代码</button>
 						<a target="_blank" href="${ServiceName}/code/view?projectId=${projectId}" style="float:right;margin-right:30px;" class="btn btn-primary">查看代码</a>
-						<button onclick="generateCode()" style="float:right;margin-right:30px;" class="btn btn-primary">生成代码</button>
+						<!--<button onclick="generateCode()" style="float:right;margin-right:30px;" class="btn btn-primary">生成代码</button>-->
     				</div>
     			</div>
 			</div>

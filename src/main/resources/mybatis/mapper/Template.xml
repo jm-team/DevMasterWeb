@@ -29,6 +29,28 @@
 		</where>
 	</select>
 	
+	<select id="listAvaliableTemplate" parameterType="paramMap" resultType="Map">
+		select pt.id
+		      ,pt.title 
+		      ,pt.uid
+		      ,pt.remark
+		      ,pt.create_time createTime
+		      ,pt.update_time updateTime
+		      ,pt.delete_flag deleteFlag
+		      ,pt.preview_image previewImage
+		      ,pt.scope
+		      ,pt.exts
+		      ,u.account createUser
+		from dm_project_template pt
+		left join dm_user u on u.id = pt.uid
+		<where>
+			pt.scope='public'
+			<if test="uid!=null">
+				and pt.uid=#{uid}
+			</if>
+		</where>
+	</select>
+	
 	<select id="listSetting" parameterType="paramMap" resultType="Map">
 		select * from dm_template_setting
 		where tpl_id = #{tplId}

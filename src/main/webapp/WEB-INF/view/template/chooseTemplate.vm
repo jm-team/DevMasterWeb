@@ -70,7 +70,7 @@ function listData(currentResult){
 	var devUsername = $('#devUsername').val();
 	$.ajax({
         type: "POST",
-        url: '${ServiceName}/template/listTemplateData',
+        url: '${ServiceName}/template/listAvaliableTemplate',
         data: {currentResult:currentResult , title:title , scope: 1},
         dataType:'json'
     }).done(function (result) {

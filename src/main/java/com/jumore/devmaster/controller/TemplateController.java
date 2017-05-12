@@ -138,6 +138,16 @@ public class TemplateController extends BaseController {
         page = baseService.findPageByParams(page, "Template.listTemplate", pm);
         return ResponseVo.<Page<Map>> BUILDER().setData(page).setCode(Const.BUSINESS_CODE.SUCCESS);
     }
+    
+    @SuppressWarnings("rawtypes")
+    @ResponseBody
+    @RequestMapping(value = "listAvaliableTemplate")
+    public ResponseVo<Page<Map>> listAvaliableTemplate(Page<Map> page) throws Exception {
+        ParamMap pm = new ParamMap();
+        pm.put("uid", SessionHelper.getUser().getId());
+        page = baseService.findPageByParams(page, "Template.listAvaliableTemplate", pm);
+        return ResponseVo.<Page<Map>> BUILDER().setData(page).setCode(Const.BUSINESS_CODE.SUCCESS);
+    }
 
     @ResponseBody
     @RequestMapping(value = "setScope")

@@ -21,6 +21,7 @@ import com.jumore.devmaster.common.CodeMirrorModeContainer;
 import com.jumore.devmaster.common.TreeIconClassContainer;
 import com.jumore.devmaster.common.util.PathUtils;
 import com.jumore.devmaster.common.util.ZipUtil;
+import com.jumore.devmaster.entity.ProjectTemplate;
 import com.jumore.dove.common.BusinessException;
 import com.jumore.dove.service.BaseService;
 import com.jumore.dove.web.model.Const;
@@ -65,7 +66,8 @@ public class FileEditController {
         } else {
             File dir = new File(dirStr);
             JSONObject jobj = new JSONObject();
-            jobj.put("text", root);
+            ProjectTemplate tpl = baseService.get(ProjectTemplate.class, Long.valueOf(root));
+            jobj.put("text", tpl.getTitle());
             jobj.put("id", root);
             jobj.put("state", "closed");
             jobj.put("folder", true);

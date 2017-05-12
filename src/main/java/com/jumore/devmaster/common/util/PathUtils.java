@@ -11,6 +11,7 @@ import java.util.zip.ZipOutputStream;
 import org.apache.commons.compress.utils.IOUtils;
 import org.springframework.util.StringUtils;
 
+import com.jumore.devmaster.entity.DevMasterUser;
 import com.jumore.devmaster.entity.FrontComponent;
 import com.jumore.devmaster.entity.ProjectTemplate;
 import com.jumore.dove.service.BaseService;
@@ -67,6 +68,10 @@ public class PathUtils {
 //        ProjectTemplate tpl = SystemManager.getBaseService().get(ProjectTemplate.class, tplId);
         return SessionHelper.getUserWorkDir()+"tpls" + File.separator + tplId + File.separator;
     }
+    
+    public static String getTplDir(Long tplId , DevMasterUser user){
+      return SessionHelper.getUserWorkDir(user)+"tpls" + File.separator + tplId + File.separator;
+  }
     
     public static String getTplFileRelativePath(String tplPath , Long tplId){
         return tplPath.replace(getTplDir(tplId), "");

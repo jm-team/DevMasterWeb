@@ -14,7 +14,7 @@ import com.jumore.dove.service.BaseServiceImpl;
 @Service
 public class TestServiceImpl extends BaseServiceImpl implements TestService{
     
-    @Transactional
+    @Transactional(rollbackFor={Exception.class})
     public void addProject(){
         Project project = new Project();
         project.setName("aaaa");
@@ -24,7 +24,7 @@ public class TestServiceImpl extends BaseServiceImpl implements TestService{
         this.save(project);
     }
     
-    @Transactional
+    @Transactional(rollbackFor={Exception.class})
     public void addProjectMember(){
         ProjectMember member = new ProjectMember();
         member.setProjectId(1000L);

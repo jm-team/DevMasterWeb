@@ -30,7 +30,7 @@ public class ProjectServiceImpl extends BaseServiceImpl implements ProjectServic
      * @param project Project
      * @param driverClass 驱动
      */
-    @Transactional
+    @Transactional(rollbackFor={Exception.class})
     public boolean addTableAndColumnInfo(Project project, String driverClass) {
         ParamMap pm = new ParamMap();
         pm.put("projectId", project.getId());
