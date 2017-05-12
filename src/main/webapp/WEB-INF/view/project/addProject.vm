@@ -10,23 +10,21 @@
 					</div>
 				</div>
 				<div class="form-group">
-					<span class="col-sm-3 control-label no-padding-right">数据库url：<span style="color:red;">*</span></span> 
+					<span class="col-sm-3 control-label no-padding-right">数据库url：</span> 
 					<div class="col-sm-9">
-						<textarea data-null-msg="数据库url不能为空" maxlength="500" rows="3" cols="" name="dbUrl"  class="col-xs-10 col-sm-5" ></textarea>
+						<textarea maxlength="500" rows="3" cols="" name="dbUrl"  class="col-xs-10 col-sm-5" ></textarea>
 					</div>
 				</div>
 				<div class="form-group">
-					<span class="col-sm-3 control-label no-padding-right">数据库账号：<span style="color:red;">*</span></span> 
+					<span class="col-sm-3 control-label no-padding-right">数据库账号：</span> 
 					<div class="col-sm-9">
-						<input type="text"  name="dbUserName" class="col-xs-10 col-sm-5"  
-							data-null-msg="数据库账号不能为空" maxlength="50"/>
+						<input type="text"  name="dbUserName" class="col-xs-10 col-sm-5" maxlength="50"/>
 					</div>
 				</div>
 				<div class="form-group">
-					<span class="col-sm-3 control-label no-padding-right">数据库密码：<span style="color:red;">*</span></span> 
+					<span class="col-sm-3 control-label no-padding-right">数据库密码：</span> 
 					<div class="col-sm-9">
-						<input type="text"  name="dbPassword" class="col-xs-10 col-sm-5"  
-							data-null-msg="数据库密码不能为空" maxlength="50"/>
+						<input type="text"  name="dbPassword" class="col-xs-10 col-sm-5" maxlength="50"/>
 					</div>
 				</div>
 				<div class="form-group">

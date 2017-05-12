@@ -27,8 +27,8 @@ import com.jumore.devmaster.entity.ProjectTemplate;
 import com.jumore.devmaster.entity.TemplateSetting;
 import com.jumore.devmaster.service.ProjectGenerateService;
 import com.jumore.devmaster.service.TemplateService;
-import com.jumore.devmaster.validator.CommonValidator;
 import com.jumore.dove.common.BusinessException;
+import com.jumore.dove.common.validator.DoveValidator;
 import com.jumore.dove.controller.base.BaseController;
 import com.jumore.dove.plugin.Page;
 import com.jumore.dove.service.BaseService;
@@ -120,6 +120,7 @@ public class TemplateController extends BaseController {
     public ModelAndView templateList(Long scope) throws Exception {
         ModelAndView mv = new ModelAndView();
         mv.addObject("scope", scope);
+        mv.addObject("myUid", SessionHelper.getUser().getId());
         return mv;
     }
 
@@ -192,6 +193,11 @@ public class TemplateController extends BaseController {
         }
         if (StringUtils.isEmpty(setting.getPlaceholder())) {
             throw new BusinessException("参数占位符不能为空");
+        }
+        // 检查占位符是否重复
+        boolean exsit = DoveValidator.exsits(TemplateSetting.class, new String[]{"tplId" , "placeholder"}, new Object[]{setting.getTplId() , setting.getPlaceholder()});
+        if(exsit){
+            throw new BusinessException("参数占位符"+setting.getPlaceholder()+"重复");
         }
         baseService.save(setting);
         return ResponseVo.<String> BUILDER().setCode(Const.BUSINESS_CODE.SUCCESS);

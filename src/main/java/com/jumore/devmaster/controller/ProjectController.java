@@ -77,15 +77,6 @@ public class ProjectController {
         if (StringUtils.isEmpty(project.getName())) {
             throw new RuntimeException("工程名不能为空");
         }
-        if (StringUtils.isEmpty(project.getDbUrl())) {
-            throw new RuntimeException("数据库连接不能为空");
-        }
-        if (StringUtils.isEmpty(project.getDbUserName())) {
-            throw new RuntimeException("数据库账号不能为空");
-        }
-        if (StringUtils.isEmpty(project.getDbPassword())) {
-            throw new RuntimeException("数据库密码不能为空");
-        }
         project.setOwnerId(SessionHelper.getUser().getId());
         project.setCreateTime(new Date());
         if(CommonValidator.isEntityExsit(Project.class, new String[]{"name","ownerId"}, new Object[]{project.getName() , project.getOwnerId()})){
@@ -108,15 +99,6 @@ public class ProjectController {
     public ResponseVo<String> doUpdateProject(Project project) throws Exception {
         if (StringUtils.isEmpty(project.getName())) {
             throw new RuntimeException("工程名不能为空");
-        }
-        if (StringUtils.isEmpty(project.getDbUrl())) {
-            throw new RuntimeException("数据库连接不能为空");
-        }
-        if (StringUtils.isEmpty(project.getDbUserName())) {
-            throw new RuntimeException("数据库账号不能为空");
-        }
-        if (StringUtils.isEmpty(project.getDbPassword())) {
-            throw new RuntimeException("数据库密码不能为空");
         }
         Project po = baseService.get(Project.class, project.getId());
         po.setName(project.getName());

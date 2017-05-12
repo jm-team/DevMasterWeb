@@ -48,10 +48,18 @@ public class ProjectGenerateServiceImpl implements ProjectGenerateService {
     @Override
     public void generateCode(Project project, String tplPath, String codePath) {
 
+        // 判断模板目录是否存在
+        if(new File(tplPath).exists()==false){
+            throw new BusinessException("好像没有什么代码好生成的，请先编辑模板内容");
+        }
         ParserEngine parseEngine = new ParserEngine();
         ProjectTemplate template = baseService.get(ProjectTemplate.class, project.getTplId());
         tplPath = PathUtils.trimPathEnd(tplPath);
         JSONObject params = JSON.parseObject(project.getTplSettingData());
+        //内置参数
+        params.put("jdbcUrl", project.getDbUrl());
+        params.put("jdbcUsername", project.getDbUserName());
+        params.put("jdbcPassword", project.getDbPassword());
         // 删除原来文件
         FileUtils.deleteQuietly(new File(codePath));
         
@@ -101,8 +109,8 @@ public class ProjectGenerateServiceImpl implements ProjectGenerateService {
         // get all tpl files
         Collection<File> files = FileUtils.listFiles(new File(tplPath), null, true);
 
-        ProjectTemplate tpl = baseService.get(ProjectTemplate.class, project.getTplId());
-        if (StringUtils.isEmpty(tpl.getExts())) {
+//        ProjectTemplate tpl = baseService.get(ProjectTemplate.class, project.getTplId());
+        if (StringUtils.isEmpty(tempalte.getExts())) {
             throw new BusinessException("没有设置模板支持的扩展名");
         }
         List<EntityField> fieldList = new ArrayList<EntityField>();
@@ -121,7 +129,7 @@ public class ProjectGenerateServiceImpl implements ProjectGenerateService {
                         + destFile.getName();
                 File realDestFile = new File(realDest);
                 String ext = PathUtils.getExt(tplFile);
-                if (!tpl.getExts().contains(ext)) {
+                if (!tempalte.getExts().contains(ext)) {
                     // 直接拷贝文件
                     FileUtils.copyFile(tplFile, realDestFile);
                     System.out.println("move file : " + realDestFile.getAbsolutePath());
@@ -182,6 +190,7 @@ public class ProjectGenerateServiceImpl implements ProjectGenerateService {
                 }
                 if (field.getPrimaryKey() != null && field.getPrimaryKey() == 1) {
                     map.put("primaryKey", true);
+                    params.put("IdType", EntityGenerateHelper.convertToJavaTypeSafety(field.getType()));
                 }
                 if (field.getLength() != null && field.getLength() > 0) {
                     map.put("maxLength", field.getLength());

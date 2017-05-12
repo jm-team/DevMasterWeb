@@ -16,6 +16,7 @@ public class EntityGenerateHelper {
         JavaDbTypeMapper.put(DEFAULT_DB_TYPE, "String");
         JavaDbTypeMapper.put("smallint", "Integer");
         JavaDbTypeMapper.put("int", "Integer");
+        JavaDbTypeMapper.put("float", "Float");
         JavaDbTypeMapper.put("bigint", "Long");
         JavaDbTypeMapper.put("char", "String");
         JavaDbTypeMapper.put("varchar", "String");

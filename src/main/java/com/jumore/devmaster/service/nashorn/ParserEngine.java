@@ -29,11 +29,14 @@ public class ParserEngine {
     }
 
     public JSONObject initVelicityContext(ProjectTemplate template, String tableName , JSONObject params) throws ScriptException{
+        params.put("tableName", tableName);
+        if(StringUtils.isEmpty(template.getEntityNameFunction())){
+            return params;
+        }
         Bindings bindings = nashorn.createBindings();
         bindings.put("tableName", tableName);
-        params.put("tableName", tableName);
         bindings.put("ctx", params);
-//        nashorn.eval(", bindings);
+        
         String parseFile = PathUtils.getTplDir(template.getId()) + template.getEntityNameFunction();
         File parse = new File(parseFile);
         if (parse.exists()) {

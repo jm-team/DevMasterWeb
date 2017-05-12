@@ -46,7 +46,7 @@
 		<where>
 			pt.scope='public'
 			<if test="uid!=null">
-				and pt.uid=#{uid}
+				or pt.uid=#{uid}
 			</if>
 		</where>
 	</select>
