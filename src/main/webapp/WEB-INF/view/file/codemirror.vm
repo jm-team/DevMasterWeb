@@ -71,10 +71,12 @@
     }
 	
 	var extraKeys = {};
-	extraKeys['Ctrl-S'] = 'save';
-	extraKeys['Alt-/'] = 'autocomplete';
-	extraKeys['Ctrl-J'] = 'toMatchingTag';
-	extraKeys["'<'"] = 'completeAfter';
+	if($!{readonly}==false){
+		extraKeys['Ctrl-S'] = 'save';
+    	extraKeys['Alt-/'] = 'autocomplete';
+    	extraKeys['Ctrl-J'] = 'toMatchingTag';
+    	extraKeys["'<'"] = 'completeAfter';
+	}
 	
 	var codeMirror = CodeMirror.fromTextArea(editor,{
 			theme:'blackboard',
@@ -98,6 +100,9 @@
 	
 	// 内容变化触发
 	codeMirror.on('change', function(cm, changeObj){
+		if($!{readonly}){
+			return;
+		}
 		parent.updateTabTitle('$!{path}', '$!{fileName}');
 		//cm.showHint(); // 自动补全
 	});
@@ -106,6 +111,9 @@
 	 * 保存功能
 	 */
 	function save(){
+		if($!{readonly}){
+			return;
+		}
 		var path = '$!{path}';
 		
 		if(path === ''){

@@ -21,6 +21,7 @@ import com.jumore.devmaster.common.CodeMirrorModeContainer;
 import com.jumore.devmaster.common.TreeIconClassContainer;
 import com.jumore.devmaster.common.util.PathUtils;
 import com.jumore.devmaster.common.util.ZipUtil;
+import com.jumore.devmaster.entity.DevMasterUser;
 import com.jumore.devmaster.entity.ProjectTemplate;
 import com.jumore.dove.common.BusinessException;
 import com.jumore.dove.service.BaseService;
@@ -35,9 +36,14 @@ public class FileEditController {
     private BaseService baseService;
 
     @RequestMapping("/fileEdit")
-    public ModelAndView index(String root, String type) throws IOException {
+    public ModelAndView index(String root, String type , boolean readonly , Long uid) throws IOException {
         ModelAndView mv = new ModelAndView();
-        String dirStr = getRootDir(type) + root;
+        String dirStr = "";
+        if(uid==null){
+            dirStr = getRootDir(type) + root;
+        }else{
+            dirStr = getRootDir(type , uid) + root;
+        }
         File dir = new File(dirStr);
 
         if (!dir.exists()) {
@@ -45,6 +51,8 @@ public class FileEditController {
         }
         mv.addObject("root", root);
         mv.addObject("type", type);
+        mv.addObject("readonly", readonly);
+        mv.addObject("uid", uid);
         return mv;
     }
 
@@ -57,8 +65,8 @@ public class FileEditController {
      */
     @ResponseBody
     @RequestMapping(value = "getFiles")
-    public JSONArray getFiles(String root, String id, String type) throws Exception {
-        String dirStr = getRootDir(type);
+    public JSONArray getFiles(String root, String id, String type ,Long uid) throws Exception {
+        String dirStr = getRootDir(type , uid);
         JSONArray arr = new JSONArray();
 
         if (!StringUtils.isEmpty(id)) {
@@ -83,7 +91,7 @@ public class FileEditController {
             JSONObject obj = new JSONObject();
             obj.put("text", file.getName());
             obj.put("folder", file.isDirectory());
-            obj.put("id", getRelativePath(file, type));
+            obj.put("id", getRelativePath(file, type , uid));
             obj.put("iconCls", TreeIconClassContainer.getIconClass(file));
 
             if (file.isDirectory()) {
@@ -150,15 +158,15 @@ public class FileEditController {
         boolean success = file.renameTo(newFile);
 
         return ResponseVo.<String>BUILDER().setCode(success ? Const.BUSINESS_CODE.SUCCESS : Const.BUSINESS_CODE.FAILED)
-                .setData(getRelativePath(newFile, type));
+                .setData(getRelativePath(newFile, type , null));
     }
 
     @RequestMapping("/codemirror")
-    public ModelAndView codemirror(String path, String type) throws IOException {
+    public ModelAndView codemirror(String path, String type , Long uid , boolean readonly) throws IOException {
         ModelAndView mv = new ModelAndView();
 
         if (org.apache.commons.lang.StringUtils.isNotBlank(path)) {
-            String filePath = getRootDir(type) + path;
+            String filePath = getRootDir(type , uid) + path;
             File file = new File(filePath);
             if (!file.exists()) {
                 FileUtils.forceMkdir(file.getParentFile());
@@ -173,6 +181,7 @@ public class FileEditController {
             mv.addObject("content", content);
             mv.addObject("path", path);
             mv.addObject("type", type);
+            mv.addObject("readonly", readonly);
             mv.addObject("fileName", file.getName());
             mv.addObject("mode", CodeMirrorModeContainer.get(file));
         }
@@ -205,12 +214,12 @@ public class FileEditController {
         response.flushBuffer();
     }
 
-    private String getRelativePath(File file, String type) {
+    private String getRelativePath(File file, String type , Long uid) {
         if (file == null) {
             return "";
         }
 
-        return file.getAbsolutePath().replace(getRootDir(type), "").replace('\\', '/');
+        return file.getAbsolutePath().replace(getRootDir(type, uid), "").replace('\\', '/');
     }
 
     @ResponseBody
@@ -243,6 +252,19 @@ public class FileEditController {
     private String getRootDir(String type) {
         if ("tpls".equals(type)) {
             return PathUtils.getTplDir();
+        } else if ("comps".equals(type)) {
+            return PathUtils.getComponentsDir();
+        }
+        return "";
+    }
+    private String getRootDir(String type , Long uid) {
+        if ("tpls".equals(type)) {
+            if(uid!=null){
+                DevMasterUser user = baseService.get(DevMasterUser.class, uid);
+                return PathUtils.getTplDir(user);
+            }else{
+               return PathUtils.getTplDir(); 
+            }
         } else if ("comps".equals(type)) {
             return PathUtils.getComponentsDir();
         }

@@ -25,7 +25,7 @@
 	
 	<!-- left start -->
 	<div data-options="region:'west',split:true,title:''" style="width:15%;padding:10px;background: transparent;">
-		<ul id="tree" class="easyui-tree" url="${ServiceName}/file/getFiles?type=${type}&root=${root}" data-options="
+		<ul id="tree" class="easyui-tree" url="${ServiceName}/file/getFiles?uid=$!{uid}&type=${type}&root=${root}&readonly=${readonly}" data-options="
                 method: 'get',
                 animate: true,
                 onContextMenu: onContextMenu,
@@ -270,6 +270,9 @@ function upload() {
  */
 function onContextMenu(e,node){
     e.preventDefault();
+	if(${readonly}){
+		return;
+	}
     var arr = node.text.split('.');
 	var ext = arr[arr.length-1];
 	if('rar'==ext || 'zip'==ext){
@@ -476,7 +479,7 @@ function openCodeFrame(path, name){
 	if(jQuery.inArray(extend, imgExtends) >= 0){
 		content = '<div><img src="${ServiceName}/file/picture?type=${type}&path=' + path + '"></div>';
 	} else{
-		content = '<iframe src="${ServiceName}/file/codemirror?type=${type}&path='+path+'" width="100%" height="98%"></iframe>'
+		content = '<iframe src="${ServiceName}/file/codemirror?uid=$!{uid}&type=${type}&readonly=$!{readonly}&path='+path+'" width="100%" height="98%"></iframe>'
 	}
 	
 	ele.tabs('add', {

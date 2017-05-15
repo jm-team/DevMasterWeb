@@ -71,10 +71,13 @@
     }
 	
 	var extraKeys = {};
-	extraKeys['Ctrl-S'] = 'save';
-	extraKeys['Alt-/'] = 'autocomplete';
-	extraKeys['Ctrl-J'] = 'toMatchingTag';
-	extraKeys["'<'"] = 'completeAfter';
+	if($!{readonly}==false){
+		extraKeys['Ctrl-S'] = 'save';
+    	extraKeys['Alt-/'] = 'autocomplete';
+    	extraKeys['Ctrl-J'] = 'toMatchingTag';
+    	extraKeys["'<'"] = 'completeAfter';
+	}
+	
 	
 	var codeMirror = CodeMirror.fromTextArea(editor,{
 			theme:'blackboard',

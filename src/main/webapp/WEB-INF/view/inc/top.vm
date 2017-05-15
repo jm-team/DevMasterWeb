@@ -44,12 +44,6 @@
 									</a>
     								</li>
     								<li>
-    									<a href="#" onclick="openBindMobile()">
-    										<i class="icon-mobile-phone"></i>
-    										绑定手机
-    									</a>
-    								</li>
-    								<li>
     									<a href="#" onclick="openResetPwd()">
     										<i class="icon-user-md"></i>
     										修改密码

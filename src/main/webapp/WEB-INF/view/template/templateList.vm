@@ -41,13 +41,24 @@
 
 							<tbody>
 								<tr style="display:none;" class="node_row">
-								    <td ><a target="_blank" href="${ServiceName}/file/fileEdit?type=tpls&root=$[id]">$[title]</a></td>
+								    <td >
+											<span>
+											<cif test="$[scope]==1">
+													<a target="_blank" href="${ServiceName}/file/fileEdit?type=tpls&root=$[id]">$[title]</a>
+                                            </cif>
+                                            </span>
+											<span>
+											<cif test="$[scope]==2">
+													<a target="_blank" href="${ServiceName}/file/fileEdit?readonly=true&uid=$[uid]&type=tpls&root=$[id]">$[title]</a>
+                                            </cif>
+                                            </span>
+									</td>
 								    <td >$[remark]</td>
 									<td >$[createTime]</td>
 									<td >$[createUser]</td>
                                     <td ><a href="javascript:void(0)" onclick="setScope($[id],$[scope])" script="true">getScopeText($[scope])</a></td>
 								    <td>
-											<cif test="$[uid]==${myUid}">
+											<cif test="$[scope]==1">
 											<a href="javascript:void(0)" onclick="openSettingList($[id])">参数配置</a>
 											<a href="javascript:void(0)" onclick="openEditTemplate($[id])">修改</a>
 											<a href="javascript:void(0)" onclick="deleteTemplate($[id])">删除</a>
