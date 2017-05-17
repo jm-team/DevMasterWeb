@@ -257,6 +257,7 @@ public class TemplateController extends BaseController {
             vo.setName(setting.getName());
             vo.setPlaceholder(setting.getPlaceholder());
             vo.setValue(tplSettingData.getString(setting.getPlaceholder()));
+            vo.setInputType(setting.getInputType());
             settingVOList.add(vo);
         }
         mv.addObject("settingList", settingVOList);

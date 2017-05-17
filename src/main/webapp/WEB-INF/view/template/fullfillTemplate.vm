@@ -7,9 +7,19 @@
 				#foreach( $setting in $settingList)
                     <div class="form-group">
     					<span class="col-sm-3 control-label no-padding-right">$setting.name：</span> 
+						#if($setting.inputType=='input')
     					<div class="col-sm-9">
     						<input type="text"  name="$setting.placeholder" value="$!setting.value" class="col-xs-10 col-sm-5" />
     					</div>
+						#end
+						#if($setting.inputType=='bool')
+							<div class="col-sm-9">
+                            <select class="col-sm-3" name="$setting.placeholder">
+								<option #if($!setting.value=='true') selected="selected" #end value="true">是</option>
+								<option #if($!setting.value=='false') selected="selected" #end value="false">否</option>
+							</select>
+                            </div>
+						#end
     				</div>
                 #end
 			</form>

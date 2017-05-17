@@ -18,6 +18,12 @@ public class TemplateSetting {
     
     private String placeholder;
     
+    /**
+     * input,bool
+     */
+    @Column(name="input_type")
+    private String inputType;
+    
     @Column(name="tpl_id")
     private Long tplId;
 
@@ -51,5 +57,13 @@ public class TemplateSetting {
 
     public void setTplId(Long tplId) {
         this.tplId = tplId;
+    }
+
+    public String getInputType() {
+        return inputType;
+    }
+
+    public void setInputType(String inputType) {
+        this.inputType = inputType;
     }
 }

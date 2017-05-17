@@ -11,6 +11,8 @@ public class TemplateSettingVO {
     private Long tplId;
     
     private String value;
+    
+    private String inputType;
 
     public Long getId() {
         return id;
@@ -50,5 +52,13 @@ public class TemplateSettingVO {
 
     public void setValue(String value) {
         this.value = value;
+    }
+
+    public String getInputType() {
+        return inputType;
+    }
+
+    public void setInputType(String inputType) {
+        this.inputType = inputType;
     }
 }

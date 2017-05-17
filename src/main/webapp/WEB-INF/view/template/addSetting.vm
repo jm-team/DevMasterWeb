@@ -17,6 +17,15 @@
 							data-null-msg="占位符不能为空" maxlength="50"/>
 					</div>
 				</div>
+				<div class="form-group">
+					<span class="col-sm-3 control-label no-padding-right">类型：<span style="color:red;">*</span></span> 
+					<div class="col-sm-9">
+                        <select name="inputType">
+                            <option value="input">输入框</option>
+							<option value="bool">bool选择</option>
+						</select>
+					</div>
+				</div>
 			</form>
          </div>
          <div class="modal-footer">
