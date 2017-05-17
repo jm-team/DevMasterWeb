@@ -38,7 +38,7 @@
 													<div class="space"></div>
 
 													<div class="clearfix">
-														<button id="login_button" type="submit" class="width-35 pull-left btn btn-sm btn-primary">
+														<button id="login_button" type="button" onclick="doSubmit();" class="width-35 pull-left btn btn-sm btn-primary">
 															<i class="icon-key"></i>
 															登录
 														</button>
@@ -60,31 +60,30 @@
 <!-- inline scripts related to this page -->
 
 <script type="text/javascript">
-    jQuery(function($) {
-		$("#commentForm").validate({
-			rules: {
-				username: {
-					required: true
-				},
-				password: {
-					required: true
-				}
-			},
-			submitHandler: function(form) {
-				//通过之后回调 
-		       doSubmit();
-		       return false;
-	        }, 
-	        invalidHandler: function(form, validator) {  //不通过回调 
-		          return false; 
-	        }
-		});
-    });  
     
     function doSubmit(){
-  	   	RSAUtils.setMaxDigits(200);  
+		$.ajax({
+            type: "POST",
+            url: '${ServiceName}/getPublicKey',
+            data: {},
+            dataType:'json'
+        }).done(function (jsonData) {
+            //如果为true，证明该用户已经下载过，显示已下载提示，否则直接下载  
+            if (jsonData.code == 0) {
+				var data = JSON.parse(jsonData.data);
+				doRealSubmit(data.publicKeyExponent , data.publicKeyModulus);
+            } else {  
+                layer.msg('获取公钥失败');
+            }  
+        });
+		
+	
+    }
+	
+	function doRealSubmit(publicKeyExponent , publicKeyModulus){
+		RSAUtils.setMaxDigits(256);
        	//setMaxDigits(256);  
-      	var key = new RSAUtils.getKeyPair("${publicKeyExponent}", "", "${publicKeyModulus}");
+      	var key = new RSAUtils.getKeyPair(publicKeyExponent, "", publicKeyModulus);
       	var username = $("#username").val();
        	var password = $("#password").val();
        	var reversedPwd = password.split("").reverse().join("");//js里面是反序的字符串，不知道为啥
@@ -104,8 +103,7 @@
                 layer.msg(jsonData.desc);
             }  
         });
-	
-    }
+	}
 </script>
 </body>
 </html>

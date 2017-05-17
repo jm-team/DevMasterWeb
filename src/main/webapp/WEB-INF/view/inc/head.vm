@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8" />
-    <title>DevMaster代码生产系统</title>
+    <title>DevMaster代码生成系统</title>
     <link href="${ServiceName}/page/img/logo.jpg" rel="icon" type="image/x-icon" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <!-- basic styles -->

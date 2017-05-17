@@ -43,12 +43,12 @@
 								<tr style="display:none;" class="node_row">
 								    <td >
 											<span>
-											<cif test="$[scope]==1">
+											<cif test="$[uid]==${myUid}">
 													<a target="_blank" href="${ServiceName}/file/fileEdit?type=tpls&root=$[id]">$[title]</a>
                                             </cif>
                                             </span>
 											<span>
-											<cif test="$[scope]==2">
+											<cif test="$[uid]!=${myUid}">
 													<a target="_blank" href="${ServiceName}/file/fileEdit?readonly=true&uid=$[uid]&type=tpls&root=$[id]">$[title]</a>
                                             </cif>
                                             </span>
@@ -58,7 +58,7 @@
 									<td >$[createUser]</td>
                                     <td ><a href="javascript:void(0)" onclick="setScope($[id],$[scope])" script="true">getScopeText($[scope])</a></td>
 								    <td>
-											<cif test="$[scope]==1">
+											<cif test="$[uid]==${myUid}">
 											<a href="javascript:void(0)" onclick="openSettingList($[id])">参数配置</a>
 											<a href="javascript:void(0)" onclick="openEditTemplate($[id])">修改</a>
 											<a href="javascript:void(0)" onclick="deleteTemplate($[id])">删除</a>

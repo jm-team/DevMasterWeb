@@ -71,7 +71,7 @@
     }
 	
 	var extraKeys = {};
-	if($!{readonly}==false){
+	if('$!{readonly}'=='false'){
 		extraKeys['Ctrl-S'] = 'save';
     	extraKeys['Alt-/'] = 'autocomplete';
     	extraKeys['Ctrl-J'] = 'toMatchingTag';
