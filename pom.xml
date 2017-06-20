@@ -64,8 +64,50 @@
 	</dependencies>
 
 	<build>
-		<finalName>DevMasterWeb</finalName>
+		<finalName>DevMasterWeb-master-${svn.revision}</finalName>
+		<resources>
+            <resource>
+                <directory>${basedir}/src/main/resources/</directory>
+                <filtering>true</filtering>
+            </resource>
+            <resource>
+                <directory>${basedir}/src/main/java/</directory>
+                <filtering>false</filtering>
+                <excludes>
+                	<exclude>**/*.java</exclude>
+                </excludes>
+            </resource>
+        </resources>
 		<plugins>
+			<plugin>
+				<groupId>com.google.code.maven-svn-revision-number-plugin</groupId>
+				<artifactId>maven-svn-revision-number-plugin</artifactId>
+				<version>1.7</version>
+				<configuration>
+					<verbose>true</verbose>
+					<entries>
+						<entry>
+							<prefix>svn</prefix>
+							<depth>empty</depth>
+						</entry>
+					</entries>
+				</configuration>
+				<executions>
+					<execution>
+						<phase>validate</phase>
+						<goals>
+							<goal>revision</goal>
+						</goals>
+					</execution>
+				</executions>
+				<dependencies>
+					<dependency>
+						<groupId>org.tmatesoft.svnkit</groupId>
+						<artifactId>svnkit</artifactId>
+						<version>1.8.10</version>
+					</dependency>
+				</dependencies>
+			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
