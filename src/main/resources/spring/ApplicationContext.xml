@@ -102,4 +102,6 @@
 	<bean id="devMasterConfiguration" class="com.jumore.devmaster.common.model.Configuration" />
 
 	<bean id="messageEventListener" class="com.jumore.devmaster.listener.MessageEventListener"/>
+	
+	<bean id="jSearch" class="com.jumore.dove.common.search.impl.DefaultJSearch" />
 </beans>

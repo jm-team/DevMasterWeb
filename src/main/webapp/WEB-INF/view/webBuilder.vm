@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Basic Layout - jQuery EasyUI Demo</title>
+<link rel="stylesheet" href="http://www.jeasyui.net/Public/js/easyui/themes/default/easyui.css">
+<link rel="stylesheet" href="http://www.jeasyui.net/Public/js/easyui/themes/icon.css">
+<link rel="stylesheet" href="http://www.jeasyui.net/Public/js/easyui/demo/demo.css">
+<script src="http://www.jeasyui.net/Public/js/jquery.js"></script>
+
+
+<script src="http://www.jeasyui.net/Public/js/easyui/jquery.easyui.min.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script src="${ServiceName}/page/js/webBuilder/keyboard.js"></script>
+<script src="${ServiceName}/page/js/webBuilder/compUtils.js"></script>
+<script src="${ServiceName}/page/js/webBuilder/comp/input.js"></script>
+<script src="${ServiceName}/page/js/webBuilder/comp/span.js"></script>
+<style type="text/css">
+body{
+	padding:1px;margin:0px;
+}
+.helper{
+	border:1px dashed #aaa;
+}
+.wrap.helper{
+	border:0px;
+}
+#props .label{
+	display:inline-block;
+	width:80px;
+	padding-left:10px;
+}
+#props .row{
+	height:30px;
+	margin-top:4px;
+	line-height:30px;
+}
+#props .row input{
+	height:22px;
+	line-height:22px;
+}
+.ui-selectable-helper{
+	border:1px dashed gray;
+	z-index:9999;
+	position:absolute;
+	cursor:move;
+}
+#page .ui-selected { border:2px solid darkgreen; }
+#page .ui-selected.wrap { border:0px; }
+#page .ui-selecting { border:2px solid #FECA40;}
+#page .ui-selecting.wrap { border:0px;}
+.selected{
+	background: ghostwhite;
+    color: darkgrey;
+}
+.comp{
+    height: 30px;
+    line-height: 30px;
+    font-size: 15px;
+    cursor: move;
+}
+</style>
+<script type="text/javascript">
+var editElem;
+var rowSubline=[];
+var colSubline=[];
+var sublines=[];
+var left_offset=200;
+var top_offset = 39;
+var currentEditComp;
+function Comp(clazz,html){
+	this.clazz = clazz;
+	this.html = html;
+	$(clazz).draggable({
+      cursor: "move",
+      helper: function( event , ui ) {
+	  	var p = $(html);
+		p.appendTo('body');
+        return p;
+      },stop: function( event, ui ) {
+	  	//ui.helper.removeClass('helper');
+		var elem = $(ui.helper[0].outerHTML);
+		// 计算位置
+		move(elem,left_offset , top_offset);
+		elem.click(function(){
+			//others remove helper class
+			$('.elem').removeClass('helper');
+			elem.addClass('helper');
+			editElem = elem;
+			readProps(elem);
+			makeElemDraggable(elem);
+			currentEditComp = elem;
+		});
+        $('#page').append(elem);
+		
+		for(var i=0;i<sublines.length;i++){
+			$(sublines[i]).remove();
+		}
+	  },start: function(event,ui){
+	  	ui.helper.addClass('helper');
+		//重新计算sublines
+		cacuSublines(ui.helper);
+	  }
+    });
+}
+
+function cacuSublines(helper){
+	rowSubline = [];
+	colSubline = [];
+	var elems = $('.elem');
+	for(var i=0;i<elems.length;i++){
+		var elem = elems[i];
+		if(elem==helper[0]){
+			continue;
+		}
+		elem = $(elem);
+		var toppx = elem.css('top');
+		var leftpx = elem.css('left');
+		var top = toppx.replace('px' , '');
+		var left = leftpx.replace('px' , '');
+		rowSubline.push(top);
+		rowSubline.push(parseFloat(top)+elem.height());
+		colSubline.push(left);
+		colSubline.push(parseFloat(left)+elem.width());
+	}
+	for(var i=0;i<colSubline.length;i++){
+		var column = $('<div style="height: 500px;position: absolute;border-left: 0.1px solid;left: '+colSubline[i]+'px;color: aqua;"></div>');
+		//var row = '<div style="width: 500px;position: absolute;border-top: 0.1px solid;top: 52px;color: aqua;"></div>';
+		sublines.push(column);
+		$('#page').append(column);
+	}
+}
+function readProps(elem){
+	if(elem.hasClass('wrap')){
+		elem = $(elem.children()[0]);
+	}
+	var html = CompUtils.buildPropsEditor(elem);
+	$('#props').empty();
+	$('#props').append(html);
+	$('#props input').change(function(event){
+		var input = $(event.target);
+		CompUtils.setAttr(input);
+		/**
+		var name = input.attr('name');
+		var scope = input.attr('scope');
+		if(scope=='value'){
+			editElem.val(input.val());
+		}
+		if(scope=='text'){
+			editElem.text(input.val());	
+		}
+		if(scope=='attr'){
+			editElem.attr(name,input.val());	
+		}
+		if(scope=='css'){
+			editElem.css(name,input.val());
+		}
+		**/
+	});
+}
+
+function makeElemDraggable(elem){
+	$(elem).draggable({
+		cursor: "move",
+		containment:'#page',
+		start: function(event,ui){
+    	  	ui.helper.addClass('helper');
+    		//重新计算sublines
+    		cacuSublines(ui.helper);
+    	},
+		stop: function(event , ui){
+			for(var i=0;i<sublines.length;i++){
+    			$(sublines[i]).remove();
+    		}
+		}
+	});
+}
+$(function(){
+	//$( ".easyui-accordion" ).accordion();
+	var comps = [];
+	comps.push(new Comp('.span' , '<span class="elem ui-widget-content" style="style:inline-block;height: 30px;line-height: 30px;width: 80px;text-align: center;cursor: move;">请输入内容</span>'));
+	comps.push(new Comp('.input' , '<span class="wrap elem ui-widget-content" style="cursor: move;padding:5px;"><input style="display:inline-block;height: 30px;line-height: 30px;width: 200px;padding-left: 10px;" placeholder="请输入内容"></input></span>'));
+    comps.push(new Comp('.select' , '<span class="wrap elem ui-widget-content" style="cursor: move;padding:5px;"><select style="display:inline-block;height: 30px;line-height: 30px;width:100px;"><option>请选择</option></select></span>'));
+	$('.page').droppable({
+        accept:'.input,.span'
+    });
+	
+	
+	$( "#page" ).mousedown(function(event){
+		
+	});
+	
+	document.onmousedown=function(event){
+		if (event.which == 3) {
+		  cancelSelectAction();
+        }
+	}
+});
+
+function makePageSelectable(){
+	$( "#page" ).selectable({
+		stop: function( event, ui ) {
+			console.log(ui);
+			$('.ui-selected');
+			var helper = $(event.toElement.outerHTML);
+			helper = move(helper,left_offset , top_offset);
+			$('#page').append(helper);
+			// make helper draggable
+			makeWrapperDraggable(helper);
+			// make all selected elems handle by wrapper
+		},
+		start: function(event , ui){
+			//clear select helper
+			$('.ui-selectable-helper').remove()
+			var selElems = $('.ui-selecting');
+			if(selElems.length>0){
+				event.preventDefault();
+				//selElems[0].click();
+			}
+		},
+		selecting: function( event, ui ) {
+			console.log(1);
+		}
+	});
+}
+
+var lastWrapperTop;
+var lastWrapperLeft;
+function makeWrapperDraggable(elem){
+	$(elem).draggable({
+		cursor: "move",
+		containment:'#page',
+		start: function(event,ui){
+    	  	ui.helper.addClass('helper');
+			lastWrapperLeft = ui.originalPosition.left;
+			lastWrapperTop = ui.originalPosition.top;
+    	},
+		stop: function(event , ui){
+			
+		},
+		drag: function( event, ui ,offset) {
+			console.log(offset);
+			// 当前位置-上次位置
+			var topOffset = ui.position.top - lastWrapperTop;
+			var leftOffset = ui.position.left - lastWrapperLeft;
+			// 记录当前位置
+			lastWrapperLeft = ui.position.left;
+			lastWrapperTop = ui.position.top;
+			var selElems = $('.ui-selected');
+        	for(var i=0;i<selElems.length;i++){
+        		var xx = $(selElems[i]);
+				move($(selElems[i]) , -leftOffset, -topOffset);
+        	}
+		}
+	});
+}
+
+
+function toggleSelectAction(){
+	btn = $('#selectBtn');
+	if(btn.hasClass('selected')){
+		cancelSelectAction();
+	}else{
+		currentEditComp=null;
+		btn.addClass('selected');
+		makePageSelectable();
+	}
+}
+function cancelSelectAction(){
+	btn = $('#selectBtn');
+	if(btn.hasClass('selected')){
+		btn.removeClass('selected');
+    	$( "#page" ).selectable( "destroy" );
+    	removeWrapper();
+	}
+}
+function removeWrapper(){
+	$('.ui-selectable-helper').remove();
+}
+</script>
+</head>
+<body oncontextmenu=self.event.returnValue=false>
+	<div class="easyui-layout" style="width:100%;height:900px;margin-left: auto;margin-right: auto;">
+		<div data-options="region:'north'" style="height:40px">
+			<div style="margin-top:5px;text-align:center;">
+				<button id="selectBtn" onclick="toggleSelectAction()" class="easyui-linkbutton">选择</button>
+				<a href="#" class="easyui-linkbutton">保存</a>
+				<a href="#" class="easyui-linkbutton">预览</a>
+            </div>
+		</div>
+		<div id="props" data-options="region:'east',split:true" title="属性" style="width:300px;">
+			<!--属性信息-->
+		</div>
+		<div data-options="region:'west',split:true" title="组件库" style="width:200px;">
+			<div class="easyui-accordion" data-options="fit:true,border:false,selected:true">
+                <!--<h3>基础控件</h3>-->
+				<div title="基础控件" style="padding:10px;">
+					<div class="span comp">文本标签
+					</div>
+					<div class="input comp">输入框
+					</div>
+					<div class="select comp">下拉框
+					</div>
+				</div>
+			</div>
+		</div>
+		<div id="page" class="page" data-options="region:'center'">
+			
+		</div>
+	</div>
+</body>
+</html>

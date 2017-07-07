@@ -290,28 +290,6 @@
                       </div>
                     </div>
         
-                    <div class="box box-element ui-draggable">
-                      <a href="#close" class="remove label label-danger">
-                        <i class="glyphicon glyphicon-remove"></i>
-                        删除
-                      </a>
-                      <span class="drag label label-default">
-                        <i class="glyphicon glyphicon-move"></i>
-                      </span>
-        
-                      <div class="preview">地址</div>
-                      <div class="view">
-                        <address contenteditable="true"><strong>Twitter, Inc.</strong>
-                          <br>
-                          795 Folsom Ave, Suite 600
-                          <br>
-                          San Francisco, CA 94107
-                          <br> <abbr title="Phone">P:</abbr>
-                          (123) 456-7890
-                        </address>
-                      </div>
-                    </div>
-        
                   </li>
                 </ul>
         </div>

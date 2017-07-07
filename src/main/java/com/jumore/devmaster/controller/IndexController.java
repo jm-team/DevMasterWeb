@@ -38,6 +38,14 @@ public class IndexController {
     }
     
     @PublicMethod
+    @RequestMapping(value = "webBuilder")
+    public ModelAndView webBuilder() throws Exception {
+        ModelAndView mv = new ModelAndView();
+        // 获取组件列表
+        return mv;
+    }
+    
+    @PublicMethod
     @RequestMapping(value = "layout2")
     public ModelAndView layout2() throws Exception {
         ModelAndView mv = new ModelAndView();
