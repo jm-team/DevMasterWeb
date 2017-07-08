@@ -1,4 +1,8 @@
 function Span() {
+	this.getHtml = function(){
+		var html = '<span class="elem ui-widget-content" style="style:inline-block;height: 30px;line-height: 30px;width: 80px;text-align: center;cursor: move;">请输入内容</span>';
+		return html;
+	};
 	this.attrs = [{
 		name : 'text',
 		text : '文本内容',

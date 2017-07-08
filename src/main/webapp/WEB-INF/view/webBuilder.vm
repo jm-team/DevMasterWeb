@@ -15,6 +15,9 @@
 <script src="${ServiceName}/page/js/webBuilder/compUtils.js"></script>
 <script src="${ServiceName}/page/js/webBuilder/comp/input.js"></script>
 <script src="${ServiceName}/page/js/webBuilder/comp/span.js"></script>
+<script src="${ServiceName}/page/js/webBuilder/comp/select.js"></script>
+<script src="${ServiceName}/page/js/webBuilder/comp/image.js"></script>
+<script src="${ServiceName}/page/js/webBuilder/comp/link.js"></script>
 <style type="text/css">
 body{
 	padding:1px;margin:0px;
@@ -31,7 +34,6 @@ body{
 	padding-left:10px;
 }
 #props .row{
-	height:30px;
 	margin-top:4px;
 	line-height:30px;
 }
@@ -68,13 +70,15 @@ var sublines=[];
 var left_offset=200;
 var top_offset = 39;
 var currentEditComp;
-function Comp(clazz,html){
+var editing;
+function Comp(clazz,tag){
 	this.clazz = clazz;
-	this.html = html;
+	
 	$(clazz).draggable({
       cursor: "move",
       helper: function( event , ui ) {
-	  	var p = $(html);
+	  	var tmp = CompUtils.getCompByTagName($(event.target).attr('tag'));
+	  	var p = $(tmp.getHtml());
 		p.appendTo('body');
         return p;
       },stop: function( event, ui ) {
@@ -140,22 +144,13 @@ function readProps(elem){
 	$('#props input').change(function(event){
 		var input = $(event.target);
 		CompUtils.setAttr(input);
-		/**
-		var name = input.attr('name');
-		var scope = input.attr('scope');
-		if(scope=='value'){
-			editElem.val(input.val());
-		}
-		if(scope=='text'){
-			editElem.text(input.val());	
-		}
-		if(scope=='attr'){
-			editElem.attr(name,input.val());	
-		}
-		if(scope=='css'){
-			editElem.css(name,input.val());
-		}
-		**/
+	});
+	$('#props .propEdit').click(function(){
+		editing=true;
+		console.log('start edit');
+	}).blur(function(){
+		editing=false;
+		console.log('leave edit');
 	});
 }
 
@@ -178,9 +173,11 @@ function makeElemDraggable(elem){
 $(function(){
 	//$( ".easyui-accordion" ).accordion();
 	var comps = [];
-	comps.push(new Comp('.span' , '<span class="elem ui-widget-content" style="style:inline-block;height: 30px;line-height: 30px;width: 80px;text-align: center;cursor: move;">请输入内容</span>'));
-	comps.push(new Comp('.input' , '<span class="wrap elem ui-widget-content" style="cursor: move;padding:5px;"><input style="display:inline-block;height: 30px;line-height: 30px;width: 200px;padding-left: 10px;" placeholder="请输入内容"></input></span>'));
-    comps.push(new Comp('.select' , '<span class="wrap elem ui-widget-content" style="cursor: move;padding:5px;"><select style="display:inline-block;height: 30px;line-height: 30px;width:100px;"><option>请选择</option></select></span>'));
+	comps.push(new Comp('.span' , 'SPAN'));
+	comps.push(new Comp('.input' , 'INPUT'));
+    comps.push(new Comp('.select' , 'SELECT'));
+	comps.push(new Comp('.img' , 'IMG'));
+	comps.push(new Comp('.link' , 'A'));
 	$('.page').droppable({
         accept:'.input,.span'
     });
@@ -295,11 +292,15 @@ function removeWrapper(){
 			<div class="easyui-accordion" data-options="fit:true,border:false,selected:true">
                 <!--<h3>基础控件</h3>-->
 				<div title="基础控件" style="padding:10px;">
-					<div class="span comp">文本标签
+					<div class="span comp" tag="SPAN">文本标签
 					</div>
-					<div class="input comp">输入框
+					<div class="input comp" tag="INPUT">输入框
 					</div>
-					<div class="select comp">下拉框
+					<div class="select comp" tag="SELECT">下拉框
+					</div>
+					<div class="img comp" tag="IMG">图片
+					</div>
+					<div class="link comp" tag="A">链接
 					</div>
 				</div>
 			</div>

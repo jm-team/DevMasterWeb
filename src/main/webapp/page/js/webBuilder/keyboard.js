@@ -12,7 +12,6 @@ function move(target,left,top){
 }
 
 function moveLeft(x){
-	event.preventDefault();
 	//是否有批量选择框
 	var wrapper = $('.ui-selectable-helper');
 	if(wrapper.length>0){
@@ -22,18 +21,19 @@ function moveLeft(x){
     		var xx = $(selElems[i]);
 			move($(selElems[i]) , x, 0);
     	}
+    	event.preventDefault();
 		return;
 	}
 	// 是否有选择的元素
 	if(currentEditComp!=null){
 		move(currentEditComp , x , 0);
+		event.preventDefault();
 	}
 	
 }
 
 
 function moveUp(y){
-	event.preventDefault();
 	//是否有批量选择框
 	var wrapper = $('.ui-selectable-helper');
 	if(wrapper.length>0){
@@ -43,17 +43,22 @@ function moveUp(y){
     		var xx = $(selElems[i]);
 			move($(selElems[i]) , 0, y);
     	}
+    	event.preventDefault();
 		return;
 	}
 	// 是否有选择的元素
 	if(currentEditComp!=null){
 		move(currentEditComp , 0 , y);
+		event.preventDefault();
 	}
 }
 
 
 $(function(){
-	$(document).keydown(function(event){ 
+	$(document).keydown(function(event){
+		if(editing){
+			return;
+		}
 		if(event.keyCode==38){
 			moveUp(1);
 		}else if(event.keyCode==40){
@@ -62,6 +67,18 @@ $(function(){
 			moveLeft(1);
 		}else if(event.keyCode==39){
 			moveLeft(-1);
+		}else if(event.keyCode==46){
+			//delete
+			// 要判断是否批量删除
+			var wrapper = $('.ui-selectable-helper');
+			var selElems = $('.ui-selected');
+			wrapper.remove();
+			selElems.remove();
+			if(currentEditComp){
+				currentEditComp.remove();
+				currentEditComp=null;
+			}
+			$('#props').empty();
 		}
 	});
 });

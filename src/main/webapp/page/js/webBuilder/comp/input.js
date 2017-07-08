@@ -1,4 +1,8 @@
 function Input() {
+	this.getHtml = function(){
+		var html = '<span class="wrap elem ui-widget-content" style="cursor: move;padding:5px;"><input style="display:inline-block;height: 30px;line-height: 30px;width: 200px;padding-left: 10px;" placeholder="请输入内容"></input></span>';
+		return html;
+	};
 	this.attrs = [{
 		name : 'placeholder',
 		text : '提示内容',
