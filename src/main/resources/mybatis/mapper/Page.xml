@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="Page">
+
+	<select id="listPage" parameterType="paramMap" resultType="Map">
+		select id as id , name as name , remark as remark , create_time as createTime , last_update_time as lastUpdateTime from dm_page_view
+		<where>
+			<if test="projectId!=null">
+				and project_id=#{projectId}
+			</if>
+			<if test="name!= null and name!=''">
+				and name like CONCAT('%', #{name},'%')
+			</if>
+		</where>
+	</select>
+
+</mapper>

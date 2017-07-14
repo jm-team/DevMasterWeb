@@ -18,7 +18,6 @@ import com.jumore.dove.web.model.ResponseVo;
 @RequestMapping(value = "")
 public class IndexController {
 
-
     @RequestMapping(value = "index")
     public ModelAndView index(String returnUrl) throws Exception {
         ModelAndView mv = new ModelAndView();
@@ -39,7 +38,7 @@ public class IndexController {
     
     @PublicMethod
     @RequestMapping(value = "webBuilder")
-    public ModelAndView webBuilder() throws Exception {
+    public ModelAndView webBuilder(Long pageId) throws Exception {
         ModelAndView mv = new ModelAndView();
         // 获取组件列表
         return mv;

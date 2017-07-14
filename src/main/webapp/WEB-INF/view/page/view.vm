@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>${page.name}</title>
+<!--
+<link rel="stylesheet" href="${ServiceName}/page/js/webBuilder/dep/easyui.css">
+	-->
+<link rel="stylesheet" href="http://www.jeasyui.net/Public/js/easyui/themes/default/easyui.css">
+<link rel="stylesheet" href="${ServiceName}/page/js/webBuilder/dep/icon.css">
+<link rel="stylesheet" href="${ServiceName}/page/js/webBuilder/dep/demo.css">
+<link rel="stylesheet" href="${ServiceName}/page/js/webBuilder/comp/table.css">
+	
+	<script src="http://www.jeasyui.net/Public/js/jquery.js"></script>
+	<!--
+<script src="${ServiceName}/page/js/webBuilder/dep/jquery-1.9.1.min.js"></script>
+-->
+<script src="${ServiceName}/page/js/webBuilder/dep/jquery.easyui.min.js"></script>
+<script src="${ServiceName}/page/js/webBuilder/dep/jquery-ui-1.12.1.js"></script>
+<style type="text/css">
+body{
+	padding:1px;margin:0px;
+}
+</style>
+<script type="text/javascript">
+
+</script>
+</head>
+<body oncontextmenu=self.event.returnValue=false>
+	<div id="page" class="page">
+		${page.content}
+	</div>
+</body>
+</html>

@@ -1,0 +1,9 @@
+.default-td{
+	border: 1px solid lightgray;width:100px;
+}
+.default-table{
+	width:400px;border-collapse: collapse;height:200px;
+}
+.default-table thead td{
+	text-align:center;
+}

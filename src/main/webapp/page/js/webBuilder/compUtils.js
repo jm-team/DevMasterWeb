@@ -16,6 +16,10 @@ var CompUtils = {
 		if(scope=='css'){
 			editElem.css(name,input.val());
 		}
+		if(scope=='data'){
+			var comp = this.getCompByTagName(editElem[0].tagName);
+			comp.setData(name , input.val() , editElem);
+		}
 	},
 	getAttr:function(comp, name){
 		
@@ -35,6 +39,18 @@ var CompUtils = {
 		}
 		if(tag=='A'){
 			return new Link();
+		}
+		if(tag=='TABLE'){
+			return new Table();
+		}
+		if(tag=='TR'){
+			return new Tr();
+		}
+		if(tag=='TD'){
+			return new Td();
+		}
+		if(tag=='DIV'){
+			return new Div();
 		}
 	},
 	
@@ -62,6 +78,15 @@ var CompUtils = {
 			var row = '<div class="row"> <span class="label">'+css.text+'</span><input class="propEdit" scope="css" name="'+css.name+'" value="'+value+'"/></div><br/>';
 			html += row;
 		}
+		
+		if(comp.data){
+			for(var i=0;i<comp.data.length;i++){
+				var data = comp.data[i];
+				var row = '<div class="row"> <span class="label">'+data.text+'</span><input class="propEdit" scope="data" name="'+data.name+'" value=""/></div><br/>';
+				html += row;
+			}
+		}
+		
 		if(comp.hasData){
 			var staticData = comp.getCurrentValue(this.getEditElem());
 			var row = '<div class="row"> <span class="label">静态数据</span><textarea class="propEdit" rows="5" onchange="CompUtils.setDefaultData(this)" scope="data" name="defaultData">'+JSON.stringify(staticData)+'</textarea></div><br/>';

@@ -29,6 +29,6 @@ function Image() {
 		name : 'background-color',
 		text : '背景色',
 	}];
-	this.defaultSrc = 'page/img/xiong.jpg';
+	this.defaultSrc = 'img/xiong.jpg';
 	
 }
