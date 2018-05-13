@@ -115,7 +115,6 @@ public class ComponentController {
 
         compPo.setGroupId(comp.getGroupId());
         compPo.setName(comp.getName());
-        compPo.setRemark(comp.getRemark());
         compPo.setVersion(comp.getVersion());
         compPo.setUpdateTime(comp.getUpdateTime());
         baseService.update(compPo);

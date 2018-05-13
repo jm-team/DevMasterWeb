@@ -45,7 +45,7 @@
 								    <td>
 											<a href="javascript:void(0)" onclick="openEditPage($[id])">编辑</a>
 											<a href="javascript:void(0)" onclick="deletePage($[id])">删除</a>
-											<a href="webBuilder?pageId=$[id]" target="_blank">设计</a>
+											<a href="webBuilder?type=page&id=$[id]" target="_blank">设计</a>
 								    </td>
 								</tr>
 							</tbody>
@@ -111,7 +111,7 @@ function openEditPage(id){
 	  title: '修改页面',
 	  shade: 0.5,
 	  area: ['50%', '450px'],
-	  content: '${ServiceName}/page/editPage?pageId='+id,
+	  content: '${ServiceName}/page/editPage?type=page&id='+id,
 	  cancel:function(index){
 	  }
 	});

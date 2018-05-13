@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.jumore.devmaster.entity.FrontComponent;
 import com.jumore.devmaster.entity.PageView;
 import com.jumore.dove.aop.annotation.PublicMethod;
 import com.jumore.dove.common.BusinessException;
@@ -23,7 +24,7 @@ import com.jumore.dove.web.model.ResponseVo;
 @PublicMethod
 @Controller
 @RequestMapping(value = "/page")
-public class pageControlelr extends BaseController {
+public class pageController extends BaseController {
 
     @Autowired
     private BaseService   baseService;
@@ -98,10 +99,16 @@ public class pageControlelr extends BaseController {
     
     @PublicMethod
     @RequestMapping(value = "webBuilder")
-    public ModelAndView webBuilder(Long pageId) throws Exception {
+    public ModelAndView webBuilder(Long id , String type) throws Exception {
         ModelAndView mv = new ModelAndView();
-        PageView po = baseService.get(PageView.class, pageId);
-        mv.addObject("page", po);
+        if("page".equals(type)){
+            PageView po = baseService.get(PageView.class, id);
+            mv.addObject("target", po);
+        }else if("comp".equals(type)){
+            FrontComponent fc = baseService.get(FrontComponent.class, id);
+            mv.addObject("target", fc);
+        }
+        mv.addObject("type", type);
         // 获取组件列表
         return mv;
     }

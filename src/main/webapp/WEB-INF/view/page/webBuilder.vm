@@ -353,7 +353,7 @@ function doSavePage(){
 	$.ajax({
         type: "POST",
         url: '${ServiceName}/page/doSavePageContent',
-        data: {pageId : ${page.id} , content: content},
+        data: {id : ${target.id} , content: content , type : ${type}},
         dataType:'json'
     }).done(function (result) {
         if(result.code!=0){
@@ -372,7 +372,7 @@ function doSavePage(){
 			<div style="margin-top:5px;text-align:center;">
 				<button id="selectBtn" onclick="toggleSelectAction()" class="easyui-linkbutton">选择</button>
 				<a href="#" class="easyui-linkbutton" onclick="doSavePage()">保存</a>
-				<a href="view?pageId=${page.id}" target="_blank" class="easyui-linkbutton">预览</a>
+				<a href="view?id=${page.id}&type=${type}" target="_blank" class="easyui-linkbutton">预览</a>
             </div>
 		</div>
 		<div id="props" data-options="region:'east',split:true" title="属性" style="width:300px;">
@@ -406,7 +406,7 @@ function doSavePage(){
 			</div>
 		</div>
 		<div id="page" class="page" data-options="region:'center'">
-			${page.content}
+			$!{target.content}
 		</div>
 	</div>
 </body>

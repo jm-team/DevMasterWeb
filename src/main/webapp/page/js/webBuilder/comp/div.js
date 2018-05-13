@@ -11,6 +11,9 @@ function Div() {
 		name : 'height',
 		text : '高度',
 	},{
+		name : 'line-height',
+		text : '行高',
+	},{
 		name : 'width',
 		text : '宽度',
 	},{

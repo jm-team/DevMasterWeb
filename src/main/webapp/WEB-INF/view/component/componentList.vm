@@ -34,7 +34,6 @@
 									<th>组件名称</th>
 									<th>版本号</th>
 									<th>类别</th>
-									<th>说明</th>
 									<th>创建时间</th>
 								    <th></th>
 								</tr>
@@ -43,10 +42,11 @@
 							<tbody>
 								<tr style="display:none;" class="node_row">
 									<td >$[groupId]</td>
-								    <td ><a target="_blank" href="${ServiceName}/file/fileEdit?type=comps&root=$[groupId].$[name].$[version]">$[name]</a></td>
+								    <td >
+										<a href="${ServiceName}/page/webBuilder?id=$[id]&type=comp" target="_blank">$[name]</a>
+									</td>
 									<td >$[version]</td>
 									<td >$[type]</td>
-								    <td >$[remark]</td>
 									<td >$[createTime]</td>
 								    <td>
 											<a href="javascript:void(0)" onclick="openEditComponent($[id])">编辑</a>

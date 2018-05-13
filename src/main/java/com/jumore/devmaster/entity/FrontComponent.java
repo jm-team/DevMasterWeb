@@ -23,7 +23,7 @@ public class FrontComponent {
     
     private Long uid;
     
-    private String remark;
+    private String content;
     
     private String version;
     
@@ -83,14 +83,6 @@ public class FrontComponent {
         this.uid = uid;
     }
 
-    public String getRemark() {
-        return remark;
-    }
-
-    public void setRemark(String remark) {
-        this.remark = remark;
-    }
-
     public String getPreviewImage() {
         return previewImage;
     }
@@ -121,6 +113,14 @@ public class FrontComponent {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
     }
     
 }
